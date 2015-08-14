@@ -212,10 +212,12 @@ static __u8 select_drm(struct wiimote_data *wdata)
 
 	if (ir == WIIPROTO_FLAG_IR_BASIC) {
 		if (wdata->state.flags & WIIPROTO_FLAG_ACCEL) {
-			if (ext)
-				return WIIPROTO_REQ_DRM_KAIE;
-			else
-				return WIIPROTO_REQ_DRM_KAI;
+			/* GEN10 and ealier devices bind IR formats to DRMs.
+			 * Hence, we cannot use DRM_KAI here as it might be
+			 * bound to IR_EXT. Use DRM_KAIE unconditionally so we
+			 * work with all devices and our parsers can use the
+			 * fixed formats, too. */
+			return WIIPROTO_REQ_DRM_KAIE;
 		} else {
 			return WIIPROTO_REQ_DRM_KIE;
 		}
@@ -836,7 +838,8 @@ static void wiimote_init_set_type(struct wiimote_data *wdata,
 		goto done;
 	}
 
-	if (vendor == USB_VENDOR_ID_NINTENDO) {
+	if (vendor == USB_VENDOR_ID_NINTENDO ||
+	    vendor == USB_VENDOR_ID_NINTENDO2) {
 		if (product == USB_DEVICE_ID_NINTENDO_WIIMOTE) {
 			devtype = WIIMOTE_DEV_GEN10;
 			goto done;
@@ -1857,6 +1860,8 @@ static void wiimote_hid_remove(struct hid_device *hdev)
 
 static const struct hid_device_id wiimote_hid_devices[] = {
 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_NINTENDO,
+				USB_DEVICE_ID_NINTENDO_WIIMOTE) },
+	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_NINTENDO2,
 				USB_DEVICE_ID_NINTENDO_WIIMOTE) },
 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_NINTENDO,
 				USB_DEVICE_ID_NINTENDO_WIIMOTE2) },

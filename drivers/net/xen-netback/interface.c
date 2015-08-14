@@ -415,12 +415,6 @@ void xenvif_carrier_off(struct xenvif *vif)
 
 void xenvif_disconnect(struct xenvif *vif)
 {
-	/* Disconnect funtion might get called by generic framework
-	 * even before vif connects, so we need to check if we really
-	 * need to do a module_put.
-	 */
-	int need_module_put = 0;
-
 	if (netif_carrier_ok(vif->dev))
 		xenvif_carrier_off(vif);
 

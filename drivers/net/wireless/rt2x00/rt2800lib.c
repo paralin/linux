@@ -6729,6 +6729,9 @@ int rt2800_enable_radio(struct rt2x00_dev *rt2x00dev)
 		     rt2800_init_registers(rt2x00dev)))
 		return -EIO;
 
+	if (unlikely(rt2800_wait_bbp_rf_ready(rt2x00dev)))
+		return -EIO;
+
 	/*
 	 * Wait BBP/RF to wake up.
 	 */

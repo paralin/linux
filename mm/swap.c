@@ -82,6 +82,19 @@ static void __put_compound_page(struct page *page)
 
 static void put_compound_page(struct page *page)
 {
+	/*
+	 * hugetlbfs pages cannot be split from under us.  If this is a
+	 * hugetlbfs page, check refcount on head page and release the page if
+	 * the refcount becomes zero.
+	 */
+	if (PageHuge(page)) {
+		page = compound_head(page);
+		if (put_page_testzero(page))
+			__put_compound_page(page);
+
+		return;
+	}
+
 	if (unlikely(PageTail(page))) {
 		/* __split_huge_page_refcount can run under us */
 		struct page *page_head = compound_head(page);
@@ -220,7 +233,6 @@ bool __get_page_tail(struct page *page)
 	 * proper PT lock that already serializes against
 	 * split_huge_page().
 	 */
-	unsigned long flags;
 	bool got = false;
 	struct page *page_head = compound_head(page);
 
@@ -249,23 +261,10 @@ bool __get_page_tail(struct page *page)
 				put_page(page_head);
 				return false;
 			}
+			compound_unlock_irqrestore(page_head, flags);
+			if (unlikely(!got))
+				put_page(page_head);
 		}
-
-		/*
-		 * page_head wasn't a dangling pointer but it
-		 * may not be a head page anymore by the time
-		 * we obtain the lock. That is ok as long as it
-		 * can't be freed from under us.
-		 */
-		flags = compound_lock_irqsave(page_head);
-		/* here __split_huge_page_refcount won't run anymore */
-		if (likely(PageTail(page))) {
-			__get_page_tail_foll(page, false);
-			got = true;
-		}
-		compound_unlock_irqrestore(page_head, flags);
-		if (unlikely(!got))
-			put_page(page_head);
 	}
 	return got;
 }

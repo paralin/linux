@@ -1863,7 +1863,7 @@ static void mld_dad_timer_expire(unsigned long data)
 		if (idev->mc_dad_count)
 			mld_dad_start_timer(idev, idev->mc_maxdelay);
 	}
-	__in6_dev_put(idev);
+	in6_dev_put(idev);
 }
 
 static int ip6_mc_del1_src(struct ifmcaddr6 *pmc, int sfmode,

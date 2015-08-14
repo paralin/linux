@@ -76,7 +76,7 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu)
 	}
 
 	/* Reset core registers */
-	memcpy(&vcpu->arch.regs, cpu_reset, sizeof(vcpu->arch.regs));
+	memcpy(&vcpu->arch.regs, reset_regs, sizeof(vcpu->arch.regs));
 
 	/* Reset CP15 registers */
 	kvm_reset_coprocs(vcpu);
