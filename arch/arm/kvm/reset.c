@@ -27,6 +27,8 @@
 #include <asm/kvm_arm.h>
 #include <asm/kvm_coproc.h>
 
+#include <kvm/arm_arch_timer.h>
+
 /******************************************************************************
  * Cortex-A15 and Cortex-A7 Reset Values
  */
@@ -78,6 +80,9 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu)
 
 	/* Reset CP15 registers */
 	kvm_reset_coprocs(vcpu);
+
+	/* Reset arch_timer context */
+	kvm_timer_vcpu_reset(vcpu, cpu_vtimer_irq);
 
 	return 0;
 }

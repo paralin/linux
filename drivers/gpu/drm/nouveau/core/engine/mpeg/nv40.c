@@ -73,6 +73,7 @@ nv40_mpeg_mthd_dma(struct nouveau_object *object, u32 mthd, void *arg, u32 len)
 		nv_wr32(priv, 0x00b374, size);
 	}
 
+	nv_wo32(&chan->base.base, 0x78, 0x02001ec1);
 	return 0;
 }
 

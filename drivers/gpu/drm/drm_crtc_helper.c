@@ -567,6 +567,11 @@ int drm_crtc_helper_set_config(struct drm_mode_set *set)
 				}
 
 				break;
+
+				if (connector->dpms != DRM_MODE_DPMS_ON) {
+					DRM_DEBUG_KMS("connector dpms not on, full mode switch\n");
+					mode_changed = true;
+				}
 			}
 		}
 

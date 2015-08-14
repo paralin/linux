@@ -2433,6 +2433,31 @@ cea_mode_alternate_clock(const struct drm_display_mode *cea_mode)
 	return clock;
 }
 
+/*
+ * Calculate the alternate clock for the CEA mode
+ * (60Hz vs. 59.94Hz etc.)
+ */
+static unsigned int
+cea_mode_alternate_clock(const struct drm_display_mode *cea_mode)
+{
+	unsigned int clock = cea_mode->clock;
+
+	if (cea_mode->vrefresh % 6 != 0)
+		return clock;
+
+	/*
+	 * edid_cea_modes contains the 59.94Hz
+	 * variant for 240 and 480 line modes,
+	 * and the 60Hz variant otherwise.
+	 */
+	if (cea_mode->vdisplay == 240 || cea_mode->vdisplay == 480)
+		clock = clock * 1001 / 1000;
+	else
+		clock = DIV_ROUND_UP(clock * 1000, 1001);
+
+	return clock;
+}
+
 /**
  * drm_match_cea_mode - look for a CEA mode matching given mode
  * @to_match: display mode

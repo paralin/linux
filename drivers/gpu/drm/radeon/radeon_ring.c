@@ -338,6 +338,38 @@ bool radeon_ring_supports_scratch_reg(struct radeon_device *rdev,
 	}
 }
 
+u32 radeon_ring_generic_get_rptr(struct radeon_device *rdev,
+				 struct radeon_ring *ring)
+{
+	u32 rptr;
+
+	if (rdev->wb.enabled && ring != &rdev->ring[R600_RING_TYPE_UVD_INDEX])
+		rptr = le32_to_cpu(rdev->wb.wb[ring->rptr_offs/4]);
+	else
+		rptr = RREG32(ring->rptr_reg);
+	rptr = (rptr & ring->ptr_reg_mask) >> ring->ptr_reg_shift;
+
+	return rptr;
+}
+
+u32 radeon_ring_generic_get_wptr(struct radeon_device *rdev,
+				 struct radeon_ring *ring)
+{
+	u32 wptr;
+
+	wptr = RREG32(ring->wptr_reg);
+	wptr = (wptr & ring->ptr_reg_mask) >> ring->ptr_reg_shift;
+
+	return wptr;
+}
+
+void radeon_ring_generic_set_wptr(struct radeon_device *rdev,
+				  struct radeon_ring *ring)
+{
+	WREG32(ring->wptr_reg, (ring->wptr << ring->ptr_reg_shift) & ring->ptr_reg_mask);
+	(void)RREG32(ring->wptr_reg);
+}
+
 /**
  * radeon_ring_free_size - update the free size
  *

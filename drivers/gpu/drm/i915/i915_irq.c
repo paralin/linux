@@ -386,6 +386,10 @@ static void ivybridge_set_fifo_underrun_reporting(struct drm_device *dev,
 			DRM_ERROR("uncleared fifo underrun on pipe %c\n",
 				  pipe_name(pipe));
 		}
+		if (hpd_event_bits & (1 << intel_encoder->hpd_pin)) {
+			DRM_DEBUG_KMS("Connector %s (pin %i) received hotplug event.\n",
+				      drm_get_connector_name(connector), intel_encoder->hpd_pin);
+		}
 	}
 }
 
@@ -3070,8 +3074,8 @@ static void ibx_irq_pre_postinstall(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 
-	if (HAS_PCH_NOP(dev))
-		return;
+	ibx_irq_preinstall(dev);
+}
 
 	WARN_ON(I915_READ(SDEIER) != 0);
 	I915_WRITE(SDEIER, 0xffffffff);

@@ -1773,7 +1773,7 @@ int wm_adsp1_event(struct snd_soc_dapm_widget *w,
 		if (ret != 0)
 			goto err;
 
-		ret = wm_adsp_setup_algs(dsp);
+		ret = wm_adsp_setup_algs(dsp, codec);
 		if (ret != 0)
 			goto err;
 
@@ -1938,7 +1938,7 @@ int wm_adsp2_event(struct snd_soc_dapm_widget *w,
 		if (ret != 0)
 			goto err;
 
-		ret = wm_adsp_setup_algs(dsp);
+		ret = wm_adsp_setup_algs(dsp, codec);
 		if (ret != 0)
 			goto err;
 
@@ -2125,33 +2125,41 @@ int wm_adsp2_init(struct wm_adsp *adsp, bool dvfs)
 	INIT_LIST_HEAD(&adsp->alg_regions);
 	INIT_LIST_HEAD(&adsp->ctl_list);
 
+	adsp->wm_coeff = kzalloc(sizeof(*adsp->wm_coeff),
+				 GFP_KERNEL);
+	if (!adsp->wm_coeff)
+		return -ENOMEM;
+	adsp->wm_coeff->regmap = adsp->regmap;
+	adsp->wm_coeff->dev = adsp->dev;
+	INIT_LIST_HEAD(&adsp->wm_coeff->ctl_list);
+
 	if (dvfs) {
 		adsp->dvfs = devm_regulator_get(adsp->dev, "DCVDD");
 		if (IS_ERR(adsp->dvfs)) {
 			ret = PTR_ERR(adsp->dvfs);
 			dev_err(adsp->dev, "Failed to get DCVDD: %d\n", ret);
-			return ret;
+			goto out_coeff;
 		}
 
 		ret = regulator_enable(adsp->dvfs);
 		if (ret != 0) {
 			dev_err(adsp->dev, "Failed to enable DCVDD: %d\n",
 				ret);
-			return ret;
+			goto out_coeff;
 		}
 
 		ret = regulator_set_voltage(adsp->dvfs, 1200000, 1800000);
 		if (ret != 0) {
 			dev_err(adsp->dev, "Failed to initialise DVFS: %d\n",
 				ret);
-			return ret;
+			goto out_coeff;
 		}
 
 		ret = regulator_disable(adsp->dvfs);
 		if (ret != 0) {
 			dev_err(adsp->dev, "Failed to disable DCVDD: %d\n",
 				ret);
-			return ret;
+			goto out_coeff;
 		}
 	}
 
@@ -2161,6 +2169,10 @@ int wm_adsp2_init(struct wm_adsp *adsp, bool dvfs)
 	}
 
 	return 0;
+
+out_coeff:
+	kfree(adsp->wm_coeff);
+	return ret;
 }
 EXPORT_SYMBOL_GPL(wm_adsp2_init);
 

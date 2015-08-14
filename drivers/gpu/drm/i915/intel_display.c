@@ -1027,8 +1027,8 @@ void assert_pll(struct drm_i915_private *dev_priv,
 /* XXX: the dsi pll is shared between MIPI DSI ports */
 static void assert_dsi_pll(struct drm_i915_private *dev_priv, bool state)
 {
-	u32 val;
 	bool cur_state;
+	struct intel_dpll_hw_state hw_state;
 
 	mutex_lock(&dev_priv->dpio_lock);
 	val = vlv_cck_read(dev_priv, CCK_REG_DSI_PLL_CONTROL);
@@ -1536,6 +1536,8 @@ static void vlv_enable_pll(struct intel_crtc *crtc)
 	u32 dpll = crtc->config.dpll_hw_state.dpll;
 
 	assert_pipe_disabled(dev_priv, crtc->pipe);
+
+	assert_pipe_disabled(dev_priv, pipe);
 
 	/* No really, not for ILK+ */
 	BUG_ON(!IS_VALLEYVIEW(dev_priv->dev));
@@ -4638,6 +4640,77 @@ static void i9xx_set_pll_dividers(struct intel_crtc *crtc)
 	I915_WRITE(FP1(crtc->pipe), crtc->config.dpll_hw_state.fp1);
 }
 
+static void i9xx_pfit_enable(struct intel_crtc *crtc)
+{
+	struct drm_device *dev = crtc->base.dev;
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	struct intel_crtc_config *pipe_config = &crtc->config;
+
+	if (!crtc->config.gmch_pfit.control)
+		return;
+
+	/*
+	 * The panel fitter should only be adjusted whilst the pipe is disabled,
+	 * according to register description and PRM.
+	 */
+	WARN_ON(I915_READ(PFIT_CONTROL) & PFIT_ENABLE);
+	assert_pipe_disabled(dev_priv, crtc->pipe);
+
+	I915_WRITE(PFIT_PGM_RATIOS, pipe_config->gmch_pfit.pgm_ratios);
+	I915_WRITE(PFIT_CONTROL, pipe_config->gmch_pfit.control);
+
+	/* Border color in case we don't scale up to the full screen. Black by
+	 * default, change to something else for debugging. */
+	I915_WRITE(BCLRPAT(crtc->pipe), 0);
+}
+
+static void valleyview_crtc_enable(struct drm_crtc *crtc)
+{
+	struct drm_device *dev = crtc->dev;
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	struct intel_crtc *intel_crtc = to_intel_crtc(crtc);
+	struct intel_encoder *encoder;
+	int pipe = intel_crtc->pipe;
+	int plane = intel_crtc->plane;
+
+	WARN_ON(!crtc->enabled);
+
+	if (intel_crtc->active)
+		return;
+
+	intel_crtc->active = true;
+	intel_update_watermarks(dev);
+
+	mutex_lock(&dev_priv->dpio_lock);
+
+	for_each_encoder_on_crtc(dev, crtc, encoder)
+		if (encoder->pre_pll_enable)
+			encoder->pre_pll_enable(encoder);
+
+	intel_enable_pll(dev_priv, pipe);
+
+	for_each_encoder_on_crtc(dev, crtc, encoder)
+		if (encoder->pre_enable)
+			encoder->pre_enable(encoder);
+
+	/* VLV wants encoder enabling _before_ the pipe is up. */
+	for_each_encoder_on_crtc(dev, crtc, encoder)
+		encoder->enable(encoder);
+
+	i9xx_pfit_enable(intel_crtc);
+
+	intel_crtc_load_lut(crtc);
+
+	intel_enable_pipe(dev_priv, pipe, false);
+	intel_enable_plane(dev_priv, plane, pipe);
+	intel_enable_planes(crtc);
+	intel_crtc_update_cursor(crtc, true);
+
+	intel_update_fbc(dev);
+
+	mutex_unlock(&dev_priv->dpio_lock);
+}
+
 static void i9xx_crtc_enable(struct drm_crtc *crtc)
 {
 	struct drm_device *dev = crtc->dev;
@@ -4864,6 +4937,7 @@ static void intel_crtc_disable(struct drm_crtc *crtc)
 	WARN_ON(!crtc->enabled);
 
 	dev_priv->display.crtc_disable(crtc);
+	intel_crtc->eld_vld = false;
 	intel_crtc_update_sarea(crtc, false);
 	dev_priv->display.off(crtc);
 
@@ -5418,6 +5492,68 @@ static void intel_cpu_transcoder_set_m_n(struct intel_crtc *crtc,
 	}
 }
 
+static void vlv_pllb_recal_opamp(struct drm_i915_private *dev_priv)
+{
+	u32 reg_val;
+
+	/*
+	 * PLLB opamp always calibrates to max value of 0x3f, force enable it
+	 * and set it to a reasonable value instead.
+	 */
+	reg_val = vlv_dpio_read(dev_priv, DPIO_IREF(1));
+	reg_val &= 0xffffff00;
+	reg_val |= 0x00000030;
+	vlv_dpio_write(dev_priv, DPIO_IREF(1), reg_val);
+
+	reg_val = vlv_dpio_read(dev_priv, DPIO_CALIBRATION);
+	reg_val &= 0x8cffffff;
+	reg_val = 0x8c000000;
+	vlv_dpio_write(dev_priv, DPIO_CALIBRATION, reg_val);
+
+	reg_val = vlv_dpio_read(dev_priv, DPIO_IREF(1));
+	reg_val &= 0xffffff00;
+	vlv_dpio_write(dev_priv, DPIO_IREF(1), reg_val);
+
+	reg_val = vlv_dpio_read(dev_priv, DPIO_CALIBRATION);
+	reg_val &= 0x00ffffff;
+	reg_val |= 0xb0000000;
+	vlv_dpio_write(dev_priv, DPIO_CALIBRATION, reg_val);
+}
+
+static void intel_pch_transcoder_set_m_n(struct intel_crtc *crtc,
+					 struct intel_link_m_n *m_n)
+{
+	struct drm_device *dev = crtc->base.dev;
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	int pipe = crtc->pipe;
+
+	I915_WRITE(PCH_TRANS_DATA_M1(pipe), TU_SIZE(m_n->tu) | m_n->gmch_m);
+	I915_WRITE(PCH_TRANS_DATA_N1(pipe), m_n->gmch_n);
+	I915_WRITE(PCH_TRANS_LINK_M1(pipe), m_n->link_m);
+	I915_WRITE(PCH_TRANS_LINK_N1(pipe), m_n->link_n);
+}
+
+static void intel_cpu_transcoder_set_m_n(struct intel_crtc *crtc,
+					 struct intel_link_m_n *m_n)
+{
+	struct drm_device *dev = crtc->base.dev;
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	int pipe = crtc->pipe;
+	enum transcoder transcoder = crtc->config.cpu_transcoder;
+
+	if (INTEL_INFO(dev)->gen >= 5) {
+		I915_WRITE(PIPE_DATA_M1(transcoder), TU_SIZE(m_n->tu) | m_n->gmch_m);
+		I915_WRITE(PIPE_DATA_N1(transcoder), m_n->gmch_n);
+		I915_WRITE(PIPE_LINK_M1(transcoder), m_n->link_m);
+		I915_WRITE(PIPE_LINK_N1(transcoder), m_n->link_n);
+	} else {
+		I915_WRITE(PIPE_DATA_M_G4X(pipe), TU_SIZE(m_n->tu) | m_n->gmch_m);
+		I915_WRITE(PIPE_DATA_N_G4X(pipe), m_n->gmch_n);
+		I915_WRITE(PIPE_LINK_M_G4X(pipe), m_n->link_m);
+		I915_WRITE(PIPE_LINK_N_G4X(pipe), m_n->link_n);
+	}
+}
+
 static void intel_dp_set_m_n(struct intel_crtc *crtc)
 {
 	if (crtc->config.has_pch_encoder)
@@ -5452,6 +5588,7 @@ static void vlv_prepare_pll(struct intel_crtc *crtc)
 {
 	struct drm_device *dev = crtc->base.dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
+	struct intel_encoder *encoder;
 	int pipe = crtc->pipe;
 	u32 mdiv;
 	u32 bestn, bestm1, bestm2, bestp1, bestp2;
@@ -5861,6 +5998,45 @@ void intel_mode_from_pipe_config(struct drm_display_mode *mode,
 	mode->flags |= pipe_config->adjusted_mode.flags;
 }
 
+static void intel_get_pipe_timings(struct intel_crtc *crtc,
+				   struct intel_crtc_config *pipe_config)
+{
+	struct drm_device *dev = crtc->base.dev;
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	enum transcoder cpu_transcoder = pipe_config->cpu_transcoder;
+	uint32_t tmp;
+
+	tmp = I915_READ(HTOTAL(cpu_transcoder));
+	pipe_config->adjusted_mode.crtc_hdisplay = (tmp & 0xffff) + 1;
+	pipe_config->adjusted_mode.crtc_htotal = ((tmp >> 16) & 0xffff) + 1;
+	tmp = I915_READ(HBLANK(cpu_transcoder));
+	pipe_config->adjusted_mode.crtc_hblank_start = (tmp & 0xffff) + 1;
+	pipe_config->adjusted_mode.crtc_hblank_end = ((tmp >> 16) & 0xffff) + 1;
+	tmp = I915_READ(HSYNC(cpu_transcoder));
+	pipe_config->adjusted_mode.crtc_hsync_start = (tmp & 0xffff) + 1;
+	pipe_config->adjusted_mode.crtc_hsync_end = ((tmp >> 16) & 0xffff) + 1;
+
+	tmp = I915_READ(VTOTAL(cpu_transcoder));
+	pipe_config->adjusted_mode.crtc_vdisplay = (tmp & 0xffff) + 1;
+	pipe_config->adjusted_mode.crtc_vtotal = ((tmp >> 16) & 0xffff) + 1;
+	tmp = I915_READ(VBLANK(cpu_transcoder));
+	pipe_config->adjusted_mode.crtc_vblank_start = (tmp & 0xffff) + 1;
+	pipe_config->adjusted_mode.crtc_vblank_end = ((tmp >> 16) & 0xffff) + 1;
+	tmp = I915_READ(VSYNC(cpu_transcoder));
+	pipe_config->adjusted_mode.crtc_vsync_start = (tmp & 0xffff) + 1;
+	pipe_config->adjusted_mode.crtc_vsync_end = ((tmp >> 16) & 0xffff) + 1;
+
+	if (I915_READ(PIPECONF(cpu_transcoder)) & PIPECONF_INTERLACE_MASK) {
+		pipe_config->adjusted_mode.flags |= DRM_MODE_FLAG_INTERLACE;
+		pipe_config->adjusted_mode.crtc_vtotal += 1;
+		pipe_config->adjusted_mode.crtc_vblank_end += 1;
+	}
+
+	tmp = I915_READ(PIPESRC(crtc->pipe));
+	pipe_config->requested_mode.vdisplay = (tmp & 0xffff) + 1;
+	pipe_config->requested_mode.hdisplay = ((tmp >> 16) & 0xffff) + 1;
+}
+
 static void i9xx_set_pipeconf(struct intel_crtc *intel_crtc)
 {
 	struct drm_device *dev = intel_crtc->base.dev;
@@ -6155,6 +6331,33 @@ static void chv_crtc_clock_get(struct intel_crtc *crtc,
 
 	/* clock.dot is the fast clock */
 	pipe_config->port_clock = clock.dot / 5;
+}
+
+static void i9xx_get_pfit_config(struct intel_crtc *crtc,
+				 struct intel_crtc_config *pipe_config)
+{
+	struct drm_device *dev = crtc->base.dev;
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	uint32_t tmp;
+
+	tmp = I915_READ(PFIT_CONTROL);
+	if (!(tmp & PFIT_ENABLE))
+		return;
+
+	/* Check whether the pfit is attached to our pipe. */
+	if (INTEL_INFO(dev)->gen < 4) {
+		if (crtc->pipe != PIPE_B)
+			return;
+	} else {
+		if ((tmp & PFIT_PIPE_MASK) != (crtc->pipe << PFIT_PIPE_SHIFT))
+			return;
+	}
+
+	pipe_config->gmch_pfit.control = tmp;
+	pipe_config->gmch_pfit.pgm_ratios = I915_READ(PFIT_PGM_RATIOS);
+	if (INTEL_INFO(dev)->gen < 5)
+		pipe_config->gmch_pfit.lvds_border_bits =
+			I915_READ(LVDS) & LVDS_BORDER_ENABLE;
 }
 
 static bool i9xx_get_pipe_config(struct intel_crtc *crtc,
@@ -9430,6 +9633,32 @@ connected_sink_compute_bpp(struct intel_connector *connector,
 	}
 }
 
+static void
+connected_sink_compute_bpp(struct intel_connector * connector,
+			   struct intel_crtc_config *pipe_config)
+{
+	int bpp = pipe_config->pipe_bpp;
+
+	DRM_DEBUG_KMS("[CONNECTOR:%d:%s] checking for sink bpp constrains\n",
+		connector->base.base.id,
+		drm_get_connector_name(&connector->base));
+
+	/* Don't use an invalid EDID bpc value */
+	if (connector->base.display_info.bpc &&
+	    connector->base.display_info.bpc * 3 < bpp) {
+		DRM_DEBUG_KMS("clamping display bpp (was %d) to EDID reported max of %d\n",
+			      bpp, connector->base.display_info.bpc*3);
+		pipe_config->pipe_bpp = connector->base.display_info.bpc*3;
+	}
+
+	/* Clamp bpp to 8 on screens without EDID 1.4 */
+	if (connector->base.display_info.bpc == 0 && bpp > 24) {
+		DRM_DEBUG_KMS("clamping display bpp (was %d) to default limit of 24\n",
+			      bpp);
+		pipe_config->pipe_bpp = 24;
+	}
+}
+
 static int
 compute_baseline_pipe_bpp(struct intel_crtc *crtc,
 			  struct drm_framebuffer *fb,
@@ -9487,7 +9716,7 @@ compute_baseline_pipe_bpp(struct intel_crtc *crtc,
 		connected_sink_compute_bpp(connector, pipe_config);
 	}
 
-	return bpp;
+	return !(num_encoders > 1 && uncloneable_encoders);
 }
 
 static void intel_dump_crtc_timings(const struct drm_display_mode *mode)
@@ -11565,6 +11794,17 @@ static void quirk_invert_brightness(struct drm_device *dev)
 	DRM_INFO("applying inverted panel brightness quirk\n");
 }
 
+/*
+ * Some machines (Dell XPS13) suffer broken backlight controls if
+ * BLM_PCH_PWM_ENABLE is set.
+ */
+static void quirk_no_pcm_pwm_enable(struct drm_device *dev)
+{
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	dev_priv->quirks |= QUIRK_NO_PCH_PWM_ENABLE;
+	DRM_INFO("applying no-PCH_PWM_ENABLE quirk\n");
+}
+
 struct intel_quirk {
 	int device;
 	int subsystem_vendor;
@@ -11684,6 +11924,11 @@ void intel_modeset_init_hw(struct drm_device *dev)
 	intel_reset_dpio(dev);
 
 	intel_enable_gt_powersave(dev);
+}
+
+void intel_modeset_suspend_hw(struct drm_device *dev)
+{
+	intel_suspend_hw(dev);
 }
 
 void intel_modeset_suspend_hw(struct drm_device *dev)
@@ -12462,6 +12707,31 @@ intel_display_capture_error_state(struct drm_device *dev)
 		error->transcoder[i].vblank = I915_READ(VBLANK(cpu_transcoder));
 		error->transcoder[i].vsync = I915_READ(VSYNC(cpu_transcoder));
 	}
+
+	error->num_transcoders = INTEL_INFO(dev)->num_pipes;
+	if (HAS_DDI(dev_priv->dev))
+		error->num_transcoders++; /* Account for eDP. */
+
+	for (i = 0; i < error->num_transcoders; i++) {
+		enum transcoder cpu_transcoder = transcoders[i];
+
+		error->transcoder[i].cpu_transcoder = cpu_transcoder;
+
+		error->transcoder[i].conf = I915_READ(PIPECONF(cpu_transcoder));
+		error->transcoder[i].htotal = I915_READ(HTOTAL(cpu_transcoder));
+		error->transcoder[i].hblank = I915_READ(HBLANK(cpu_transcoder));
+		error->transcoder[i].hsync = I915_READ(HSYNC(cpu_transcoder));
+		error->transcoder[i].vtotal = I915_READ(VTOTAL(cpu_transcoder));
+		error->transcoder[i].vblank = I915_READ(VBLANK(cpu_transcoder));
+		error->transcoder[i].vsync = I915_READ(VSYNC(cpu_transcoder));
+	}
+
+	/* In the code above we read the registers without checking if the power
+	 * well was on, so here we have to clear the FPGA_DBG_RM_NOCLAIM bit to
+	 * prevent the next I915_WRITE from detecting it and printing an error
+	 * message. */
+	if (HAS_POWER_WELL(dev))
+		I915_WRITE_NOTRACE(FPGA_DBG, FPGA_DBG_RM_NOCLAIM);
 
 	return error;
 }

@@ -1396,6 +1396,7 @@ static void discard_cap_releases(struct ceph_mds_client *mdsc,
 	num = le32_to_cpu(head->num);
 	dout("discard_cap_releases mds%d %p %u\n", session->s_mds, msg, num);
 	head->num = cpu_to_le32(0);
+	msg->front.iov_len = sizeof(*head);
 	session->s_num_cap_releases += num;
 
 	/* requeue completed messages */
@@ -1558,7 +1559,7 @@ retry:
 	*base = ceph_ino(temp->d_inode);
 	*plen = len;
 	dout("build_path on %p %d built %llx '%.*s'\n",
-	     dentry, dentry->d_count, *base, len, path);
+	     dentry, d_count(dentry), *base, len, path);
 	return path;
 }
 
@@ -2461,6 +2462,7 @@ static int encode_caps_cb(struct inode *inode, struct ceph_cap *cap,
 	spin_lock(&ci->i_ceph_lock);
 	cap->seq = 0;        /* reset cap seq */
 	cap->issue_seq = 0;  /* and issue_seq */
+	cap->mseq = 0;       /* and migrate_seq */
 
 	if (recon_state->flock) {
 		rec.v2.cap_id = cpu_to_le64(cap->cap_id);
@@ -2488,20 +2490,20 @@ static int encode_caps_cb(struct inode *inode, struct ceph_cap *cap,
 		struct ceph_filelock *flocks;
 
 encode_again:
-		lock_flocks();
+		spin_lock(&inode->i_lock);
 		ceph_count_locks(inode, &num_fcntl_locks, &num_flock_locks);
-		unlock_flocks();
+		spin_unlock(&inode->i_lock);
 		flocks = kmalloc((num_fcntl_locks+num_flock_locks) *
 				 sizeof(struct ceph_filelock), GFP_NOFS);
 		if (!flocks) {
 			err = -ENOMEM;
 			goto out_free;
 		}
-		lock_flocks();
+		spin_lock(&inode->i_lock);
 		err = ceph_encode_locks_to_buffer(inode, flocks,
 						  num_fcntl_locks,
 						  num_flock_locks);
-		unlock_flocks();
+		spin_unlock(&inode->i_lock);
 		if (err) {
 			kfree(flocks);
 			if (err == -ENOSPC)

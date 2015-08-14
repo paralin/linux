@@ -440,6 +440,9 @@ static u32 i9xx_get_backlight(struct intel_connector *connector)
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	struct intel_panel *panel = &connector->panel;
 	u32 val;
+	unsigned long flags;
+
+	spin_lock_irqsave(&dev_priv->backlight.lock, flags);
 
 	val = I915_READ(BLC_PWM_CTL) & BACKLIGHT_DUTY_CYCLE_MASK;
 	if (INTEL_INFO(dev)->gen < 4)
@@ -550,6 +553,22 @@ intel_panel_actually_set_backlight(struct intel_connector *connector, u32 level)
 {
 	struct drm_device *dev = connector->base.dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
+	u32 freq;
+	unsigned long flags;
+
+	spin_lock_irqsave(&dev_priv->backlight.lock, flags);
+
+	freq = intel_panel_get_max_backlight(dev);
+	if (!freq) {
+		/* we are screwed, bail out */
+		goto out;
+	}
+
+	/* scale to hardware, but be careful to not overflow */
+	if (freq < max)
+		level = level * freq / max;
+	else
+		level = freq / max * level;
 
 	DRM_DEBUG_DRIVER("set backlight PWM = %d\n", level);
 
@@ -910,6 +929,7 @@ static int intel_backlight_device_register(struct intel_connector *connector)
 {
 	struct intel_panel *panel = &connector->panel;
 	struct backlight_properties props;
+	unsigned long flags;
 
 	if (WARN_ON(panel->backlight.device))
 		return -ENODEV;

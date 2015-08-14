@@ -15,9 +15,6 @@
 #include <asm/mach-types.h>
 
 #include <mach/map.h>
-
-volatile u8 *uart_base;
-
 #include <plat/uncompress.h>
 #include <plat/cpu.h>
 
@@ -32,8 +29,8 @@ static void arch_detect_cpu(void)
 
 	/*
 	 * product_id is bits 31:12
-	 *    bits 23:20 describe the exynosX family
-	 *
+	 * bits 23:20 describe the exynosX family
+	 * bits 27:24 describe the exynosX family in exynos5420
 	 */
 	chip_id &= EXYNOS5_SOC_MASK;
 

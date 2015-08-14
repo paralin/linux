@@ -1295,6 +1295,25 @@ i915_gem_object_wait_rendering__tail(struct drm_i915_gem_object *obj,
 	return 0;
 }
 
+static int
+i915_gem_object_wait_rendering__tail(struct drm_i915_gem_object *obj,
+				     struct intel_ring_buffer *ring)
+{
+	i915_gem_retire_requests_ring(ring);
+
+	/* Manually manage the write flush as we may have not yet
+	 * retired the buffer.
+	 *
+	 * Note that the last_write_seqno is always the earlier of
+	 * the two (read/write) seqno, so if we haved successfully waited,
+	 * we know we have passed the last write.
+	 */
+	obj->last_write_seqno = 0;
+	obj->base.write_domain &= ~I915_GEM_GPU_DOMAINS;
+
+	return 0;
+}
+
 /**
  * Ensures that all rendering to the object has completed and the object is
  * safe to unbind from the GTT or access from the CPU.
@@ -2922,6 +2941,7 @@ int i915_vma_unbind(struct i915_vma *vma)
 	vma->unbind_vma(vma);
 
 	i915_gem_gtt_finish_object(obj);
+	i915_gem_object_unpin_pages(obj);
 
 	list_del_init(&vma->mm_list);
 	/* Avoid an unnecessary call to unbind on rebind. */

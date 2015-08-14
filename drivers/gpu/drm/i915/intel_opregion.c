@@ -148,6 +148,12 @@ struct opregion_asle {
 #define ASLE_TCHE_PFIT_EN	(1 << 2)
 #define ASLE_TCHE_PFMB_EN	(1 << 3)
 
+/* Technology enabled indicator */
+#define ASLE_TCHE_ALS_EN	(1 << 0)
+#define ASLE_TCHE_BLC_EN	(1 << 1)
+#define ASLE_TCHE_PFIT_EN	(1 << 2)
+#define ASLE_TCHE_PFMB_EN	(1 << 3)
+
 /* ASLE backlight brightness to set */
 #define ASLE_BCLP_VALID                (1<<31)
 #define ASLE_BCLP_MSK          (~(1<<31))

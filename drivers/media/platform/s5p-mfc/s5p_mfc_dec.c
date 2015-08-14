@@ -422,6 +422,12 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
 			mfc_err("Unknown codec\n");
 			return -EINVAL;
 		}
+		if (!IS_MFCV6(dev)) {
+			if (fmt->fourcc == V4L2_PIX_FMT_VP8) {
+				mfc_err("Not supported format.\n");
+				return -EINVAL;
+			}
+		}
 	} else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
 		fmt = find_format(dev, f, MFC_FMT_RAW);
 		if (!fmt) {
@@ -951,7 +957,7 @@ static int s5p_mfc_queue_setup(struct vb2_queue *vq,
 		psize[0] = ctx->dec_src_buf_size;
 		allocators[0] = ctx->dev->alloc_ctx[MFC_BANK1_ALLOC_CTX];
 	} else {
-		mfc_err("This video node is dedicated to decoding. Decoding not initalised\n");
+		mfc_err("This video node is dedicated to decoding. Decoding not initialized\n");
 		return -EINVAL;
 	}
 	return 0;

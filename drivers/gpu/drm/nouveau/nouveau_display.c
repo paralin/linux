@@ -26,6 +26,7 @@
 
 #include <drm/drmP.h>
 #include <drm/drm_crtc_helper.h>
+#include <drm/ttm/ttm_execbuf_util.h>
 
 #include "nouveau_fbcon.h"
 #include "dispnv04/hw.h"
@@ -700,6 +701,12 @@ nouveau_crtc_page_flip(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 	struct nouveau_page_flip_state *s;
 	struct nouveau_channel *chan = drm->channel;
 	struct nouveau_fence *fence;
+	struct ttm_validate_buffer resv[2] = {
+		{ .bo = &old_bo->bo },
+		{ .bo = &new_bo->bo },
+	};
+	struct ww_acquire_ctx ticket;
+	LIST_HEAD(res);
 	int ret;
 
 	if (!drm->channel)

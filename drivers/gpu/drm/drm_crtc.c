@@ -313,6 +313,28 @@ const char *drm_get_connector_status_name(enum drm_connector_status status)
 }
 EXPORT_SYMBOL(drm_get_connector_status_name);
 
+static char printable_char(int c)
+{
+	return isascii(c) && isprint(c) ? c : '?';
+}
+
+const char *drm_get_format_name(uint32_t format)
+{
+	static char buf[32];
+
+	snprintf(buf, sizeof(buf),
+		 "%c%c%c%c %s-endian (0x%08x)",
+		 printable_char(format & 0xff),
+		 printable_char((format >> 8) & 0xff),
+		 printable_char((format >> 16) & 0xff),
+		 printable_char((format >> 24) & 0x7f),
+		 format & DRM_FORMAT_BIG_ENDIAN ? "big" : "little",
+		 format);
+
+	return buf;
+}
+EXPORT_SYMBOL(drm_get_format_name);
+
 /**
  * drm_get_subpixel_order_name - return a string for a given subpixel enum
  * @order: enum of subpixel_order

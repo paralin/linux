@@ -2445,6 +2445,11 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
 		ret = PTR_ERR(res->mout_hdmi);
 		goto fail;
 	}
+	res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
+	if (IS_ERR(res->mout_hdmi)) {
+		DRM_ERROR("failed to get clock 'mout_hdmi'\n");
+		goto fail;
+	}
 
 	// clk_set_parent(res->mout_hdmi, res->sclk_pixel);
 	clk_set_parent(res->sclk_hdmi, res->sclk_hdmiphy);

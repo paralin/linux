@@ -139,6 +139,8 @@
 #include <net/tcp.h>
 #endif
 
+#include <net/busy_poll.h>
+
 static DEFINE_MUTEX(proto_list_mutex);
 static LIST_HEAD(proto_list);
 
@@ -947,6 +949,19 @@ set_rcvbuf:
 		sock_valbool_flag(sk, SOCK_SELECT_ERR_QUEUE, valbool);
 		break;
 
+#ifdef CONFIG_NET_RX_BUSY_POLL
+	case SO_BUSY_POLL:
+		/* allow unprivileged users to decrease the value */
+		if ((val > sk->sk_ll_usec) && !capable(CAP_NET_ADMIN))
+			ret = -EPERM;
+		else {
+			if (val < 0)
+				ret = -EINVAL;
+			else
+				sk->sk_ll_usec = val;
+		}
+		break;
+#endif
 	default:
 		ret = -ENOPROTOOPT;
 		break;
@@ -1203,6 +1218,12 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
 	case SO_SELECT_ERR_QUEUE:
 		v.val = sock_flag(sk, SOCK_SELECT_ERR_QUEUE);
 		break;
+
+#ifdef CONFIG_NET_RX_BUSY_POLL
+	case SO_BUSY_POLL:
+		v.val = sk->sk_ll_usec;
+		break;
+#endif
 
 	default:
 		return -ENOPROTOOPT;

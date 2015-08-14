@@ -195,6 +195,8 @@ static DECLARE_TLV_DB_SCALE(pga_tlv, -600, 50, 0);
 
 static DECLARE_TLV_DB_SCALE(mix_tlv, -50, 50, 0);
 
+static DECLARE_TLV_DB_SCALE(beep_tlv, -56, 200, 0);
+
 static const unsigned int limiter_tlv[] = {
 	TLV_DB_RANGE_HEAD(2),
 	0, 2, TLV_DB_SCALE_ITEM(-3000, 600, 0),

@@ -1302,6 +1302,7 @@ int vmw_resource_do_evict(struct vmw_resource *res, bool interruptible)
 {
 	struct ttm_validate_buffer val_buf;
 	const struct vmw_res_func *func = res->func;
+	struct ww_acquire_ctx ticket;
 	int ret;
 
 	BUG_ON(!func->may_evict);
@@ -1322,7 +1323,7 @@ int vmw_resource_do_evict(struct vmw_resource *res, bool interruptible)
 	res->backup_dirty = true;
 	res->res_dirty = false;
 out_no_unbind:
-	vmw_resource_backoff_reservation(&val_buf);
+	vmw_resource_backoff_reservation(&ticket, &val_buf);
 
 	return ret;
 }

@@ -735,6 +735,7 @@ gen6_add_request(struct intel_engine_cs *ring)
 	ret = ring->semaphore.signal(ring, 4);
 	if (ret)
 		return ret;
+#undef MBOX_UPDATE_DWORDS
 
 	intel_ring_emit(ring, MI_STORE_DWORD_INDEX);
 	intel_ring_emit(ring, I915_GEM_HWS_INDEX << MI_STORE_DWORD_INDEX_SHIFT);
@@ -936,7 +937,7 @@ i9xx_ring_get_irq(struct intel_engine_cs *ring)
 		return false;
 
 	spin_lock_irqsave(&dev_priv->irq_lock, flags);
-	if (ring->irq_refcount++ == 0) {
+	if (ring->irq_refcount.gt++ == 0) {
 		dev_priv->irq_mask &= ~ring->irq_enable_mask;
 		I915_WRITE(IMR, dev_priv->irq_mask);
 		POSTING_READ(IMR);
@@ -954,7 +955,7 @@ i9xx_ring_put_irq(struct intel_engine_cs *ring)
 	unsigned long flags;
 
 	spin_lock_irqsave(&dev_priv->irq_lock, flags);
-	if (--ring->irq_refcount == 0) {
+	if (--ring->irq_refcount.gt == 0) {
 		dev_priv->irq_mask |= ring->irq_enable_mask;
 		I915_WRITE(IMR, dev_priv->irq_mask);
 		POSTING_READ(IMR);
@@ -973,7 +974,7 @@ i8xx_ring_get_irq(struct intel_engine_cs *ring)
 		return false;
 
 	spin_lock_irqsave(&dev_priv->irq_lock, flags);
-	if (ring->irq_refcount++ == 0) {
+	if (ring->irq_refcount.gt++ == 0) {
 		dev_priv->irq_mask &= ~ring->irq_enable_mask;
 		I915_WRITE16(IMR, dev_priv->irq_mask);
 		POSTING_READ16(IMR);
@@ -991,7 +992,7 @@ i8xx_ring_put_irq(struct intel_engine_cs *ring)
 	unsigned long flags;
 
 	spin_lock_irqsave(&dev_priv->irq_lock, flags);
-	if (--ring->irq_refcount == 0) {
+	if (--ring->irq_refcount.gt == 0) {
 		dev_priv->irq_mask |= ring->irq_enable_mask;
 		I915_WRITE16(IMR, dev_priv->irq_mask);
 		POSTING_READ16(IMR);
@@ -1221,6 +1222,48 @@ gen8_ring_put_irq(struct intel_engine_cs *ring)
 		POSTING_READ(RING_IMR(ring->mmio_base));
 	}
 	spin_unlock_irqrestore(&dev_priv->irq_lock, flags);
+}
+
+static bool
+hsw_vebox_get_irq(struct intel_ring_buffer *ring)
+{
+	struct drm_device *dev = ring->dev;
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	unsigned long flags;
+
+	if (!dev->irq_enabled)
+		return false;
+
+	spin_lock_irqsave(&dev_priv->rps.lock, flags);
+	if (ring->irq_refcount.pm++ == 0) {
+		u32 pm_imr = I915_READ(GEN6_PMIMR);
+		I915_WRITE_IMR(ring, ~ring->irq_enable_mask);
+		I915_WRITE(GEN6_PMIMR, pm_imr & ~ring->irq_enable_mask);
+		POSTING_READ(GEN6_PMIMR);
+	}
+	spin_unlock_irqrestore(&dev_priv->rps.lock, flags);
+
+	return true;
+}
+
+static void
+hsw_vebox_put_irq(struct intel_ring_buffer *ring)
+{
+	struct drm_device *dev = ring->dev;
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	unsigned long flags;
+
+	if (!dev->irq_enabled)
+		return;
+
+	spin_lock_irqsave(&dev_priv->rps.lock, flags);
+	if (--ring->irq_refcount.pm == 0) {
+		u32 pm_imr = I915_READ(GEN6_PMIMR);
+		I915_WRITE_IMR(ring, ~0);
+		I915_WRITE(GEN6_PMIMR, pm_imr | ring->irq_enable_mask);
+		POSTING_READ(GEN6_PMIMR);
+	}
+	spin_unlock_irqrestore(&dev_priv->rps.lock, flags);
 }
 
 static int

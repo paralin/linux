@@ -606,6 +606,8 @@
 
 #define ATC_MISC_CG           				0x3350
 
+#define ATC_MISC_CG           				0x3350
+
 #define IH_RB_CNTL                                        0x3e00
 #       define IH_RB_ENABLE                               (1 << 0)
 #       define IH_IB_SIZE(x)                              ((x) << 1) /* log2 */

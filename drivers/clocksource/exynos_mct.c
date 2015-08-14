@@ -461,7 +461,7 @@ static void exynos4_local_timer_stop(struct clock_event_device *evt)
 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
 }
 
-static struct local_timer_ops exynos4_mct_tick_ops __cpuinitdata = {
+static struct local_timer_ops exynos4_mct_tick_ops = {
 	.setup	= exynos4_local_timer_setup,
 	.stop	= exynos4_local_timer_stop,
 };

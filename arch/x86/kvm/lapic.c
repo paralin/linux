@@ -1652,8 +1652,8 @@ void kvm_inject_apic_timer_irqs(struct kvm_vcpu *vcpu)
 		return;
 
 	if (atomic_read(&apic->lapic_timer.pending) > 0) {
-		if (kvm_apic_local_deliver(apic, APIC_LVTT))
-			atomic_dec(&apic->lapic_timer.pending);
+		kvm_apic_local_deliver(apic, APIC_LVTT);
+		atomic_set(&apic->lapic_timer.pending, 0);
 	}
 }
 

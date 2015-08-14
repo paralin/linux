@@ -88,6 +88,8 @@
 #define      MVNETA_TX_IN_PRGRS                  BIT(1)
 #define      MVNETA_TX_FIFO_EMPTY                BIT(8)
 #define MVNETA_RX_MIN_FRAME_SIZE                 0x247c
+#define MVNETA_SGMII_SERDES_CFG			 0x24A0
+#define      MVNETA_SGMII_SERDES_PROTO		 0x0cc7
 #define MVNETA_TYPE_PRIO                         0x24bc
 #define      MVNETA_FORCE_UNI                    BIT(21)
 #define MVNETA_TXQ_CMD_1                         0x24e4
@@ -698,6 +700,8 @@ static void mvneta_port_sgmii_config(struct mvneta_port *pp)
 	val = mvreg_read(pp, MVNETA_GMAC_CTRL_2);
 	val |= MVNETA_GMAC2_PCS_ENABLE;
 	mvreg_write(pp, MVNETA_GMAC_CTRL_2, val);
+
+	mvreg_write(pp, MVNETA_SGMII_SERDES_CFG, MVNETA_SGMII_SERDES_PROTO);
 }
 
 /* Start the Ethernet port RX and TX activity */
@@ -2269,6 +2273,21 @@ static int mvneta_change_mtu(struct net_device *dev, int mtu)
 	return 0;
 }
 
+/* Get mac address */
+static void mvneta_get_mac_addr(struct mvneta_port *pp, unsigned char *addr)
+{
+	u32 mac_addr_l, mac_addr_h;
+
+	mac_addr_l = mvreg_read(pp, MVNETA_MAC_ADDR_LOW);
+	mac_addr_h = mvreg_read(pp, MVNETA_MAC_ADDR_HIGH);
+	addr[0] = (mac_addr_h >> 24) & 0xFF;
+	addr[1] = (mac_addr_h >> 16) & 0xFF;
+	addr[2] = (mac_addr_h >> 8) & 0xFF;
+	addr[3] = mac_addr_h & 0xFF;
+	addr[4] = (mac_addr_l >> 8) & 0xFF;
+	addr[5] = mac_addr_l & 0xFF;
+}
+
 /* Handle setting mac address */
 static int mvneta_set_mac_addr(struct net_device *dev, void *addr)
 {
@@ -2684,7 +2703,9 @@ static int mvneta_probe(struct platform_device *pdev)
 	u32 phy_addr;
 	struct mvneta_port *pp;
 	struct net_device *dev;
-	const char *mac_addr;
+	const char *dt_mac_addr;
+	char hw_mac_addr[ETH_ALEN];
+	const char *mac_from;
 	int phy_mode;
 	int err;
 
@@ -2720,13 +2741,6 @@ static int mvneta_probe(struct platform_device *pdev)
 		goto err_free_irq;
 	}
 
-	mac_addr = of_get_mac_address(dn);
-
-	if (!mac_addr || !is_valid_ether_addr(mac_addr))
-		eth_hw_addr_random(dev);
-	else
-		memcpy(dev->dev_addr, mac_addr, ETH_ALEN);
-
 	dev->tx_queue_len = MVNETA_MAX_TXD;
 	dev->watchdog_timeo = 5 * HZ;
 	dev->netdev_ops = &mvneta_netdev_ops;
@@ -2739,16 +2753,10 @@ static int mvneta_probe(struct platform_device *pdev)
 	pp->phy_node = phy_node;
 	pp->phy_interface = phy_mode;
 
-	pp->base = of_iomap(dn, 0);
-	if (pp->base == NULL) {
-		err = -ENOMEM;
-		goto err_free_irq;
-	}
-
 	pp->clk = devm_clk_get(&pdev->dev, NULL);
 	if (IS_ERR(pp->clk)) {
 		err = PTR_ERR(pp->clk);
-		goto err_unmap;
+		goto err_free_irq;
 	}
 
 	clk_prepare_enable(pp->clk);
@@ -2790,7 +2798,8 @@ static int mvneta_probe(struct platform_device *pdev)
 		goto err_deinit;
 	}
 
-	netdev_info(dev, "mac: %pM\n", dev->dev_addr);
+	netdev_info(dev, "Using %s mac address %pM\n", mac_from,
+		    dev->dev_addr);
 
 	platform_set_drvdata(pdev, pp->dev);
 
@@ -2804,6 +2813,8 @@ err_clk:
 	clk_disable_unprepare(pp->clk);
 err_unmap:
 	iounmap(pp->base);
+err_clk:
+	clk_disable_unprepare(pp->clk);
 err_free_irq:
 	irq_dispose_mapping(dev->irq);
 err_free_netdev:
@@ -2824,8 +2835,6 @@ static int mvneta_remove(struct platform_device *pdev)
 	iounmap(pp->base);
 	irq_dispose_mapping(dev->irq);
 	free_netdev(dev);
-
-	platform_set_drvdata(pdev, NULL);
 
 	return 0;
 }

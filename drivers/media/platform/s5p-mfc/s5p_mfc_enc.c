@@ -976,6 +976,18 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
 			return -EINVAL;
 		}
 
+		if (!IS_MFCV6(dev)) {
+			if (fmt->fourcc == V4L2_PIX_FMT_NV12MT_16X16) {
+				mfc_err("Not supported format.\n");
+				return -EINVAL;
+			}
+		} else if (IS_MFCV6(dev)) {
+			if (fmt->fourcc == V4L2_PIX_FMT_NV12MT) {
+				mfc_err("Not supported format.\n");
+				return -EINVAL;
+			}
+		}
+
 		if (fmt->num_planes != pix_fmt_mp->num_planes) {
 			mfc_err("failed to try output format\n");
 			return -EINVAL;

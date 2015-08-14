@@ -783,6 +783,14 @@ static void intel_enable_hdmi(struct intel_encoder *encoder)
 		I915_WRITE(intel_hdmi->hdmi_reg, temp);
 		POSTING_READ(intel_hdmi->hdmi_reg);
 	}
+
+	if (IS_VALLEYVIEW(dev)) {
+		struct intel_digital_port *dport =
+			enc_to_dig_port(&encoder->base);
+		int channel = vlv_dport_to_channel(dport);
+
+		vlv_wait_port_ready(dev_priv, channel);
+	}
 }
 
 static void vlv_enable_hdmi(struct intel_encoder *encoder)

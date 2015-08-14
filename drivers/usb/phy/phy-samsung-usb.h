@@ -47,6 +47,16 @@
 #define RSTCON_HLINK_SWRST			(0x1 << 1)
 #define RSTCON_SWRST				(0x1 << 0)
 
+/* EXYNOS4X12 */
+#define EXYNOS4X12_PHY_HSIC_CTRL0		(0x04)
+#define EXYNOS4X12_PHY_HSIC_CTRL1		(0x08)
+
+#define PHYPWR_NORMAL_MASK_HSIC1		(0x7 << 12)
+#define PHYPWR_NORMAL_MASK_HSIC0		(0x7 << 9)
+#define PHYPWR_NORMAL_MASK_PHY1			(0x7 << 6)
+
+#define RSTCON_HOSTPHY_SWRST			(0xf << 3)
+
 /* EXYNOS5 */
 #define EXYNOS5_PHY_HOST_CTRL0			(0x00)
 
@@ -262,9 +272,12 @@
 enum samsung_cpu_type {
 	TYPE_S3C64XX,
 	TYPE_EXYNOS4210,
+	TYPE_EXYNOS4X12,
 	TYPE_EXYNOS5250,
 	TYPE_EXYNOS5,
 };
+
+struct samsung_usbphy;
 
 /*
  * struct samsung_usbphy_drvdata - driver data for various SoC variants
@@ -356,3 +369,7 @@ extern void samsung_usbphy_cfg_sel(struct samsung_usbphy *sphy);
 extern int samsung_usbphy_set_type(struct usb_phy *phy,
 					enum samsung_usb_phy_type phy_type);
 extern int samsung_usbphy_get_refclk_freq(struct samsung_usbphy *sphy);
+extern int samsung_usbphy_rate_to_clksel_64xx(struct samsung_usbphy *sphy,
+							unsigned long rate);
+extern int samsung_usbphy_rate_to_clksel_4x12(struct samsung_usbphy *sphy,
+							unsigned long rate);

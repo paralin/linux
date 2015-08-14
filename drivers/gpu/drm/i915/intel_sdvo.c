@@ -1172,6 +1172,10 @@ static bool intel_sdvo_compute_config(struct intel_encoder *encoder,
 	if (intel_sdvo->is_tv)
 		i9xx_adjust_sdvo_tv_clock(pipe_config);
 
+	/* Clock computation needs to happen after pixel multiplier. */
+	if (intel_sdvo->is_tv)
+		i9xx_adjust_sdvo_tv_clock(pipe_config);
+
 	return true;
 }
 

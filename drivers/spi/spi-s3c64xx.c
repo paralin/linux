@@ -134,6 +134,7 @@
 #define S3C64XX_SPI_TRAILCNT		S3C64XX_SPI_MAX_TRAILCNT
 
 #define msecs_to_loops(t) (loops_per_jiffy / 1000 * HZ * t)
+#define is_polling(x)	(x->port_conf->quirks & S3C64XX_SPI_QUIRK_POLL)
 
 #define RXBUSY    (1<<2)
 #define TXBUSY    (1<<3)
@@ -156,6 +157,7 @@ struct s3c64xx_spi_port_config {
 	int	fifo_lvl_mask[MAX_SPI_PORTS];
 	int	rx_lvl_offset;
 	int	tx_st_done;
+	int	quirks;
 	bool	high_speed;
 	bool	clk_from_cmu;
 };
@@ -587,20 +589,19 @@ static int wait_for_xfer(struct s3c64xx_spi_driver_data *sdd,
 		} while (RX_FIFO_LVL(status, sdd) < xfer->len && --val);
 	}
 
-	if (!val)
-		return -EIO;
-
 	if (dma_mode) {
 		u32 status;
 
 		/*
+		 * If the previous xfer was completed within timeout, then
+		 * proceed further else return -EIO.
 		 * DmaTx returns after simply writing data in the FIFO,
 		 * w/o waiting for real transmission on the bus to finish.
 		 * DmaRx returns only after Dma read data from FIFO which
 		 * needs bus transmission to finish, so we don't worry if
 		 * Xfer involved Rx(with or without Tx).
 		 */
-		if (xfer->rx_buf == NULL) {
+		if (val && !xfer->rx_buf) {
 			val = msecs_to_loops(10);
 			status = readl(regs + S3C64XX_SPI_STATUS);
 			while ((TX_FIFO_LVL(status, sdd)
@@ -610,30 +611,54 @@ static int wait_for_xfer(struct s3c64xx_spi_driver_data *sdd,
 				status = readl(regs + S3C64XX_SPI_STATUS);
 			}
 
-			if (!val)
-				return -EIO;
 		}
+
+		/* If timed out while checking rx/tx status return error */
+		if (!val)
+			return -EIO;
 	} else {
+		int loops;
+		u32 cpy_len;
+		u8 *buf;
+
 		/* If it was only Tx */
-		if (xfer->rx_buf == NULL) {
+		if (!xfer->rx_buf) {
 			sdd->state &= ~TXBUSY;
 			return 0;
 		}
 
-		switch (sdd->cur_bpw) {
-		case 32:
-			ioread32_rep(regs + S3C64XX_SPI_RX_DATA,
-				xfer->rx_buf, xfer->len / 4);
-			break;
-		case 16:
-			ioread16_rep(regs + S3C64XX_SPI_RX_DATA,
-				xfer->rx_buf, xfer->len / 2);
-			break;
-		default:
-			ioread8_rep(regs + S3C64XX_SPI_RX_DATA,
-				xfer->rx_buf, xfer->len);
-			break;
-		}
+		/*
+		 * If the receive length is bigger than the controller fifo
+		 * size, calculate the loops and read the fifo as many times.
+		 * loops = length / max fifo size (calculated by using the
+		 * fifo mask).
+		 * For any size less than the fifo size the below code is
+		 * executed atleast once.
+		 */
+		loops = xfer->len / ((FIFO_LVL_MASK(sdd) >> 1) + 1);
+		buf = xfer->rx_buf;
+		do {
+			/* wait for data to be received in the fifo */
+			cpy_len = s3c64xx_spi_wait_for_timeout(sdd,
+						(loops ? ms : 0));
+
+			switch (sdd->cur_bpw) {
+			case 32:
+				ioread32_rep(regs + S3C64XX_SPI_RX_DATA,
+					buf, cpy_len / 4);
+				break;
+			case 16:
+				ioread16_rep(regs + S3C64XX_SPI_RX_DATA,
+					buf, cpy_len / 2);
+				break;
+			default:
+				ioread8_rep(regs + S3C64XX_SPI_RX_DATA,
+					buf, cpy_len);
+				break;
+			}
+
+			buf = buf + cpy_len;
+		} while (loops--);
 		sdd->state &= ~RXBUSY;
 	}
 
@@ -1007,9 +1032,11 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
 {
 	struct s3c64xx_spi_csinfo *cs;
 	struct device_node *slave_np, *data_np = NULL;
+	struct s3c64xx_spi_driver_data *sdd;
 	u32 fb_delay = 0;
 	u32 cs_mode = 0;
 
+	sdd = spi_master_get_devdata(spi->master);
 	slave_np = spi->dev.of_node;
 	if (!slave_np) {
 		dev_err(&spi->dev, "device node not found\n");
@@ -1084,8 +1111,10 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
 				goto err_gpio_req;
 			}
 		}
-		spi_set_ctldata(spi, cs);
 	}
+
+	if (!spi_get_ctldata(spi))
+		spi_set_ctldata(spi, cs);
 
 	sci = sdd->cntrlr_info;
 
@@ -1180,8 +1209,10 @@ err_gpio_req:
 static void s3c64xx_spi_cleanup(struct spi_device *spi)
 {
 	struct s3c64xx_spi_csinfo *cs = spi_get_ctldata(spi);
+	struct s3c64xx_spi_driver_data *sdd;
 
-	if (cs) {
+	sdd = spi_master_get_devdata(spi->master);
+	if (cs && sdd->cs_gpio) {
 		gpio_free(cs->line);
 		if (spi->dev.of_node)
 			kfree(cs);
@@ -1381,7 +1412,11 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
 	sdd->cntrlr_info = sci;
 	sdd->pdev = pdev;
 	sdd->sfr_start = mem_res->start;
+	sdd->cs_gpio = true;
 	if (pdev->dev.of_node) {
+		if (!of_find_property(pdev->dev.of_node, "cs-gpio", NULL))
+			sdd->cs_gpio = false;
+
 		ret = of_alias_get_id(pdev->dev.of_node, "spi");
 		if (ret < 0) {
 			dev_err(&pdev->dev, "failed to get alias id, errno %d\n",
@@ -1427,7 +1462,8 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
 	master->unprepare_transfer_hardware = s3c64xx_spi_unprepare_transfer;
 	master->num_chipselect = sci->num_cs;
 	master->dma_alignment = 8;
-	master->bits_per_word_mask = BIT(32 - 1) | BIT(16 - 1) | BIT(8 - 1);
+	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
+					SPI_BPW_MASK(8);
 	/* the spi->mode bits understood by this driver: */
 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
 
@@ -1520,7 +1556,6 @@ err3:
 err2:
 	clk_disable_unprepare(sdd->clk);
 err0:
-	platform_set_drvdata(pdev, NULL);
 	spi_master_put(master);
 
 	return ret;
@@ -1541,7 +1576,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
 
 	clk_disable_unprepare(sdd->clk);
 
-	platform_set_drvdata(pdev, NULL);
 	spi_master_put(master);
 
 	return 0;
@@ -1734,7 +1768,6 @@ static struct platform_device_id s3c64xx_spi_driver_ids[] = {
 	{ },
 };
 
-#ifdef CONFIG_OF
 static const struct of_device_id s3c64xx_spi_dt_match[] = {
 	{ .compatible = "samsung,exynos4210-spi",
 			.data = (void *)&exynos4_spi_port_config,
@@ -1745,7 +1778,6 @@ static const struct of_device_id s3c64xx_spi_dt_match[] = {
 	{ },
 };
 MODULE_DEVICE_TABLE(of, s3c64xx_spi_dt_match);
-#endif /* CONFIG_OF */
 
 static struct platform_driver s3c64xx_spi_driver = {
 	.driver = {

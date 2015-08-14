@@ -714,10 +714,10 @@ __mutex_unlock_slowpath(atomic_t *lock_count)
  * mutex_lock_interruptible() and mutex_trylock().
  */
 static noinline int __sched
-__mutex_lock_killable_slowpath(atomic_t *lock_count);
+__mutex_lock_killable_slowpath(struct mutex *lock);
 
 static noinline int __sched
-__mutex_lock_interruptible_slowpath(atomic_t *lock_count);
+__mutex_lock_interruptible_slowpath(struct mutex *lock);
 
 /**
  * mutex_lock_interruptible - acquire the mutex, interruptible
@@ -735,12 +735,12 @@ int __sched mutex_lock_interruptible(struct mutex *lock)
 	int ret;
 
 	might_sleep();
-	ret =  __mutex_fastpath_lock_retval
-			(&lock->count, __mutex_lock_interruptible_slowpath);
-	if (!ret)
+	ret =  __mutex_fastpath_lock_retval(&lock->count);
+	if (likely(!ret)) {
 		mutex_set_owner(lock);
-
-	return ret;
+		return 0;
+	} else
+		return __mutex_lock_interruptible_slowpath(lock);
 }
 
 EXPORT_SYMBOL(mutex_lock_interruptible);
@@ -750,12 +750,12 @@ int __sched mutex_lock_killable(struct mutex *lock)
 	int ret;
 
 	might_sleep();
-	ret = __mutex_fastpath_lock_retval
-			(&lock->count, __mutex_lock_killable_slowpath);
-	if (!ret)
+	ret = __mutex_fastpath_lock_retval(&lock->count);
+	if (likely(!ret)) {
 		mutex_set_owner(lock);
-
-	return ret;
+		return 0;
+	} else
+		return __mutex_lock_killable_slowpath(lock);
 }
 EXPORT_SYMBOL(mutex_lock_killable);
 
@@ -764,24 +764,39 @@ __mutex_lock_slowpath(atomic_t *lock_count)
 {
 	struct mutex *lock = container_of(lock_count, struct mutex, count);
 
-	__mutex_lock_common(lock, TASK_UNINTERRUPTIBLE, 0, NULL, _RET_IP_);
+	__mutex_lock_common(lock, TASK_UNINTERRUPTIBLE, 0,
+			    NULL, _RET_IP_, NULL);
 }
 
 static noinline int __sched
-__mutex_lock_killable_slowpath(atomic_t *lock_count)
+__mutex_lock_killable_slowpath(struct mutex *lock)
 {
-	struct mutex *lock = container_of(lock_count, struct mutex, count);
-
-	return __mutex_lock_common(lock, TASK_KILLABLE, 0, NULL, _RET_IP_);
+	return __mutex_lock_common(lock, TASK_KILLABLE, 0,
+				   NULL, _RET_IP_, NULL);
 }
 
 static noinline int __sched
-__mutex_lock_interruptible_slowpath(atomic_t *lock_count)
+__mutex_lock_interruptible_slowpath(struct mutex *lock)
 {
-	struct mutex *lock = container_of(lock_count, struct mutex, count);
-
-	return __mutex_lock_common(lock, TASK_INTERRUPTIBLE, 0, NULL, _RET_IP_);
+	return __mutex_lock_common(lock, TASK_INTERRUPTIBLE, 0,
+				   NULL, _RET_IP_, NULL);
 }
+
+static noinline int __sched
+__ww_mutex_lock_slowpath(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
+{
+	return __mutex_lock_common(&lock->base, TASK_UNINTERRUPTIBLE, 0,
+				   NULL, _RET_IP_, ctx);
+}
+
+static noinline int __sched
+__ww_mutex_lock_interruptible_slowpath(struct ww_mutex *lock,
+					    struct ww_acquire_ctx *ctx)
+{
+	return __mutex_lock_common(&lock->base, TASK_INTERRUPTIBLE, 0,
+				   NULL, _RET_IP_, ctx);
+}
+
 #endif
 
 /*
@@ -836,6 +851,45 @@ int __sched mutex_trylock(struct mutex *lock)
 	return ret;
 }
 EXPORT_SYMBOL(mutex_trylock);
+
+#ifndef CONFIG_DEBUG_LOCK_ALLOC
+int __sched
+__ww_mutex_lock(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
+{
+	int ret;
+
+	might_sleep();
+
+	ret = __mutex_fastpath_lock_retval(&lock->base.count);
+
+	if (likely(!ret)) {
+		ww_mutex_set_context_fastpath(lock, ctx);
+		mutex_set_owner(&lock->base);
+	} else
+		ret = __ww_mutex_lock_slowpath(lock, ctx);
+	return ret;
+}
+EXPORT_SYMBOL(__ww_mutex_lock);
+
+int __sched
+__ww_mutex_lock_interruptible(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
+{
+	int ret;
+
+	might_sleep();
+
+	ret = __mutex_fastpath_lock_retval(&lock->base.count);
+
+	if (likely(!ret)) {
+		ww_mutex_set_context_fastpath(lock, ctx);
+		mutex_set_owner(&lock->base);
+	} else
+		ret = __ww_mutex_lock_interruptible_slowpath(lock, ctx);
+	return ret;
+}
+EXPORT_SYMBOL(__ww_mutex_lock_interruptible);
+
+#endif
 
 /**
  * atomic_dec_and_mutex_lock - return holding mutex if we dec to 0

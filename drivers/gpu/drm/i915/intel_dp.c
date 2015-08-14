@@ -794,6 +794,49 @@ intel_dp_set_m2_n2(struct intel_crtc *crtc, struct intel_link_m_n *m_n)
 	I915_WRITE(PIPE_LINK_N2(transcoder), m_n->link_n);
 }
 
+static void
+intel_dp_set_clock(struct intel_encoder *encoder,
+		   struct intel_crtc_config *pipe_config, int link_bw)
+{
+	struct drm_device *dev = encoder->base.dev;
+
+	if (IS_G4X(dev)) {
+		if (link_bw == DP_LINK_BW_1_62) {
+			pipe_config->dpll.p1 = 2;
+			pipe_config->dpll.p2 = 10;
+			pipe_config->dpll.n = 2;
+			pipe_config->dpll.m1 = 23;
+			pipe_config->dpll.m2 = 8;
+		} else {
+			pipe_config->dpll.p1 = 1;
+			pipe_config->dpll.p2 = 10;
+			pipe_config->dpll.n = 1;
+			pipe_config->dpll.m1 = 14;
+			pipe_config->dpll.m2 = 2;
+		}
+		pipe_config->clock_set = true;
+	} else if (IS_HASWELL(dev)) {
+		/* Haswell has special-purpose DP DDI clocks. */
+	} else if (HAS_PCH_SPLIT(dev)) {
+		if (link_bw == DP_LINK_BW_1_62) {
+			pipe_config->dpll.n = 1;
+			pipe_config->dpll.p1 = 2;
+			pipe_config->dpll.p2 = 10;
+			pipe_config->dpll.m1 = 12;
+			pipe_config->dpll.m2 = 9;
+		} else {
+			pipe_config->dpll.n = 2;
+			pipe_config->dpll.p1 = 1;
+			pipe_config->dpll.p2 = 10;
+			pipe_config->dpll.m1 = 14;
+			pipe_config->dpll.m2 = 8;
+		}
+		pipe_config->clock_set = true;
+	} else if (IS_VALLEYVIEW(dev)) {
+		/* FIXME: Need to figure out optimized DP clocks for vlv. */
+	}
+}
+
 bool
 intel_dp_compute_config(struct intel_encoder *encoder,
 			struct intel_crtc_config *pipe_config)
@@ -4223,6 +4266,18 @@ intel_dp_init_connector(struct intel_digital_port *intel_dig_port,
 		type = DRM_MODE_CONNECTOR_eDP;
 	else
 		type = DRM_MODE_CONNECTOR_DisplayPort;
+
+	/*
+	 * For eDP we always set the encoder type to INTEL_OUTPUT_EDP, but
+	 * for DP the encoder type can be set by the caller to
+	 * INTEL_OUTPUT_UNKNOWN for DDI, so don't rewrite it.
+	 */
+	if (type == DRM_MODE_CONNECTOR_eDP)
+		intel_encoder->type = INTEL_OUTPUT_EDP;
+
+	DRM_DEBUG_KMS("Adding %s connector on port %c\n",
+			type == DRM_MODE_CONNECTOR_eDP ? "eDP" : "DP",
+			port_name(port));
 
 	/*
 	 * For eDP we always set the encoder type to INTEL_OUTPUT_EDP, but

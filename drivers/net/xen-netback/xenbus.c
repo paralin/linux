@@ -160,7 +160,7 @@ abort_transaction:
 	xenbus_transaction_end(xbt, 1);
 	xenbus_dev_fatal(dev, err, "%s", message);
 fail:
-	pr_debug("failed");
+	pr_debug("failed\n");
 	netback_remove(dev);
 	return err;
 }
@@ -496,19 +496,34 @@ static int connect_rings(struct backend_info *be)
 	struct xenvif *vif = be->vif;
 	struct xenbus_device *dev = be->dev;
 	unsigned long tx_ring_ref, rx_ring_ref;
-	unsigned int evtchn, rx_copy;
+	unsigned int tx_evtchn, rx_evtchn, rx_copy;
 	int err;
 	int val;
 
 	err = xenbus_gather(XBT_NIL, dev->otherend,
 			    "tx-ring-ref", "%lu", &tx_ring_ref,
-			    "rx-ring-ref", "%lu", &rx_ring_ref,
-			    "event-channel", "%u", &evtchn, NULL);
+			    "rx-ring-ref", "%lu", &rx_ring_ref, NULL);
 	if (err) {
 		xenbus_dev_fatal(dev, err,
-				 "reading %s/ring-ref and event-channel",
+				 "reading %s/ring-ref",
 				 dev->otherend);
 		return err;
+	}
+
+	/* Try split event channels first, then single event channel. */
+	err = xenbus_gather(XBT_NIL, dev->otherend,
+			    "event-channel-tx", "%u", &tx_evtchn,
+			    "event-channel-rx", "%u", &rx_evtchn, NULL);
+	if (err < 0) {
+		err = xenbus_scanf(XBT_NIL, dev->otherend,
+				   "event-channel", "%u", &tx_evtchn);
+		if (err < 0) {
+			xenbus_dev_fatal(dev, err,
+					 "reading %s/event-channel(-tx/rx)",
+					 dev->otherend);
+			return err;
+		}
+		rx_evtchn = tx_evtchn;
 	}
 
 	err = xenbus_scanf(XBT_NIL, dev->otherend, "request-rx-copy", "%u",
@@ -557,11 +572,13 @@ static int connect_rings(struct backend_info *be)
 	vif->csum = !val;
 
 	/* Map the shared frame, irq etc. */
-	err = xenvif_connect(vif, tx_ring_ref, rx_ring_ref, evtchn);
+	err = xenvif_connect(vif, tx_ring_ref, rx_ring_ref,
+			     tx_evtchn, rx_evtchn);
 	if (err) {
 		xenbus_dev_fatal(dev, err,
-				 "mapping shared-frames %lu/%lu port %u",
-				 tx_ring_ref, rx_ring_ref, evtchn);
+				 "mapping shared-frames %lu/%lu port tx %u rx %u",
+				 tx_ring_ref, rx_ring_ref,
+				 tx_evtchn, rx_evtchn);
 		return err;
 	}
 	return 0;
@@ -587,4 +604,9 @@ static DEFINE_XENBUS_DRIVER(netback, ,
 int xenvif_xenbus_init(void)
 {
 	return xenbus_register_backend(&netback_driver);
+}
+
+void xenvif_xenbus_fini(void)
+{
+	return xenbus_unregister_driver(&netback_driver);
 }

@@ -12,7 +12,6 @@
  */
 
 #include <linux/bug.h>
-#include <linux/delay.h>
 #include <linux/err.h>
 #include <linux/gpio.h>
 #include <linux/slab.h>
@@ -76,7 +75,7 @@ static int get_ramp_delay(int ramp_delay)
 {
 	unsigned char cnt = 0;
 
-	ramp_delay /= 6;
+	ramp_delay /= 6250;
 
 	while (true) {
 		ramp_delay = ramp_delay >> 1;

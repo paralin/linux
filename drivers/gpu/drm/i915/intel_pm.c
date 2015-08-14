@@ -262,6 +262,18 @@ static void ironlake_disable_fbc(struct drm_device *dev)
 		dpfc_ctl &= ~DPFC_CTL_EN;
 		I915_WRITE(ILK_DPFC_CONTROL, dpfc_ctl);
 
+		if (IS_IVYBRIDGE(dev))
+			/* WaFbcDisableDpfcClockGating:ivb */
+			I915_WRITE(ILK_DSPCLK_GATE_D,
+				   I915_READ(ILK_DSPCLK_GATE_D) &
+				   ~ILK_DPFCUNIT_CLOCK_GATE_DISABLE);
+
+		if (IS_HASWELL(dev))
+			/* WaFbcDisableDpfcClockGating:hsw */
+			I915_WRITE(HSW_CLKGATE_DISABLE_PART_1,
+				   I915_READ(HSW_CLKGATE_DISABLE_PART_1) &
+				   ~HSW_DPFC_GATING_DISABLE);
+
 		DRM_DEBUG_KMS("disabled FBC\n");
 	}
 }
@@ -6386,7 +6398,12 @@ void intel_init_pm(struct drm_device *dev)
 			dev_priv->display.disable_fbc = ironlake_disable_fbc;
 		} else if (INTEL_INFO(dev)->gen >= 5) {
 			dev_priv->display.fbc_enabled = ironlake_fbc_enabled;
-			dev_priv->display.enable_fbc = ironlake_enable_fbc;
+			if (IS_IVYBRIDGE(dev) || IS_HASWELL(dev))
+				dev_priv->display.enable_fbc =
+					gen7_enable_fbc;
+			else
+				dev_priv->display.enable_fbc =
+					ironlake_enable_fbc;
 			dev_priv->display.disable_fbc = ironlake_disable_fbc;
 		} else if (IS_GM45(dev)) {
 			dev_priv->display.fbc_enabled = g4x_fbc_enabled;

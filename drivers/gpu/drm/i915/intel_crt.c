@@ -855,6 +855,7 @@ void intel_crt_init(struct drm_device *dev)
 	crt->base.compute_config = intel_crt_compute_config;
 	crt->base.disable = intel_disable_crt;
 	crt->base.enable = intel_enable_crt;
+	crt->base.get_config = intel_crt_get_config;
 	if (I915_HAS_HOTPLUG(dev))
 		crt->base.hpd_pin = HPD_CRT;
 	if (HAS_DDI(dev)) {

@@ -6,6 +6,8 @@
 
 extern seqlock_t jiffies_lock;
 
+#define CS_NAME_LEN	32
+
 #ifdef CONFIG_GENERIC_CLOCKEVENTS_BUILD
 
 #define TICK_DO_TIMER_NONE	-1
@@ -22,6 +24,8 @@ extern void tick_notify(unsigned long reason, void *dev);
 extern void tick_check_new_device(struct clock_event_device *dev);
 
 extern void clockevents_shutdown(struct clock_event_device *dev);
+
+extern size_t sysfs_get_uname(const char *buf, char *dst, size_t cnt);
 
 /*
  * NO_HZ / high resolution timer shared code

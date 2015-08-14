@@ -77,6 +77,17 @@ _nouveau_devinit_dtor(struct nouveau_object *object)
 }
 
 int
+_nouveau_devinit_init(struct nouveau_object *object)
+{
+	struct nouveau_devinit *devinit = (void *)object;
+	int ret = nouveau_subdev_init(&devinit->base);
+	if (ret)
+		return ret;
+
+	return nvbios_init(&devinit->base, devinit->post);
+}
+
+int
 nouveau_devinit_create_(struct nouveau_object *parent,
 			struct nouveau_object *engine,
 			struct nouveau_oclass *oclass,

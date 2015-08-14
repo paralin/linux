@@ -71,8 +71,11 @@ nv50_devinit_pll_set(struct nouveau_devinit *devinit, u32 type, u32 freq)
 		break;
 	}
 
-	return 0;
-}
+	ret = nv04_pll_calc(nv_subdev(devinit), &info, freq, &N1, &M1, &N2, &M2, &P);
+	if (!ret) {
+		nv_error(devinit, "failed pll calculation\n");
+		return ret;
+	}
 
 static u64
 nv50_devinit_disable(struct nouveau_devinit *devinit)

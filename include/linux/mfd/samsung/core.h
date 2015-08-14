@@ -48,8 +48,6 @@ struct sec_pmic_dev {
 	struct regmap *rtc_regmap;
 	struct i2c_client *i2c;
 	struct i2c_client *rtc;
-	struct mutex iolock;
-	struct mutex irqlock;
 
 	int device_type;
 	int rev_num;
@@ -58,8 +56,6 @@ struct sec_pmic_dev {
 	struct regmap_irq_chip_data *irq_data;
 
 	int ono;
-	u8 irq_masks_cur[NUM_IRQ_REGS];
-	u8 irq_masks_cache[NUM_IRQ_REGS];
 	int type;
 	bool wakeup;
 	bool wtsr_smpl;

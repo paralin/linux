@@ -959,6 +959,9 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
 	tm_recheckpoint_new_task(src);
 
 	*dst = *src;
+
+	clear_task_ebb(dst);
+
 	return 0;
 }
 

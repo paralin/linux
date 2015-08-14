@@ -42,18 +42,22 @@
 		#size-cells = <0>;
 
 		cpu@0 {
+			device_type = "cpu";
 			compatible = "arm,cortex-a15";
 			reg = <0>;
 		};
 		cpu@1 {
+			device_type = "cpu";
 			compatible = "arm,cortex-a15";
 			reg = <1>;
 		};
 		cpu@2 {
+			device_type = "cpu";
 			compatible = "arm,cortex-a15";
 			reg = <2>;
 		};
 		cpu@3 {
+			device_type = "cpu";
 			compatible = "arm,cortex-a15";
 			reg = <3>;
 		};
@@ -122,7 +126,7 @@
 		clock-names = "spi", "spi_busclk0";
 	};
 
-	pinctrl {
+	pin_ctrl: pinctrl {
 		compatible = "samsung,exynos5440-pinctrl";
 		reg = <0xE0000 0x1000>;
 		interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>,

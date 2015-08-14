@@ -32,7 +32,8 @@
 #include <linux/sched.h>
 #include <linux/module.h>
 
-static void ttm_eu_backoff_reservation_locked(struct list_head *list)
+static void ttm_eu_backoff_reservation_locked(struct list_head *list,
+					      struct ww_acquire_ctx *ticket)
 {
 	struct ttm_validate_buffer *entry;
 

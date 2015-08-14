@@ -386,7 +386,7 @@ static struct notifier_block platform_nb = {
 	.notifier_call = exynos_pm_notifier_call,
 };
 
-static __init int exynos_pm_dt_parse_domains(void)
+static __init int exynos4_pm_init_power_domain(void)
 {
 	struct platform_device *pdev = NULL;
 	struct device_node *np = NULL;

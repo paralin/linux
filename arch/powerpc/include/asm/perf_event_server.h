@@ -12,6 +12,7 @@
 #include <linux/types.h>
 #include <asm/hw_irq.h>
 #include <linux/device.h>
+#include <uapi/asm/perf_event.h>
 
 #define MAX_HWEVENTS		8
 #define MAX_EVENT_ALTERNATIVES	8

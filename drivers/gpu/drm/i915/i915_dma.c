@@ -1579,6 +1579,15 @@ int i915_driver_load(struct drm_device *dev, unsigned long flags)
 
 	intel_display_crc_init(dev);
 
+	spin_lock_init(&dev_priv->irq_lock);
+	spin_lock_init(&dev_priv->gpu_error.lock);
+	spin_lock_init(&dev_priv->rps.lock);
+	spin_lock_init(&dev_priv->gt_lock);
+	spin_lock_init(&dev_priv->backlight.lock);
+	mutex_init(&dev_priv->dpio_lock);
+	mutex_init(&dev_priv->rps.hw_lock);
+	mutex_init(&dev_priv->modeset_restore_lock);
+
 	i915_dump_device_info(dev_priv);
 
 	/* Not all pre-production machines fall into this category, only the
@@ -1711,6 +1720,9 @@ int i915_driver_load(struct drm_device *dev, unsigned long flags)
 	}
 
 	intel_power_domains_init(dev_priv);
+
+	if (HAS_POWER_WELL(dev))
+		i915_init_power_well(dev);
 
 	if (drm_core_check_feature(dev, DRIVER_MODESET)) {
 		ret = i915_load_modeset_init(dev);

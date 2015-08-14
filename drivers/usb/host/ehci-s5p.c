@@ -56,6 +56,8 @@ struct s5p_ehci_hcd {
 	unsigned post_lpa_resume:1;
 };
 
+static struct s5p_ehci_platdata empty_platdata;
+
 #define to_s5p_ehci(hcd)      (struct s5p_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
 
 static void s5p_setup_vbus_gpio(struct platform_device *pdev)
@@ -279,6 +281,8 @@ static int s5p_ehci_probe(struct platform_device *pdev)
 		s5p_ehci->phy = phy;
 		s5p_ehci->otg = phy->otg;
 	}
+
+skip_phy:
 
 	s5p_ehci->clk = devm_clk_get(&pdev->dev, "usbhost");
 

@@ -288,8 +288,6 @@ int module_finalize(const Elf32_Ehdr *hdr, const Elf_Shdr *sechdrs,
 
 		if (strcmp(".ARM.exidx.init.text", secname) == 0)
 			maps[ARM_SEC_INIT].unw_sec = s;
-		else if (strcmp(".ARM.exidx.devinit.text", secname) == 0)
-			maps[ARM_SEC_DEVINIT].unw_sec = s;
 		else if (strcmp(".ARM.exidx", secname) == 0)
 			maps[ARM_SEC_CORE].unw_sec = s;
 		else if (strcmp(".ARM.exidx.exit.text", secname) == 0)
@@ -302,8 +300,6 @@ int module_finalize(const Elf32_Ehdr *hdr, const Elf_Shdr *sechdrs,
 			maps[ARM_SEC_HOT].unw_sec = s;
 		else if (strcmp(".init.text", secname) == 0)
 			maps[ARM_SEC_INIT].txt_sec = s;
-		else if (strcmp(".devinit.text", secname) == 0)
-			maps[ARM_SEC_DEVINIT].txt_sec = s;
 		else if (strcmp(".text", secname) == 0)
 			maps[ARM_SEC_CORE].txt_sec = s;
 		else if (strcmp(".exit.text", secname) == 0)

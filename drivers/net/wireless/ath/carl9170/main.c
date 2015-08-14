@@ -1448,6 +1448,8 @@ static int carl9170_op_ampdu_action(struct ieee80211_hw *hw,
 		tid_info->state = CARL9170_TID_STATE_PROGRESS;
 		tid_info->tid = tid;
 		tid_info->max = sta_info->ampdu_max_len;
+		tid_info->sta = sta;
+		tid_info->vif = vif;
 
 		INIT_LIST_HEAD(&tid_info->list);
 		INIT_LIST_HEAD(&tid_info->tmp_list);

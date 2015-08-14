@@ -867,6 +867,11 @@ struct radeon_vm_pt {
 	uint64_t			addr;
 };
 
+/* PTBs (Page Table Blocks) need to be aligned to 32K */
+#define RADEON_VM_PTB_ALIGN_SIZE   32768
+#define RADEON_VM_PTB_ALIGN_MASK (RADEON_VM_PTB_ALIGN_SIZE - 1)
+#define RADEON_VM_PTB_ALIGN(a) (((a) + RADEON_VM_PTB_ALIGN_MASK) & ~RADEON_VM_PTB_ALIGN_MASK)
+
 struct radeon_vm {
 	struct list_head		va;
 	unsigned			id;
@@ -2090,6 +2095,36 @@ struct cik_asic {
 	uint32_t active_cus;
 };
 
+struct cik_asic {
+	unsigned max_shader_engines;
+	unsigned max_tile_pipes;
+	unsigned max_cu_per_sh;
+	unsigned max_sh_per_se;
+	unsigned max_backends_per_se;
+	unsigned max_texture_channel_caches;
+	unsigned max_gprs;
+	unsigned max_gs_threads;
+	unsigned max_hw_contexts;
+	unsigned sc_prim_fifo_size_frontend;
+	unsigned sc_prim_fifo_size_backend;
+	unsigned sc_hiz_tile_fifo_size;
+	unsigned sc_earlyz_tile_fifo_size;
+
+	unsigned num_tile_pipes;
+	unsigned num_backends_per_se;
+	unsigned backend_disable_mask_per_asic;
+	unsigned backend_map;
+	unsigned num_texture_channel_caches;
+	unsigned mem_max_burst_length_bytes;
+	unsigned mem_row_size_in_kb;
+	unsigned shader_engine_tile_size;
+	unsigned num_gpus;
+	unsigned multi_gpu_tile_size;
+
+	unsigned tile_config;
+	uint32_t tile_mode_array[32];
+};
+
 union radeon_asic_config {
 	struct r300_asic	r300;
 	struct r100_asic	r100;
@@ -2602,6 +2637,96 @@ static inline void cik_didt_wreg(struct radeon_device *rdev, u32 reg, u32 v)
 	WREG32(CIK_DIDT_IND_INDEX, (reg));
 	WREG32(CIK_DIDT_IND_DATA, (v));
 	spin_unlock_irqrestore(&rdev->didt_idx_lock, flags);
+}
+
+static inline u32 tn_smc_rreg(struct radeon_device *rdev, u32 reg)
+{
+	u32 r;
+
+	WREG32(TN_SMC_IND_INDEX_0, (reg));
+	r = RREG32(TN_SMC_IND_DATA_0);
+	return r;
+}
+
+static inline void tn_smc_wreg(struct radeon_device *rdev, u32 reg, u32 v)
+{
+	WREG32(TN_SMC_IND_INDEX_0, (reg));
+	WREG32(TN_SMC_IND_DATA_0, (v));
+}
+
+static inline u32 r600_rcu_rreg(struct radeon_device *rdev, u32 reg)
+{
+	u32 r;
+
+	WREG32(R600_RCU_INDEX, ((reg) & 0x1fff));
+	r = RREG32(R600_RCU_DATA);
+	return r;
+}
+
+static inline void r600_rcu_wreg(struct radeon_device *rdev, u32 reg, u32 v)
+{
+	WREG32(R600_RCU_INDEX, ((reg) & 0x1fff));
+	WREG32(R600_RCU_DATA, (v));
+}
+
+static inline u32 eg_cg_rreg(struct radeon_device *rdev, u32 reg)
+{
+	u32 r;
+
+	WREG32(EVERGREEN_CG_IND_ADDR, ((reg) & 0xffff));
+	r = RREG32(EVERGREEN_CG_IND_DATA);
+	return r;
+}
+
+static inline void eg_cg_wreg(struct radeon_device *rdev, u32 reg, u32 v)
+{
+	WREG32(EVERGREEN_CG_IND_ADDR, ((reg) & 0xffff));
+	WREG32(EVERGREEN_CG_IND_DATA, (v));
+}
+
+static inline u32 eg_pif_phy0_rreg(struct radeon_device *rdev, u32 reg)
+{
+	u32 r;
+
+	WREG32(EVERGREEN_PIF_PHY0_INDEX, ((reg) & 0xffff));
+	r = RREG32(EVERGREEN_PIF_PHY0_DATA);
+	return r;
+}
+
+static inline void eg_pif_phy0_wreg(struct radeon_device *rdev, u32 reg, u32 v)
+{
+	WREG32(EVERGREEN_PIF_PHY0_INDEX, ((reg) & 0xffff));
+	WREG32(EVERGREEN_PIF_PHY0_DATA, (v));
+}
+
+static inline u32 eg_pif_phy1_rreg(struct radeon_device *rdev, u32 reg)
+{
+	u32 r;
+
+	WREG32(EVERGREEN_PIF_PHY1_INDEX, ((reg) & 0xffff));
+	r = RREG32(EVERGREEN_PIF_PHY1_DATA);
+	return r;
+}
+
+static inline void eg_pif_phy1_wreg(struct radeon_device *rdev, u32 reg, u32 v)
+{
+	WREG32(EVERGREEN_PIF_PHY1_INDEX, ((reg) & 0xffff));
+	WREG32(EVERGREEN_PIF_PHY1_DATA, (v));
+}
+
+static inline u32 r600_uvd_ctx_rreg(struct radeon_device *rdev, u32 reg)
+{
+	u32 r;
+
+	WREG32(R600_UVD_CTX_INDEX, ((reg) & 0x1ff));
+	r = RREG32(R600_UVD_CTX_DATA);
+	return r;
+}
+
+static inline void r600_uvd_ctx_wreg(struct radeon_device *rdev, u32 reg, u32 v)
+{
+	WREG32(R600_UVD_CTX_INDEX, ((reg) & 0x1ff));
+	WREG32(R600_UVD_CTX_DATA, (v));
 }
 
 void r100_pll_errata_after_index(struct radeon_device *rdev);

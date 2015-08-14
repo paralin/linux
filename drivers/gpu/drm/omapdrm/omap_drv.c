@@ -136,6 +136,9 @@ static int omap_modeset_init(struct drm_device *dev)
 	int num_mgrs = dss_feat_get_num_mgrs();
 	int num_crtcs;
 	int i, id = 0;
+	int r;
+
+	omap_crtc_pre_init();
 
 	drm_mode_config_init(dev);
 
@@ -159,6 +162,13 @@ static int omap_modeset_init(struct drm_device *dev)
 
 		if (!omapdss_device_is_connected(dssdev))
 			continue;
+
+		r = dssdev->driver->connect(dssdev);
+		if (r) {
+			dev_err(dev->dev, "could not connect display: %s\n",
+					dssdev->name);
+			continue;
+		}
 
 		encoder = omap_encoder_init(dev, dssdev);
 

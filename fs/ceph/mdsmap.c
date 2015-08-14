@@ -92,6 +92,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
 		u32 num_export_targets;
 		void *pexport_targets = NULL;
 		struct ceph_timespec laggy_since;
+		struct ceph_mds_info *info;
 
 		ceph_decode_need(p, end, sizeof(u64)*2 + 1 + sizeof(u32), bad);
 		global_id = ceph_decode_64(p);

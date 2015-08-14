@@ -229,7 +229,7 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
 		goto err;
 	}
 
-	wdt->clk = clk_get(&adev->dev, NULL);
+	wdt->clk = devm_clk_get(&adev->dev, NULL);
 	if (IS_ERR(wdt->clk)) {
 		dev_warn(&adev->dev, "Clock not found\n");
 		ret = PTR_ERR(wdt->clk);
@@ -249,15 +249,13 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
 	if (ret) {
 		dev_err(&adev->dev, "watchdog_register_device() failed: %d\n",
 				ret);
-		goto err_register;
+		goto err;
 	}
 	amba_set_drvdata(adev, wdt);
 
 	dev_info(&adev->dev, "registration successful\n");
 	return 0;
 
-err_register:
-	clk_put(wdt->clk);
 err:
 	dev_err(&adev->dev, "Probe Failed!!!\n");
 	return ret;
@@ -270,7 +268,6 @@ static int sp805_wdt_remove(struct amba_device *adev)
 	watchdog_unregister_device(&wdt->wdd);
 	amba_set_drvdata(adev, NULL);
 	watchdog_set_drvdata(&wdt->wdd, NULL);
-	clk_put(wdt->clk);
 
 	return 0;
 }

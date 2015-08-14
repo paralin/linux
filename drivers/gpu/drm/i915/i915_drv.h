@@ -656,6 +656,7 @@ enum intel_sbi_destination {
 #define QUIRK_PIPEA_FORCE (1<<0)
 #define QUIRK_LVDS_SSC_DISABLE (1<<1)
 #define QUIRK_INVERT_BRIGHTNESS (1<<2)
+#define QUIRK_NO_PCH_PWM_ENABLE (1<<3)
 
 struct intel_fbdev;
 struct intel_fbc_work;
@@ -882,6 +883,7 @@ struct vlv_s0ix_state {
 struct intel_gen6_power_mgmt {
 	/* work and pm_iir are protected by dev_priv->irq_lock */
 	struct work_struct work;
+	struct delayed_work vlv_work;
 	u32 pm_iir;
 
 	/* Frequencies are stored in potentially platform dependent multiples.
@@ -2078,6 +2080,7 @@ void i915_handle_error(struct drm_device *dev, bool wedged,
 void gen6_set_pm_mask(struct drm_i915_private *dev_priv, u32 pm_iir,
 							int new_delay);
 extern void intel_irq_init(struct drm_device *dev);
+extern void intel_pm_init(struct drm_device *dev);
 extern void intel_hpd_init(struct drm_device *dev);
 
 extern void intel_uncore_sanitize(struct drm_device *dev);
