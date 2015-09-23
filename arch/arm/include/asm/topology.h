@@ -25,6 +25,11 @@
 #define arch_scale_thermal_pressure topology_get_thermal_pressure
 #define arch_set_thermal_pressure   topology_set_thermal_pressure
 
+#ifdef CONFIG_CPU_FREQ
+#include <linux/cpufreq.h>
+#define arch_scale_freq_capacity cpufreq_scale_freq_capacity
+#endif
+
 #else
 
 static inline void init_cpu_topology(void) { }
