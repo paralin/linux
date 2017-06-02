@@ -11718,6 +11718,12 @@ F:	Documentation/devicetree/bindings/power/mti,mips-cpc.yaml
 F:	arch/mips/generic/
 F:	arch/mips/tools/generic-board-config.sh
 
+MIPS GENERIC PLATFORM
+M:	Paul Burton <paul.burton@imgtec.com>
+L:	linux-mips@linux-mips.org
+S:	Supported
+F:	arch/mips/generic/
+
 MIPS RINT INSTRUCTION EMULATION
 M:	Aleksandar Markovic <aleksandar.markovic@mips.com>
 L:	linux-mips@vger.kernel.org
