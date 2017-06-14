@@ -780,7 +780,7 @@ static int msm_ispif_stop_immediately(struct ispif_device *ispif,
 
 static int msm_ispif_reconfig_3d_output(struct ispif_device *ispif,enum msm_ispif_vfe_intf vfe_id)
 {
-	uint32_t reg_data, input_sel_data;
+	uint32_t reg_data;
 	BUG_ON(!ispif);
 
 	if (!( (vfe_id == VFE0) ||  (vfe_id == VFE1))){

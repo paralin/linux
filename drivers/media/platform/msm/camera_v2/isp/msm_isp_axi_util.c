@@ -27,7 +27,6 @@ static int msm_isp_axi_create_stream(
 	struct vfe_device *vfe_dev,
 	struct msm_vfe_axi_stream_request_cmd *stream_cfg_cmd)
 {
-	int rc = -1;
 	struct msm_vfe_axi_shared_data *axi_data = &vfe_dev->axi_data;
 	int i = stream_cfg_cmd->stream_src;
 

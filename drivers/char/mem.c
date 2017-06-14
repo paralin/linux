@@ -101,10 +101,9 @@ static int get_lock(void)
 	return -1;
 }
 
-static void release_lock()
+static void release_lock(void)
 {
 	atomic_set(mem_lock, 1);
-	return 0;
 }
 
 #define LOCK_MEM	1

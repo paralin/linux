@@ -35,7 +35,9 @@
 #include <linux/qcedev.h>
 #include "qce.h"
 
+#ifndef U32_MAX
 #define	U32_MAX	((u32)(~0U))
+#endif
 #define CACHE_LINE_SIZE 32
 #define CE_SHA_BLOCK_SIZE SHA256_BLOCK_SIZE
 

@@ -750,7 +750,7 @@ void send_adm_custom_topology(int port_id)
 		adm_top.payload_size);
 	result = apr_send_pkt(this_adm.apr, (uint32_t *)&adm_top);
 	if (result < 0) {
-		pr_err("%s: Set topologies failed port = 0x%pK payload = 0x%x\n",
+		pr_err("%s: Set topologies failed port = %d payload = %p\n",
 			__func__, port_id, &cal_block.cal_paddr);
 		goto done;
 	}

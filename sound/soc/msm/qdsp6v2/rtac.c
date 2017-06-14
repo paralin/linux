@@ -25,7 +25,8 @@
 #include <sound/q6asm-v2.h>
 #include <sound/q6afe-v2.h>
 #include <sound/apr_audio-v2.h>
-#include <q6voice.h>
+
+#include "q6voice.h"
 #include "audio_acdb.h"
 
 
@@ -207,7 +208,7 @@ int rtac_allocate_cal_buffer(uint32_t cal_type)
 	pr_debug("%s: cal_type %d, paddr 0x%pK, kvaddr 0x%pK, map_size 0x%x\n",
 		__func__, cal_type,
 		&rtac_cal[cal_type].cal_data.paddr,
-		rtac_cal[cal_type].cal_data.kvaddr,
+		&rtac_cal[cal_type].cal_data.kvaddr,
 		rtac_cal[cal_type].map_data.map_size);
 done:
 	return result;

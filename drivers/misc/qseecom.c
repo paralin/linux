@@ -1375,8 +1375,6 @@ static int qseecom_send_service_cmd(struct qseecom_dev_handle *data,
 	struct qseecom_client_send_service_ireq send_svc_ireq;
 	struct qseecom_command_scm_resp resp;
 	struct qseecom_send_svc_cmd_req req;
-	void   *send_req_ptr;
-	size_t req_buf_size;
 
 	/*struct qseecom_command_scm_resp resp;*/
 

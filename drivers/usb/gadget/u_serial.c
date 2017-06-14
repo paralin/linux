@@ -1293,7 +1293,7 @@ static void usb_debugfs_init(struct gs_port *ui_dev, int port_num)
 	char buf[48];
 
 	if (!ui_dev)
-	return -EINVAL;
+		return;
 	
 	snprintf(buf, 48, "usb_serial%d", port_num);
 	gs_dent = debugfs_create_dir(buf, 0);
