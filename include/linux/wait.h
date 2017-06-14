@@ -31,6 +31,7 @@ int default_wake_function(wait_queue_t *wait, unsigned mode, int flags, void *ke
 struct __wait_queue {
 	unsigned int flags;
 #define WQ_FLAG_EXCLUSIVE	0x01
+#define WQ_FLAG_WOKEN           0x02
 	void *private;
 	wait_queue_func_t func;
 	struct list_head task_list;
@@ -75,6 +76,16 @@ struct task_struct;
 
 #define __WAIT_BIT_KEY_INITIALIZER(word, bit)				\
 	{ .flags = word, .bit_nr = bit, }
+
+#define DEFINE_WAIT_FUNC(name, function)                                \
+        wait_queue_t name = {                                           \
+                .private        = current,                              \
+                .func           = function,                             \
+                .task_list      = LIST_HEAD_INIT((name).task_list),     \
+        }
+
+long wait_woken(wait_queue_t *wait, unsigned mode, long timeout);
+int woken_wake_function(wait_queue_t *wait, unsigned mode, int sync, void *key);
 
 extern void __init_waitqueue_head(wait_queue_head_t *q, const char *name, struct lock_class_key *);
 

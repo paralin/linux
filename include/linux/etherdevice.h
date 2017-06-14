@@ -277,4 +277,38 @@ static inline unsigned long compare_ether_header(const void *a, const void *b)
 #endif
 }
 
+/**
+ * eth_broadcast_addr - Assign broadcast address
+ * @addr: Pointer to a six-byte array containing the Ethernet address
+ *
+ * Assign the broadcast address to the given address array.
+ */
+static inline void eth_broadcast_addr(u8 *addr)
+{
+        memset(addr, 0xff, ETH_ALEN);
+}
+/**
+ * ether_addr_equal - Compare two Ethernet addresses
+ * @addr1: Pointer to a six-byte array containing the Ethernet address
+ * @addr2: Pointer other six-byte array containing the Ethernet address
+ *
+ * Compare two Ethernet addresses, returns true if equal
+ *
+ * Please note: addr1 & addr2 must both be aligned to u16.
+ */
+static inline bool ether_addr_equal(const u8 *addr1, const u8 *addr2)
+{
+#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
+        u32 fold = ((*(const u32 *)addr1) ^ (*(const u32 *)addr2)) |
+                   ((*(const u16 *)(addr1 + 4)) ^ (*(const u16 *)(addr2 + 4)));
+
+        return fold == 0;
+#else
+        const u16 *a = (const u16 *)addr1;
+        const u16 *b = (const u16 *)addr2;
+
+        return ((a[0] ^ b[0]) | (a[1] ^ b[1]) | (a[2] ^ b[2])) == 0;
+#endif
+}
+
 #endif	/* _LINUX_ETHERDEVICE_H */

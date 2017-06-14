@@ -20,7 +20,7 @@
    SOFTWARE IS DISCLAIMED.
 */
 
-#include <linux/module.h>
+#include <linux/export.h>
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 #include <linux/types.h>
@@ -74,7 +74,7 @@ static struct cmtp_application *cmtp_application_add(struct cmtp_session *sessio
 {
 	struct cmtp_application *app = kzalloc(sizeof(*app), GFP_KERNEL);
 
-	BT_DBG("session %pK application %pK appl %d", session, app, appl);
+	BT_DBG("session %p application %p appl %d", session, app, appl);
 
 	if (!app)
 		return NULL;
@@ -89,7 +89,7 @@ static struct cmtp_application *cmtp_application_add(struct cmtp_session *sessio
 
 static void cmtp_application_del(struct cmtp_session *session, struct cmtp_application *app)
 {
-	BT_DBG("session %pK application %pK", session, app);
+	BT_DBG("session %p application %p", session, app);
 
 	if (app) {
 		list_del(&app->list);
@@ -137,7 +137,7 @@ static void cmtp_send_capimsg(struct cmtp_session *session, struct sk_buff *skb)
 {
 	struct cmtp_scb *scb = (void *) skb->cb;
 
-	BT_DBG("session %pK skb %pK len %d", session, skb, skb->len);
+	BT_DBG("session %p skb %p len %d", session, skb, skb->len);
 
 	scb->id = -1;
 	scb->data = (CAPIMSG_COMMAND(skb->data) == CAPI_DATA_B3);
@@ -154,8 +154,7 @@ static void cmtp_send_interopmsg(struct cmtp_session *session,
 	struct sk_buff *skb;
 	unsigned char *s;
 
-	BT_DBG("session %pK subcmd 0x%02x appl %d msgnum %d",
-	       session, subcmd, appl, msgnum);
+	BT_DBG("session %p subcmd 0x%02x appl %d msgnum %d", session, subcmd, appl, msgnum);
 
 	skb = alloc_skb(CAPI_MSG_BASELEN + 6 + len, GFP_ATOMIC);
 	if (!skb) {
@@ -191,7 +190,7 @@ static void cmtp_recv_interopmsg(struct cmtp_session *session, struct sk_buff *s
 	__u16 appl, msgnum, func, info;
 	__u32 controller;
 
-	BT_DBG("session %pK skb %pK len %d", session, skb, skb->len);
+	BT_DBG("session %p skb %p len %d", session, skb, skb->len);
 
 	switch (CAPIMSG_SUBCOMMAND(skb->data)) {
 	case CAPI_CONF:
@@ -254,8 +253,6 @@ static void cmtp_recv_interopmsg(struct cmtp_session *session, struct sk_buff *s
 			if (skb->len < CAPI_MSG_BASELEN + 15)
 				break;
 
-			controller = CAPIMSG_U32(skb->data, CAPI_MSG_BASELEN + 10);
-
 			if (!info && ctrl) {
 				int len = min_t(uint, CAPI_MANUFACTURER_LEN,
 						skb->data[CAPI_MSG_BASELEN + 14]);
@@ -271,8 +268,6 @@ static void cmtp_recv_interopmsg(struct cmtp_session *session, struct sk_buff *s
 			if (skb->len < CAPI_MSG_BASELEN + 32)
 				break;
 
-			controller = CAPIMSG_U32(skb->data, CAPI_MSG_BASELEN + 12);
-
 			if (!info && ctrl) {
 				ctrl->version.majorversion = CAPIMSG_U32(skb->data, CAPI_MSG_BASELEN + 16);
 				ctrl->version.minorversion = CAPIMSG_U32(skb->data, CAPI_MSG_BASELEN + 20);
@@ -285,8 +280,6 @@ static void cmtp_recv_interopmsg(struct cmtp_session *session, struct sk_buff *s
 		case CAPI_FUNCTION_GET_SERIAL_NUMBER:
 			if (skb->len < CAPI_MSG_BASELEN + 17)
 				break;
-
-			controller = CAPIMSG_U32(skb->data, CAPI_MSG_BASELEN + 12);
 
 			if (!info && ctrl) {
 				int len = min_t(uint, CAPI_SERIAL_LEN,
@@ -327,10 +320,10 @@ void cmtp_recv_capimsg(struct cmtp_session *session, struct sk_buff *skb)
 {
 	struct capi_ctr *ctrl = &session->ctrl;
 	struct cmtp_application *application;
-	__u16 cmd, appl;
+	__u16 appl;
 	__u32 contr;
 
-	BT_DBG("session %pK skb %pK len %d", session, skb, skb->len);
+	BT_DBG("session %p skb %p len %d", session, skb, skb->len);
 
 	if (skb->len < CAPI_MSG_BASELEN)
 		return;
@@ -340,12 +333,11 @@ void cmtp_recv_capimsg(struct cmtp_session *session, struct sk_buff *skb)
 		return;
 	}
 
-	if (session->flags & (1 << CMTP_LOOPBACK)) {
+	if (session->flags & BIT(CMTP_LOOPBACK)) {
 		kfree_skb(skb);
 		return;
 	}
 
-	cmd = CAPICMD(CAPIMSG_COMMAND(skb->data), CAPIMSG_SUBCOMMAND(skb->data));
 	appl = CAPIMSG_APPID(skb->data);
 	contr = CAPIMSG_CONTROL(skb->data);
 
@@ -364,18 +356,12 @@ void cmtp_recv_capimsg(struct cmtp_session *session, struct sk_buff *skb)
 		CAPIMSG_SETCONTROL(skb->data, contr);
 	}
 
-	if (!ctrl) {
-		BT_ERR("Can't find controller %d for message", session->num);
-		kfree_skb(skb);
-		return;
-	}
-
 	capi_ctr_handle_message(ctrl, appl, skb);
 }
 
 static int cmtp_load_firmware(struct capi_ctr *ctrl, capiloaddata *data)
 {
-	BT_DBG("ctrl %pK data %pK", ctrl, data);
+	BT_DBG("ctrl %p data %p", ctrl, data);
 
 	return 0;
 }
@@ -384,11 +370,12 @@ static void cmtp_reset_ctr(struct capi_ctr *ctrl)
 {
 	struct cmtp_session *session = ctrl->driverdata;
 
-	BT_DBG("ctrl %pK", ctrl);
+	BT_DBG("ctrl %p", ctrl);
 
 	capi_ctr_down(ctrl);
 
-	kthread_stop(session->task);
+	atomic_inc(&session->terminate);
+	wake_up_process(session->task);
 }
 
 static void cmtp_register_appl(struct capi_ctr *ctrl, __u16 appl, capi_register_params *rp)
@@ -400,8 +387,8 @@ static void cmtp_register_appl(struct capi_ctr *ctrl, __u16 appl, capi_register_
 	unsigned char buf[8];
 	int err = 0, nconn, want = rp->level3cnt;
 
-	BT_DBG("ctrl %pK appl %d level3cnt %d datablkcnt %d datablklen %d",
-	       ctrl, appl, rp->level3cnt, rp->datablkcnt, rp->datablklen);
+	BT_DBG("ctrl %p appl %d level3cnt %d datablkcnt %d datablklen %d",
+		ctrl, appl, rp->level3cnt, rp->datablkcnt, rp->datablklen);
 
 	application = cmtp_application_add(session, appl);
 	if (!application) {
@@ -465,7 +452,7 @@ static void cmtp_release_appl(struct capi_ctr *ctrl, __u16 appl)
 	struct cmtp_session *session = ctrl->driverdata;
 	struct cmtp_application *application;
 
-	BT_DBG("ctrl %pK appl %d", ctrl, appl);
+	BT_DBG("ctrl %p appl %d", ctrl, appl);
 
 	application = cmtp_application_get(session, CMTP_APPLID, appl);
 	if (!application) {
@@ -491,7 +478,7 @@ static u16 cmtp_send_message(struct capi_ctr *ctrl, struct sk_buff *skb)
 	__u16 appl;
 	__u32 contr;
 
-	BT_DBG("ctrl %pK skb %pK", ctrl, skb);
+	BT_DBG("ctrl %p skb %p", ctrl, skb);
 
 	appl = CAPIMSG_APPID(skb->data);
 	contr = CAPIMSG_CONTROL(skb->data);
@@ -540,7 +527,7 @@ static int cmtp_proc_show(struct seq_file *m, void *v)
 
 static int cmtp_proc_open(struct inode *inode, struct file *file)
 {
-	return single_open(file, cmtp_proc_show, PDE(inode)->data);
+	return single_open(file, cmtp_proc_show, PDE_DATA(inode));
 }
 
 static const struct file_operations cmtp_proc_fops = {
@@ -556,7 +543,7 @@ int cmtp_attach_device(struct cmtp_session *session)
 	unsigned char buf[4];
 	long ret;
 
-	BT_DBG("session %pK", session);
+	BT_DBG("session %p", session);
 
 	capimsg_setu32(buf, 0, 0);
 
@@ -598,7 +585,7 @@ int cmtp_attach_device(struct cmtp_session *session)
 
 	session->num = session->ctrl.cnr;
 
-	BT_DBG("session %pK num %d", session, session->num);
+	BT_DBG("session %p num %d", session, session->num);
 
 	capimsg_setu32(buf, 0, 1);
 
@@ -619,7 +606,7 @@ int cmtp_attach_device(struct cmtp_session *session)
 
 void cmtp_detach_device(struct cmtp_session *session)
 {
-	BT_DBG("session %pK", session);
+	BT_DBG("session %p", session);
 
 	detach_capi_ctr(&session->ctrl);
 }

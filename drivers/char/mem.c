@@ -92,7 +92,7 @@ void __weak unxlate_dev_mem_ptr(unsigned long phys, void *addr)
 {
 }
 
-static int get_lock()
+static int get_lock(void)
 {
 	if(atomic_cmpxchg(mem_lock, 1, 0))
 		return 0;

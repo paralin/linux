@@ -53,36 +53,33 @@ static LIST_HEAD(cmtp_session_list);
 static struct cmtp_session *__cmtp_get_session(bdaddr_t *bdaddr)
 {
 	struct cmtp_session *session;
-	struct list_head *p;
 
 	BT_DBG("");
 
-	list_for_each(p, &cmtp_session_list) {
-		session = list_entry(p, struct cmtp_session, list);
+	list_for_each_entry(session, &cmtp_session_list, list)
 		if (!bacmp(bdaddr, &session->bdaddr))
 			return session;
-	}
+
 	return NULL;
 }
 
 static void __cmtp_link_session(struct cmtp_session *session)
 {
-	__module_get(THIS_MODULE);
 	list_add(&session->list, &cmtp_session_list);
 }
 
 static void __cmtp_unlink_session(struct cmtp_session *session)
 {
 	list_del(&session->list);
-	module_put(THIS_MODULE);
 }
 
 static void __cmtp_copy_session(struct cmtp_session *session, struct cmtp_conninfo *ci)
 {
+	u32 valid_flags = BIT(CMTP_LOOPBACK);
 	memset(ci, 0, sizeof(*ci));
 	bacpy(&ci->bdaddr, &session->bdaddr);
 
-	ci->flags = session->flags;
+	ci->flags = session->flags & valid_flags;
 	ci->state = session->state;
 
 	ci->num = session->num;
@@ -112,7 +109,7 @@ static inline void cmtp_add_msgpart(struct cmtp_session *session, int id, const 
 	struct sk_buff *skb = session->reassembly[id], *nskb;
 	int size;
 
-	BT_DBG("session %pK buf %pK count %d", session, buf, count);
+	BT_DBG("session %p buf %p count %d", session, buf, count);
 
 	size = (skb) ? skb->len + count : count;
 
@@ -137,7 +134,7 @@ static inline int cmtp_recv_frame(struct cmtp_session *session, struct sk_buff *
 	__u8 hdr, hdrlen, id;
 	__u16 len;
 
-	BT_DBG("session %pK skb %pK len %d", session, skb, skb->len);
+	BT_DBG("session %p skb %p len %d", session, skb, skb->len);
 
 	while (skb->len > 0) {
 		hdr = skb->data[0];
@@ -200,7 +197,7 @@ static int cmtp_send_frame(struct cmtp_session *session, unsigned char *data, in
 	struct kvec iv = { data, len };
 	struct msghdr msg;
 
-	BT_DBG("session %pK data %pK len %d", session, data, len);
+	BT_DBG("session %p data %p len %d", session, data, len);
 
 	if (!len)
 		return 0;
@@ -216,7 +213,7 @@ static void cmtp_process_transmit(struct cmtp_session *session)
 	unsigned char *hdr;
 	unsigned int size, tail;
 
-	BT_DBG("session %pK", session);
+	BT_DBG("session %p", session);
 
 	nskb = alloc_skb(session->mtu, GFP_ATOMIC);
 	if (!nskb) {
@@ -286,15 +283,17 @@ static int cmtp_session(void *arg)
 	struct sk_buff *skb;
 	wait_queue_t wait;
 
-	BT_DBG("session %pK", session);
+	BT_DBG("session %p", session);
 
 	set_user_nice(current, -15);
 
 	init_waitqueue_entry(&wait, current);
 	add_wait_queue(sk_sleep(sk), &wait);
-	while (!kthread_should_stop()) {
+	while (1) {
 		set_current_state(TASK_INTERRUPTIBLE);
 
+		if (atomic_read(&session->terminate))
+			break;
 		if (sk->sk_state != BT_CONNECTED)
 			break;
 
@@ -310,12 +309,12 @@ static int cmtp_session(void *arg)
 
 		schedule();
 	}
-	set_current_state(TASK_RUNNING);
+	__set_current_state(TASK_RUNNING);
 	remove_wait_queue(sk_sleep(sk), &wait);
 
 	down_write(&cmtp_session_sem);
 
-	if (!(session->flags & (1 << CMTP_LOOPBACK)))
+	if (!(session->flags & BIT(CMTP_LOOPBACK)))
 		cmtp_detach_device(session);
 
 	fput(session->sock->file);
@@ -325,15 +324,23 @@ static int cmtp_session(void *arg)
 	up_write(&cmtp_session_sem);
 
 	kfree(session);
+	module_put_and_exit(0);
 	return 0;
 }
 
 int cmtp_add_connection(struct cmtp_connadd_req *req, struct socket *sock)
 {
+	u32 valid_flags = BIT(CMTP_LOOPBACK);
 	struct cmtp_session *session, *s;
 	int i, err;
 
 	BT_DBG("");
+
+	if (!l2cap_is_socket(sock))
+		return -EBADFD;
+
+	if (req->flags & ~valid_flags)
+		return -EINVAL;
 
 	session = kzalloc(sizeof(struct cmtp_session), GFP_KERNEL);
 	if (!session)
@@ -341,19 +348,20 @@ int cmtp_add_connection(struct cmtp_connadd_req *req, struct socket *sock)
 
 	down_write(&cmtp_session_sem);
 
-	s = __cmtp_get_session(&bt_sk(sock->sk)->dst);
+	s = __cmtp_get_session(&l2cap_pi(sock->sk)->chan->dst);
 	if (s && s->state == BT_CONNECTED) {
 		err = -EEXIST;
 		goto failed;
 	}
 
-	bacpy(&session->bdaddr, &bt_sk(sock->sk)->dst);
+	bacpy(&session->bdaddr, &l2cap_pi(sock->sk)->chan->dst);
 
-	session->mtu = min_t(uint, l2cap_pi(sock->sk)->omtu, l2cap_pi(sock->sk)->imtu);
+	session->mtu = min_t(uint, l2cap_pi(sock->sk)->chan->omtu,
+					l2cap_pi(sock->sk)->chan->imtu);
 
 	BT_DBG("mtu %d", session->mtu);
 
-	sprintf(session->name, "%s", batostr(&bt_sk(sock->sk)->dst));
+	sprintf(session->name, "%pMR", &session->bdaddr);
 
 	session->sock  = sock;
 	session->state = BT_CONFIG;
@@ -373,24 +381,27 @@ int cmtp_add_connection(struct cmtp_connadd_req *req, struct socket *sock)
 
 	__cmtp_link_session(session);
 
+	__module_get(THIS_MODULE);
 	session->task = kthread_run(cmtp_session, session, "kcmtpd_ctr_%d",
 								session->num);
 	if (IS_ERR(session->task)) {
+		module_put(THIS_MODULE);
 		err = PTR_ERR(session->task);
 		goto unlink;
 	}
 
-	if (!(session->flags & (1 << CMTP_LOOPBACK))) {
+	if (!(session->flags & BIT(CMTP_LOOPBACK))) {
 		err = cmtp_attach_device(session);
-		if (err < 0)
-			goto detach;
+		if (err < 0) {
+			atomic_inc(&session->terminate);
+			wake_up_process(session->task);
+			up_write(&cmtp_session_sem);
+			return err;
+		}
 	}
 
 	up_write(&cmtp_session_sem);
 	return 0;
-
-detach:
-	cmtp_detach_device(session);
 
 unlink:
 	__cmtp_unlink_session(session);
@@ -403,10 +414,14 @@ failed:
 
 int cmtp_del_connection(struct cmtp_conndel_req *req)
 {
+	u32 valid_flags = 0;
 	struct cmtp_session *session;
 	int err = 0;
 
 	BT_DBG("");
+
+	if (req->flags & ~valid_flags)
+		return -EINVAL;
 
 	down_read(&cmtp_session_sem);
 
@@ -416,7 +431,8 @@ int cmtp_del_connection(struct cmtp_conndel_req *req)
 		skb_queue_purge(&session->transmit);
 
 		/* Stop session thread */
-		kthread_stop(session->task);
+		atomic_inc(&session->terminate);
+		wake_up_process(session->task);
 	} else
 		err = -ENOENT;
 
@@ -426,18 +442,15 @@ int cmtp_del_connection(struct cmtp_conndel_req *req)
 
 int cmtp_get_connlist(struct cmtp_connlist_req *req)
 {
-	struct list_head *p;
+	struct cmtp_session *session;
 	int err = 0, n = 0;
 
 	BT_DBG("");
 
 	down_read(&cmtp_session_sem);
 
-	list_for_each(p, &cmtp_session_list) {
-		struct cmtp_session *session;
+	list_for_each_entry(session, &cmtp_session_list, list) {
 		struct cmtp_conninfo ci;
-
-		session = list_entry(p, struct cmtp_session, list);
 
 		__cmtp_copy_session(session, &ci);
 
