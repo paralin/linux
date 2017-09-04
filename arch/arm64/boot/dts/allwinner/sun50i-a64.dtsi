@@ -21,6 +21,9 @@
 		mmc0 = &mmc0;
 		mmc1 = &mmc1;
 		mmc2 = &mmc2;
+
+		// This allows setting ethaddr from u-boot command line
+		ethernet0 = &emac;
 	};
 
 	chosen {
