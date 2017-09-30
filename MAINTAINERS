@@ -7513,6 +7513,12 @@ S:	Supported
 F:	Documentation/scsi/hptiop.txt
 F:	drivers/scsi/hptiop.c
 
+HIMAX HM5065 SENSOR DRIVER
+M:	Ondrej Jirman <kernel@xff.cz>
+L:	linux-media@vger.kernel.org
+S:	Supported
+F:	drivers/media/i2c/hm5065.c
+
 HIPPI
 M:	Jes Sorensen <jes@trained-monkey.org>
 L:	linux-hippi@sunsite.dk
