@@ -5539,6 +5539,21 @@ static const struct alg_test_desc alg_test_descs[] = {
 			.cipher = __VECS(serpent_xts_tv_template)
 		}
 	}, {
+		.alg = "xts(speck128)",
+		.test = alg_test_skcipher,
+		.suite = {
+			.cipher = {
+				.enc = {
+					.vecs = speck128_xts_enc_tv_template,
+					.count = ARRAY_SIZE(speck128_xts_enc_tv_template)
+				},
+				.dec = {
+					.vecs = speck128_xts_dec_tv_template,
+					.count = ARRAY_SIZE(speck128_xts_dec_tv_template)
+				}
+			}
+		}
+	}, {
 		.alg = "xts(twofish)",
 		.generic_driver = "xts(ecb(twofish-generic))",
 		.test = alg_test_skcipher,
