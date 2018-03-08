@@ -3,18 +3,15 @@ Rockchip SoC MIPI RX D-PHY
 
 Required properties:
 - compatible: value should be one of the following
-	"rockchip,rk1808-mipi-dphy-rx"
 	"rockchip,rk3288-mipi-dphy"
-	"rockchip,rk3326-mipi-dphy"
-	"rockchip,rk3368-mipi-dphy"
 	"rockchip,rk3399-mipi-dphy"
 - clocks : list of clock specifiers, corresponding to entries in
 	clock-names property;
 - clock-names: required clock name.
 
-MIPI RX0 D-PHY use registers in "general register files", it
+MIPI RX D-PHY use registers in "general register files", it
 should be a child of the GRF.
-MIPI TX1RX1 D-PHY have its own registers, it must have a reg property.
+MIPI TXRX D-PHY have its own registers, it must have a reg property.
 
 Optional properties:
 - reg: offset and length of the register set for the device.
@@ -37,7 +34,7 @@ The first port show the sensors connected in this mipi-dphy.
 
 The port node must contain at least one endpoint. It could have multiple endpoints
 linked to different sensors, but please note that they are not supposed to be
-actived at the same time.
+activated at the same time.
 
 The second port should be connected to isp node.
 - endpoint:
