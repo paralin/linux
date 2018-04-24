@@ -72,3 +72,18 @@ void mark_tech_preview(const char *msg, struct module *mod)
 		mod->taints |= (1U << TAINT_AUX);
 }
 EXPORT_SYMBOL(mark_tech_preview);
+
+/**
+ * mark_driver_unsupported - drivers that we know we don't want to support
+ * @name: the name of the driver
+ *
+ * In some cases Red Hat has chosen to build a driver for internal QE
+ * use. Use this function to mark those drivers as unsupported for
+ * customers.
+ */
+void mark_driver_unsupported(const char *name)
+{
+	pr_crit("Warning: %s - This driver has not undergone sufficient testing by Red Hat for this release and therefore cannot be used in production systems.\n",
+	        name ? name : "kernel");
+}
+EXPORT_SYMBOL(mark_driver_unsupported);
