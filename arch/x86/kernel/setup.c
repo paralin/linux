@@ -802,36 +802,54 @@ static void __init trim_low_memory_range(void)
 {
 	memblock_reserve(0, ALIGN(reserve_low, PAGE_SIZE));
 }
-	
+
 static bool valid_amd_processor(__u8 family, const char *model_id)
 {
 	bool valid;
 
-	if (family < 0x17)
+	switch(family) {
+	case 0x15:
 		valid = true;
-	else
+		break;
+
+	case 0x17:
 		valid = strstr(model_id, "AMD EPYC 7");
+		break;
+
+	default:
+		valid = false;
+		break;
+	}
 
 	return valid;
 }
 
-static bool valid_intel_processor(__u8 model, __u8 stepping)
+static bool valid_intel_processor(__u8 family, __u8 model, __u8 stepping)
 {
 	bool valid;
 
+	if (family != 6)
+		return false;
+
 	switch(model) {
-	case INTEL_FAM6_KABYLAKE:
-	case INTEL_FAM6_KABYLAKE_L:
-	case INTEL_FAM6_XEON_PHI_KNM:
-	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-	case INTEL_FAM6_ATOM_DENVERTON:
-	case INTEL_FAM6_XEON_PHI_KNL:
-	case INTEL_FAM6_BROADWELL_D:
-	case INTEL_FAM6_BROADWELL_X:
-	case INTEL_FAM6_ATOM_SILVERMONT2:
+	case INTEL_FAM6_ATOM_GOLDMONT_D:
+	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
+
+	case INTEL_FAM6_BROADWELL:
 	case INTEL_FAM6_BROADWELL_G:
+	case INTEL_FAM6_BROADWELL_X:
+	case INTEL_FAM6_BROADWELL_D:
+
+	case INTEL_FAM6_HASWELL:
 	case INTEL_FAM6_HASWELL_G:
 	case INTEL_FAM6_HASWELL_L:
+	case INTEL_FAM6_HASWELL_X:
+
+	case INTEL_FAM6_KABYLAKE:
+	case INTEL_FAM6_KABYLAKE_L:
+
+	case INTEL_FAM6_XEON_PHI_KNM:
+	case INTEL_FAM6_XEON_PHI_KNL:
 		valid = true;
 		break;
 
@@ -843,7 +861,7 @@ static bool valid_intel_processor(__u8 model, __u8 stepping)
 		break;
 
 	default:
-		valid = (boot_cpu_data.x86_model <= INTEL_FAM6_HASWELL_X);
+		valid = false;
 		break;
 	}
 
@@ -863,19 +881,12 @@ static void rh_check_supported(void)
 		pr_crit("Important:  In Red Hat Enterprise Linux 8, single threaded, single CPU 64-bit physical systems are unsupported by Red Hat. Please contact your Red Hat support representative for a list of certified and supported systems.");
 	}
 
-	/* RHEL only supports Intel and AMD processors */
-	if ((boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) &&
-	    (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)) {
-		pr_crit("Detected processor %s %s\n",
-			boot_cpu_data.x86_vendor_id,
-			boot_cpu_data.x86_model_id);
-		mark_hardware_unsupported("Processor");
-	}
-
-	/* If the RHEL kernel does not support this hardware, the kernel will
-	 * attempt to boot, but no support is provided for this hardware */
-
-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
+	/*
+	 * If the RHEL kernel does not support this hardware, the kernel will
+	 * attempt to boot, but no support is provided for this hardware
+	 */
+	switch (boot_cpu_data.x86_vendor) {
+	case X86_VENDOR_AMD:
 		if (!valid_amd_processor(boot_cpu_data.x86,
 					 boot_cpu_data.x86_model_id)) {
 			pr_crit("Detected CPU family %xh model %d\n",
@@ -883,12 +894,11 @@ static void rh_check_supported(void)
 				boot_cpu_data.x86_model);
 			mark_hardware_unsupported("AMD Processor");
 		}
-	}
+		break;
 
-	/* Intel CPU family 6, model greater than 60 */
-	if ((boot_cpu_data.x86_vendor == X86_VENDOR_INTEL) &&
-	    ((boot_cpu_data.x86 == 6))) {
-		if (!valid_intel_processor(boot_cpu_data.x86_model,
+	case X86_VENDOR_INTEL:
+		if (!valid_intel_processor(boot_cpu_data.x86,
+					   boot_cpu_data.x86_model,
 					   boot_cpu_data.x86_stepping)) {
 			pr_crit("Detected CPU family %d model %d stepping %d\n",
 				boot_cpu_data.x86,
@@ -896,6 +906,14 @@ static void rh_check_supported(void)
 				boot_cpu_data.x86_stepping);
 			mark_hardware_unsupported("Intel Processor");
 		}
+		break;
+
+	default:
+		pr_crit("Detected processor %s %s\n",
+			boot_cpu_data.x86_vendor_id,
+			boot_cpu_data.x86_model_id);
+		mark_hardware_unsupported("Processor");
+		break;
 	}
 
 	/*
