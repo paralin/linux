@@ -845,19 +845,24 @@ static bool valid_intel_processor(__u8 family, __u8 model, __u8 stepping)
 	case INTEL_FAM6_HASWELL_L:
 	case INTEL_FAM6_HASWELL_X:
 
-	case INTEL_FAM6_KABYLAKE:
-	case INTEL_FAM6_KABYLAKE_L:
-
 	case INTEL_FAM6_XEON_PHI_KNM:
 	case INTEL_FAM6_XEON_PHI_KNL:
 		valid = true;
+		break;
+
+	case INTEL_FAM6_KABYLAKE:
+		valid = (stepping <= 10);
+		break;
+
+	case INTEL_FAM6_KABYLAKE_L:
+		valid = (stepping <= 11);
 		break;
 
 	case INTEL_FAM6_SKYLAKE_L:
 	case INTEL_FAM6_SKYLAKE:
 	case INTEL_FAM6_SKYLAKE_X:
 		/* stepping > 4 is Cascade Lake and is not supported */
-		valid = (boot_cpu_data.x86_stepping <= 4);
+		valid = (stepping <= 4);
 		break;
 
 	default:
