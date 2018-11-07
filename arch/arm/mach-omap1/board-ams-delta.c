@@ -760,6 +760,9 @@ static void modem_pm(struct uart_port *port, unsigned int state, unsigned old)
 	if (!priv)
 		return;
 
+	if (!priv)
+		return;
+
 	if (IS_ERR(priv->regulator))
 		return;
 
