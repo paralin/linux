@@ -61,15 +61,19 @@ void mark_tech_preview(const char *msg, struct module *mod)
 
 	if (msg)
 		str = msg;
+#ifdef CONFIG_MODULES
 	else if (mod && mod->name)
 		str = mod->name;
+#endif
 
 	pr_warn("TECH PREVIEW: %s may not be fully supported.\n"
 		"Please review provided documentation for limitations.\n",
 		(str ? str : "kernel"));
 	add_taint(TAINT_AUX, LOCKDEP_STILL_OK);
+#ifdef CONFIG_MODULES
 	if (mod)
 		mod->taints |= (1U << TAINT_AUX);
+#endif
 }
 EXPORT_SYMBOL(mark_tech_preview);
 
