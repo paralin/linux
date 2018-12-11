@@ -50,6 +50,8 @@
 
 #include <linux/nospec.h>
 
+#include <linux/nospec.h>
+
 struct ip6mr_rule {
 	struct fib_rule		common;
 };
