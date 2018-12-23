@@ -43,6 +43,9 @@ int lowpan_header_create(struct sk_buff *skb, struct net_device *ldev,
 	if (!daddr)
 		return -EINVAL;
 
+	if (!daddr)
+		return -EINVAL;
+
 	/* TODO:
 	 * if this package isn't ipv6 one, where should it be routed?
 	 */
