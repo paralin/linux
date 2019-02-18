@@ -27,6 +27,14 @@
 	/delete-node/opp-1400000000;
 };
 
+&arm_a7_pmu {
+	status = "disabled";
+};
+
+&arm_a15_pmu {
+	status = "disabled";
+};
+
 &pwm {
 	/*
 	 * PWM 0 -- fan
