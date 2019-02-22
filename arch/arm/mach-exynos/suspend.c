@@ -267,10 +267,8 @@ static int exynos5420_cpu_suspend(unsigned long arg)
 
 	writel_relaxed(0x0, pm_state.sysram_base + EXYNOS5420_CPU_STATE);
 
-	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM)) {
-		mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
-		mcpm_cpu_suspend();
-	}
+	mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
+	mcpm_cpu_suspend();
 
 	pr_info("Failed to suspend the system\n");
 
@@ -345,8 +343,7 @@ static void exynos5420_pm_prepare(void)
 	exynos_pm_enter_sleep_mode();
 
 	/* ensure at least INFORM0 has the resume address */
-	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM))
-		pmu_raw_writel(__pa_symbol(mcpm_entry_point), S5P_INFORM0);
+	pmu_raw_writel(__pa_symbol(mcpm_entry_point), S5P_INFORM0);
 
 	tmp = pmu_raw_readl(EXYNOS_L2_OPTION(0));
 	tmp &= ~EXYNOS_L2_USE_RETENTION;
@@ -444,8 +441,7 @@ early_wakeup:
 
 static void exynos5420_prepare_pm_resume(void)
 {
-	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM))
-		WARN_ON(mcpm_cpu_powered_up());
+	WARN_ON(mcpm_cpu_powered_up());
 }
 
 static void exynos5420_pm_resume(void)
