@@ -861,6 +861,8 @@ static int ov6650_video_probe(struct v4l2_subdev *sd)
 
 	msleep(20);
 
+	msleep(20);
+
 	/*
 	 * check and show product ID and manufacturer ID
 	 */
