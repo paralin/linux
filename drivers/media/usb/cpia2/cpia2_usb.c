@@ -908,6 +908,8 @@ static void cpia2_usb_disconnect(struct usb_interface *intf)
 
 	v4l2_device_put(&cam->v4l2_dev);
 
+	v4l2_device_put(&cam->v4l2_dev);
+
 	LOG("CPiA2 camera disconnected.\n");
 }
 
