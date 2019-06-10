@@ -483,6 +483,9 @@ copy_exit:
 	/* is_valid check must proceed before copy of the cache entry. */
 	smp_rmb();
 
+	/* is_valid check must proceed before copy of the cache entry. */
+	smp_rmb();
+
 	ptr = cache_ent->caps_cache;
 
 	if (copy_to_user(u64_to_user_ptr(args->addr), ptr, size))
