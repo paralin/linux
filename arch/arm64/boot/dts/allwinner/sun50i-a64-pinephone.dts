@@ -10,6 +10,7 @@
 
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
+#include <dt-bindings/leds/common.h>
 #include <dt-bindings/pwm/pwm.h>
 
 / {
@@ -55,6 +56,8 @@
 			DVDD-supply = <&reg_eldo3>;
 			reset-gpios = <&pio 3 3 GPIO_ACTIVE_LOW>; /* PD3 */
 			powerdown-gpios = <&pio 2 0 GPIO_ACTIVE_HIGH>; /* PC0 */
+
+			flash-leds = <&sgm3140_flash>;
 
 			port {
 				ov5640_ep: endpoint {
@@ -128,6 +131,17 @@
 	wifi_pwrseq: wifi_pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
+	};
+
+	sgm3140 {
+		compatible = "sgmicro,sgm3140";
+		flash-gpios = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* FLASH_TRIGOUT: PD7 */
+		enable-gpios = <&pio 1 3 GPIO_ACTIVE_HIGH>; /* FLASH_EN: PB3 */
+
+		sgm3140_flash: led {
+			function = LED_FUNCTION_FLASH;
+			color = <LED_COLOR_ID_WHITE>;
+		};
 	};
 };
 
