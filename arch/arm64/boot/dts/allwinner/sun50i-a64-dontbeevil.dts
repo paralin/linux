@@ -277,12 +277,12 @@
 };
 
 &pio {
-       touch_intr_pin: touch_intr_pin {
-               pins = "PH4";
-               // TODO: perhaps remove this bias
-               bias-pull-up;
-               function = "irq";
-       };
+	touch_intr_pin: touch_intr_pin {
+		pins = "PH4";
+		// TODO: perhaps remove this bias
+		bias-pull-up;
+		function = "irq";
+	};
 };
 
 
