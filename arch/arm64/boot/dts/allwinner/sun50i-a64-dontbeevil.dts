@@ -307,7 +307,7 @@
 	};
 
 	stk3335@47 {
-		compatible = "sensortek,STK3335";
+		compatible = "sensortek,stk3335";
 		reg = <0x47>;
 		interrupt-parent = <&pio>;
 		interrupts = <1 0 IRQ_TYPE_EDGE_FALLING>; /* PB0 */
