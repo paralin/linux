@@ -596,7 +596,7 @@
 };
 
 &route_dsi {
-	status = "disabled";
+	status = "okay";
 };
 
 &tsadc {
