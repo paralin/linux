@@ -1056,6 +1056,9 @@ static int gsl_ts_suspend(struct device *dev)
 	if (!ts->flag_activated)
 		return 0;
 
+	if (!ts->flag_activated)
+		return 0;
+
 #ifdef GSL_MONITOR
 	cancel_delayed_work_sync(&gsl_monitor_work);
 #endif
