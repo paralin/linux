@@ -389,7 +389,7 @@ static int pinephone_unprepare(struct drm_panel *panel)
 }
 
 static const struct drm_display_mode pinephone_default_mode = {
-	.clock = 48000,
+	.clock = 70000,
 	.vrefresh = 60,
 
 	.hdisplay = 720,
