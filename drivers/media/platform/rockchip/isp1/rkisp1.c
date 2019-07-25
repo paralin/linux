@@ -795,6 +795,7 @@ static int rkisp1_isp_stop(struct rkisp1_device *dev)
 			domain->ops->attach_dev(domain, dev->dev);
 		}
 	}
+	rkisp1_config_clk(dev, true);
 	dev->isp_state = ISP_STOP;
 
 	if (dev->emd_vc <= CIF_ISP_ADD_DATA_VC_MAX) {
