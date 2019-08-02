@@ -559,6 +559,10 @@
 };
 
 &dsi0 {
+	/*
+	 * this property is used for providing backward compatibility
+	 * for rk/uboot:rkdevelop.
+	 */
 	rockchip,dual-channel = <&dsi1>;
 	rockchip,lane-rate = <1000>;
 	status = "okay";
