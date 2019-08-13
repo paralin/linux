@@ -1054,10 +1054,10 @@ static int rk818_battery_get_property(struct power_supply *psy,
 		val->intval = rk818_battery_time_to_full(di);
 		break;
 	case POWER_SUPPLY_PROP_VOLTAGE_MAX:
-		val->intval = di->voltage_max;
+		val->intval = di->voltage_max * 1000;	/* uV */
 		break;
 	case POWER_SUPPLY_PROP_CURRENT_MAX:
-		val->intval = di->current_max;
+		val->intval = di->current_max * 1000;	/* uA */
 		break;
 	default:
 		return -EINVAL;
