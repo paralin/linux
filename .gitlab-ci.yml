@@ -12,6 +12,7 @@ build:
     KBUILD_DEBARCH: arm64
     LOCALVERSION: -pine64
   before_script:
+    - apt update
     - apt install flex bc bison kmod cpio libssl-dev fakeroot rsync -y
   script:
     - rm -f *.{deb,dsc,gz} || true
