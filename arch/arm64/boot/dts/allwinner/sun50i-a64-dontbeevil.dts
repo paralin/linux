@@ -262,7 +262,7 @@
 	pinctrl-0 = <&i2c0_pins>;
 	status = "okay";
 
-	ft6236@38 {
+	touchscreen: ft6236@38 {
 		compatible = "focaltech,ft6236", "edt,edt-6236";
 		reg = <0x38>;
 
