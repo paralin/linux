@@ -300,7 +300,9 @@
 		reg = <0x68>;
 		interrupt-parent = <&pio>;
 		interrupts = <7 5 IRQ_TYPE_EDGE_FALLING>; /* PH5 */
-		orientation = <0xff 0 0 0 1 0 0 0 0xff>;
+		mount-matrix = "0", "1", "0",
+			       "1", "0", "0",
+			       "0", "0", "1";
 	};
 
 	lis3mdl@1e {
