@@ -158,6 +158,8 @@
 
 		simple-audio-card,cpu {
 			sound-dai = <&i2s0>;
+			dai-tdm-slot-num = <1>;
+			dai-tdm-slot-width = <8>;
 		};
 
 		simple-audio-card,codec {
