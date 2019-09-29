@@ -571,7 +571,7 @@ config VIDEO_GC2035
 	  GC2035 camera.
 
 	  To compile this driver as a module, choose M here: the
-	  module will be called ????.
+	  module will be called gc2035.
 
 config VIDEO_IMX214
 	tristate "Sony IMX214 sensor support"
