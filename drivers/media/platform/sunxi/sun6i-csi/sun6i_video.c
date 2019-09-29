@@ -138,6 +138,7 @@ static int sun6i_video_start_streaming(struct vb2_queue *vq, unsigned int count)
 	struct v4l2_subdev *subdev;
 	unsigned long flags;
 	int ret;
+	printk(KERN_ERR "%s: in this func!!\n", __func__);
 
 	video->sequence = 0;
 
@@ -532,15 +533,19 @@ static const struct v4l2_file_operations sun6i_video_fops = {
 static int sun6i_video_link_validate_get_format(struct media_pad *pad,
 						struct v4l2_subdev_format *fmt)
 {
+	printk(KERN_ERR "%s: in this func!!\n", __func__);
 	if (is_media_entity_v4l2_subdev(pad->entity)) {
 		struct v4l2_subdev *sd =
 				media_entity_to_v4l2_subdev(pad->entity);
 
 		fmt->which = V4L2_SUBDEV_FORMAT_ACTIVE;
 		fmt->pad = pad->index;
-		return v4l2_subdev_call(sd, pad, get_fmt, NULL, fmt);
+		int ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, fmt);
+		printk(KERN_ERR "%s: ret: %d\n", __func__, ret);
+		return ret;
 	}
 
+	printk(KERN_ERR "%s: return EINVAL\n", __func__);
 	return -EINVAL;
 }
 

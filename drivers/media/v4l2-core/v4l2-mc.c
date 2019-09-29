@@ -366,6 +366,7 @@ static int pipeline_pm_power_one(struct media_entity *entity, int change)
 {
 	struct v4l2_subdev *subdev;
 	int ret;
+	printk(KERN_ERR "%s: change: %d\n", __func__, change);
 
 	subdev = is_media_entity_v4l2_subdev(entity)
 	       ? media_entity_to_v4l2_subdev(entity) : NULL;
@@ -400,6 +401,7 @@ static int pipeline_pm_power(struct media_entity *entity, int change,
 {
 	struct media_entity *first = entity;
 	int ret = 0;
+	printk(KERN_ERR "%s: change: %d\n", __func__, change);
 
 	if (!change)
 		return 0;
@@ -410,9 +412,12 @@ static int pipeline_pm_power(struct media_entity *entity, int change,
 		if (is_media_entity_v4l2_subdev(entity))
 			ret = pipeline_pm_power_one(entity, change);
 
-	if (!ret)
+	if (!ret) {
+		printk(KERN_ERR "%s: return ret now :)", __func__);
 		return ret;
+	}
 
+	printk(KERN_ERR "%s: power off again :(\n", __func__);
 	media_graph_walk_start(graph, first);
 
 	while ((first = media_graph_walk_next(graph))

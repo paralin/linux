@@ -71,26 +71,52 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		ov5640: camera@3c {
-			compatible = "ovti,ov5640";
+//		ov5640: rearcamera@3c {
+//			compatible = "ovti,ov5640";
+//			reg = <0x3c>;
+//			pinctrl-names = "default";
+//			pinctrl-0 = <&csi_mclk_pin>;
+//			clocks = <&ccu CLK_CSI_MCLK>;
+//			clock-names = "xclk";
+//
+//			AVDD-supply = <&reg_dldo3>; /* AVDD-CSI */
+//			DOVDD-supply = <&reg_aldo1>; /* DOVDD-CAMF(???) / DOVDD-CSI */
+//			DVDD-supply = <&reg_eldo3>; /* DVDD1V8-CSI */
+//			reset-gpios = <&pio 3 3 GPIO_ACTIVE_LOW>; /* CSI-RST-R: PD3 */
+//			powerdown-gpios = <&pio 2 0 GPIO_ACTIVE_HIGH>; /* CSI-STBY-R: PC0 */
+//
+//			port {
+//				ov5640_ep: endpoint {
+//					remote-endpoint = <&csi_ep>;
+//					bus-width = <8>;
+//					hsync-active = <1>; /* Active high */
+//					vsync-active = <0>; /* Active low */
+//					data-active = <1>;  /* Active high */
+//					pclk-sample = <1>;  /* Rising */
+//				};
+//			};
+//		};
+
+		gc2145: frontcamera@3c {
+			compatible = "galaxycore,gc2035";
 			reg = <0x3c>;
 			pinctrl-names = "default";
 			pinctrl-0 = <&csi_mclk_pin>;
 			clocks = <&ccu CLK_CSI_MCLK>;
 			clock-names = "xclk";
 
-			AVDD-supply = <&reg_dldo3>;
-			DOVDD-supply = <&reg_aldo1>;
-			DVDD-supply = <&reg_eldo3>;
-			reset-gpios = <&pio 3 3 GPIO_ACTIVE_LOW>; /* CSI-RST-R: PD3 */
-			powerdown-gpios = <&pio 2 0 GPIO_ACTIVE_HIGH>; /* CSI-STBY-R: PC0 */
+			AVDD-supply = <&reg_dldo3>; /* AVDD-CSI */
+			DVDD-supply = <&reg_eldo3>; /* DVDD1V8-CSI */
+			IOVDD-supply = <&reg_aldo1>; /* DOVDD-CAMR(???) / DOVDD-CSI */
+			reset-gpios = <&pio 4 16 GPIO_ACTIVE_LOW>; /* CSI-RST-F: PE16 */
+			powerdown-gpios = <&pio 4 17 GPIO_ACTIVE_HIGH>; /* CSI-STBY-F: PE17 */
 
 			port {
-				ov5640_ep: endpoint {
+				gc2145_ep: endpoint {
 					remote-endpoint = <&csi_ep>;
 					bus-width = <8>;
 					hsync-active = <1>; /* Active high */
-					vsync-active = <0>; /* Active low */
+					vsync-active = <1>; /* Active high */
 					data-active = <1>;  /* Active high */
 					pclk-sample = <1>;  /* Rising */
 				};
@@ -175,10 +201,11 @@
 		#size-cells = <0>;
 
 		csi_ep: endpoint {
-			remote-endpoint = <&ov5640_ep>;
+//			remote-endpoint = <&ov5640_ep>;
+			remote-endpoint = <&gc2145_ep>;
 			bus-width = <8>;
 			hsync-active = <1>; /* Active high */
-			vsync-active = <0>; /* Active low */
+			vsync-active = <1>; /* Active high */
 			data-active = <1>;  /* Active high */
 			pclk-sample = <1>;  /* Rising */
 		};
