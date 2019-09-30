@@ -1454,6 +1454,12 @@
  *     code execution in kernel space should be permitted.
  *
  *     @what: kernel feature being accessed
+ *
+ * @lock_kernel_down
+ *     Put the kernel into lock-down mode.
+ *
+ *     @where: Where the lock-down is originating from (e.g. command line option)
+ *     @level: The lock-down level (can only increase)
  */
 union security_list_options {
 	int (*binder_set_context_mgr)(struct task_struct *mgr);
@@ -1826,6 +1832,7 @@ union security_list_options {
 	int (*perf_event_write)(struct perf_event *event);
 
 #endif
+	int (*lock_kernel_down)(const char *where, enum lockdown_reason level);
 };
 
 struct security_hook_heads {
@@ -2075,6 +2082,7 @@ struct security_hook_heads {
 	struct hlist_head perf_event_read;
 	struct hlist_head perf_event_write;
 #endif
+	struct hlist_head lock_kernel_down;
 } __randomize_layout;
 
 /*
