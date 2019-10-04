@@ -152,3 +152,6 @@ x509.genkey
 #
 configs/*.config
 localversion
+
+# GitLab CI configuration
+!.gitlab-ci.yml
