@@ -1,3 +1,18 @@
+* Thu Oct 17 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc3.1.elrdy]
+- v5.4-rc3 rebase
+- Amend the changelog when rebasing (Laura Abbott)
+- configs: New config in drivers/platform for v5.4-rc1 (Jeremy Cline)
+- configs: New config in drivers/pinctrl for v5.4-rc1 (Jeremy Cline)
+- configs: New config in drivers/net/wireless for v5.4-rc1 (Jeremy Cline)
+- configs: New config in drivers/net/ethernet/mellanox for v5.4-rc1 (Jeremy Cline)
+- configs: New config in drivers/net/can for v5.4-rc1 (Jeremy Cline)
+- configs: New config in drivers/hid for v5.4-rc1 (Jeremy Cline)
+- configs: New config in drivers/dma-buf for v5.4-rc1 (Jeremy Cline)
+- configs: New config in block for v5.4-rc1 (Jeremy Cline)
+- configs: New config in drivers/cpuidle for v5.4-rc1 (Jeremy Cline)
+- redhat: configs: Split CONFIG_CRYPTO_SHA512 (Laura Abbott)
+- redhat: Set Fedora options (Laura Abbott)
+
 * Wed Oct 09 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc2.1.elrdy]
 - Skip ksamples for bpf, they are broken (Jeremy Cline)
 - Add a SysRq option to lift kernel lockdown (Kyle McMartin)
