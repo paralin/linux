@@ -155,7 +155,7 @@
 		simple-audio-card,name = "EC25 audio";
 		simple-audio-card,format = "dsp_a";
 		simple-audio-card,mclk-fs = <256>;
-		simple-audio-card,frame-inversion;
+		//simple-audio-card,frame-inversion;
 
 		simple-audio-card,cpu {
 			sound-dai = <&i2s0>;
