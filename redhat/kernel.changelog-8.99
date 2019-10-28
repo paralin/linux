@@ -1,3 +1,31 @@
+* Mon Oct 28 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc5.1.elrdy]
+- v5.4-rc5 rebase
+- arm: aarch64: Drop the EXPERT setting from ARM64_FORCE_52BIT (Jeremy Cline)
+- configs: turn on ARM64_FORCE_52BIT for debug builds (Jeremy Cline)
+- kernel.spec.template: Tweak the python3 mangling (Laura Abbott)
+- kernel.spec.template: Add --with verbose option (Laura Abbott)
+- kernel.spec.template: Switch to using install instead of __install (Laura Abbott)
+- kernel.spec.template: Make the kernel.org URL https (Laura Abbott)
+- kernel.spec.template: Update message about secure boot signing (Laura Abbott)
+- kernel.spec.template: Move some with flags definitions up (Laura Abbott)
+- kernel.spec.template: Update some BuildRequires (Laura Abbott)
+- kernel.spec.template: Get rid of clean (Laura Abbott)
+- configs: New config in drivers/char for v5.4-rc1 (Jeremy Cline)
+- configs: New config in net/sched for v5.4-rc1 (Jeremy Cline)
+- configs: New config in lib for v5.4-rc1 (Jeremy Cline)
+- configs: New config in fs/verity for v5.4-rc1 (Jeremy Cline)
+- configs: New config in arch/aarch64 for v5.4-rc4 (Jeremy Cline)
+- configs: New config in arch/arm64 for v5.4-rc1 (Jeremy Cline)
+- Flip off CONFIG_ARM64_VA_BITS_52 so the bundle that turns it on applies (Jeremy Cline)
+- configs: Increase x86_64 NR_UARTS to 64 (Prarit Bhargava) [http://bugzilla.redhat.com/1730649]
+- Update changelog (Laura Abbott)
+- New configuration options for v5.4-rc4 (Jeremy Cline)
+- Correctly name tarball for single tarball builds (Laura Abbott)
+- configs: New config in drivers/pci for v5.4-rc1 (Jeremy Cline)
+- Allow overriding the dist tag on the command line (Laura Abbott)
+- Allow scratch branch target to be overridden (Laura Abbott)
+- Remove long dead BUILD_DEFAULT_TARGET (Laura Abbott)
+
 * Thu Oct 17 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc3.1.elrdy]
 - v5.4-rc3 rebase
 - Amend the changelog when rebasing (Laura Abbott)
