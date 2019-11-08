@@ -1,3 +1,60 @@
+* Wed Nov 06 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc6.2.elrdy]
+- v5.4-rc6 rebase
+- iommu/arm-smmu: workaround DMA mode issues (Laura Abbott)
+- rh_taint: correct loaddable module support dependencies (Philipp Rudo) [1652266]
+- rh_kabi: introduce RH_KABI_EXCLUDE (Jakub Racek) [1652256]
+- mark intel knights landing and knights mill unsupported (David Arcari) [1610493]
+- mark whiskey-lake processor supported (David Arcari) [1609604]
+- ipmi: do not configure ipmi for HPE m400 (Laura Abbott) [https://bugzilla.redhat.com/show_bug.cgi?id=1670017]
+- IB/rxe: Mark Soft-RoCE Transport driver as tech-preview (Don Dutile) [1605216]
+- scsi: smartpqi: add inspur advantech ids (Don Brace) [1503736]
+- ice: mark driver as tech-preview (Jonathan Toppins) [1495347]
+- be2iscsi: remove BE3 family support (Maurizio Lombardi) [1598366]
+- update rh_check_supported processor list (David Arcari) [1595918]
+- kABI: Add generic kABI macros to use for kABI workarounds (Myron Stowe) [1546831]
+- add pci_hw_vendor_status() (Maurizio Lombardi) [1590829]
+- ahci: thunderx2: Fix for errata that affects stop engine (Robert Richter) [1563590]
+- Vulcan: AHCI PCI bar fix for Broadcom Vulcan early silicon (Robert Richter) [1563590]
+- bpf: Add tech preview taint for syscall (Eugene Syromiatnikov) [1559877]
+- bpf: set unprivileged_bpf_disabled to 1 by default, add a boot parameter (Eugene Syromiatnikov) [1561171]
+- add Red Hat-specific taint flags (Eugene Syromiatnikov) [1559877]
+- kdump: fix a grammar issue in a kernel message (Dave Young) [1507353]
+- tags.sh: Ignore redhat/rpm (Jeremy Cline)
+- put RHEL info into generated headers (Laura Abbott) [https://bugzilla.redhat.com/show_bug.cgi?id=1663728]
+- kdump: add support for crashkernel=auto (Jeremy Cline)
+- kdump: round up the total memory size to 128M for crashkernel reservation (Dave Young) [1507353]
+- acpi: prefer booting with ACPI over DTS (Mark Salter) [1576869]
+- aarch64: acpi scan: Fix regression related to X-Gene UARTs (Mark Salter) [1519554]
+- ACPI / irq: Workaround firmware issue on X-Gene based m400 (Mark Salter) [1519554]
+- add rh_check_supported (David Arcari) [1565717]
+- qla2xxx: Remove PCI IDs of deprecated adapter (Jeremy Cline)
+- be2iscsi: remove unsupported device IDs (Chris Leech) [1574502]
+- Removing Obsolete hba pci-ids from rhel8 (Dick Kennedy) [1572321]
+- hpsa: modify hpsa driver version (Jeremy Cline)
+- hpsa: remove old cciss-based smartarray pci ids (Joseph Szczypek) [1471185]
+- rh_taint: add support for marking driver as unsupported (Jonathan Toppins) [1565704]
+- rh_taint: add support (David Arcari) [1565704]
+- qla4xxx: Remove deprecated PCI IDs from RHEL 8 (Chad Dupuis) [1518874]
+- aacraid: Remove depreciated device and vendor PCI id's (Raghava Aditya Renukunta) [1495307]
+- megaraid_sas: remove deprecated pci-ids (Tomas Henzl) [1509329]
+- mpt*: remove certain deprecated pci-ids (Jeremy Cline)
+- modules: add rhelversion MODULE_INFO tag (Laura Abbott)
+- ACPI: APEI: arm64: Ignore broken HPE moonshot APEI support (Al Stone) [1518076]
+- configs: New config in fs/fuse for v5.4-rc1 (Jeremy Cline)
+- merge.pl: Avoid comments but do not skip them (Don Zickus)
+- configs: New config in drivers/net/ethernet/pensando for v5.4-rc1 (Jeremy Cline)
+- Update a comment about what released kernel means (Laura Abbott)
+- Provide both Fedora and RHEL files in the SRPM (Laura Abbott)
+- kernel.spec.template: Trim EXTRAVERSION in the Makefile (Laura Abbott)
+- kernel.spec.template: Add macros for building with nopatches (Laura Abbott)
+- kernel.spec.template: Add some macros for Fedora differences (Laura Abbott)
+- kernel.spec.template: Consolodate the options (Laura Abbott)
+- configs: Add pending direcory to Fedora (Laura Abbott)
+- kernel.spec.template: Don't run hardlink if rpm-ostree is in use (Laura Abbott)
+- configs: New config in net/can for v5.4-rc1 (Jeremy Cline)
+- configs: New config in drivers/net/phy for v5.4-rc1 (Jeremy Cline)
+- Updated changelog ("CKI@GitLab")
+
 * Mon Oct 28 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc5.1.elrdy]
 - v5.4-rc5 rebase
 - arm: aarch64: Drop the EXPERT setting from ARM64_FORCE_52BIT (Jeremy Cline)
