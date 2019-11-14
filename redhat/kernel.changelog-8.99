@@ -1,3 +1,14 @@
+* Wed Nov 13 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc7.1.elrdy]
+- v5.4-rc7 rebase
+- Temporarily add VBOXSF_FS config (Jeremy Cline)
+- Add support for deprecating processors (Laura Abbott)
+- Add Red Hat tainting (Laura Abbott)
+- Introduce CONFIG_RH_DISABLE_DEPRECATED (Laura Abbott)
+- configs: New config in fs/erofs for v5.4-rc1 (Jeremy Cline)
+- configs: New config in mm for v5.4-rc1 (Jeremy Cline)
+- configs: New config in drivers/md for v5.4-rc1 (Jeremy Cline)
+- configs: New config in init for v5.4-rc1 (Jeremy Cline)
+
 * Wed Nov 06 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc6.2.elrdy]
 - v5.4-rc6 rebase
 - iommu/arm-smmu: workaround DMA mode issues (Laura Abbott)
