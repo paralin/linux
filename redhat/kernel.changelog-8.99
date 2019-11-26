@@ -1,3 +1,12 @@
+* Tue Nov 26 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-1.elrdy]
+- v5.4 rebase
+- redhat/scripts: Remove redhat/scripts/rh_get_maintainer.pl (Prarit Bhargava)
+- configs: Take CONFIG_DEFAULT_MMAP_MIN_ADDR from Fedra (Laura Abbott)
+- configs: Turn off ISDN (Laura Abbott)
+- kernel-packaging: Remove kernel files from kernel-modules-extra package (Prarit Bhargava)
+- Add a script to generate configuration patches (Laura Abbott)
+- Introduce rh-configs-commit (Laura Abbott)
+
 * Fri Nov 22 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc8.1.elrdy]
 - v5.4-rc8 rebase
 - kconfig: Add option to get the full help text with listnewconfig (Laura Abbott)
