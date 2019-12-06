@@ -1,4 +1,6 @@
 *.c   diff=cpp
 *.h   diff=cpp
+*.dtsi diff=dts
+*.dts  diff=dts
 /redhat		export-ignore
 makefile	export-ignore
