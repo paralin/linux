@@ -7270,11 +7270,7 @@ lpfc_get_hba_function_mode(struct lpfc_hba *phba)
 	case PCI_DEVICE_ID_SKYHAWK:
 	case PCI_DEVICE_ID_SKYHAWK_VF:
 	case PCI_DEVICE_ID_LANCER_FCOE:
-	case PCI_DEVICE_ID_LANCER_FCOE_VF:
 	case PCI_DEVICE_ID_ZEPHYR_DCSP:
-	case PCI_DEVICE_ID_HORNET:
-	case PCI_DEVICE_ID_TIGERSHARK:
-	case PCI_DEVICE_ID_TOMCAT:
 		phba->hba_flag |= HBA_FCOE_MODE;
 		break;
 	default:
