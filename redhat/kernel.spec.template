@@ -284,8 +284,8 @@ Summary: The Linux kernel
 # Overrides for generic default options
 
 # only package docs noarch
-%ifnarch noarch
 %define with_doc 0
+%ifnarch noarch
 %define doc_build_fail true
 %endif
 
