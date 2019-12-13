@@ -1,3 +1,13 @@
+* Fri Dec 13 2019 Jeremy Cline <jcline@redhat.com> [5.5.0-0.rc1.1.elrdy]
+- v5.5-rc1 rebase
+- Used Python 3 for scripts/jobserver-exec (Jeremy Cline)
+- Drop references to SCSI PCI IDs we remove (Jeremy Cline)
+- Disable documentation build, it is broken. (Jeremy Cline)
+- Temporarily switch TUNE_DEFAULT to y (Jeremy Cline)
+- Run config test for merge requests and internal (Jeremy Cline)
+- Turn off CONFIG_AX25 (Laura Abbott)
+- Add missing licensedir line (Laura Abbott)
+
 * Tue Nov 26 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-1.elrdy]
 - v5.4 rebase
 - redhat/scripts: Remove redhat/scripts/rh_get_maintainer.pl (Prarit Bhargava)
