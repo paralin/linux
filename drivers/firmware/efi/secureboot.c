@@ -30,7 +30,7 @@ void __init efi_set_secure_boot(enum efi_secureboot_mode mode)
 			pr_info("Secure boot enabled\n");
 			break;
 		default:
-			pr_warning("Secure boot could not be determined (mode %u)\n",
+			pr_warn("Secure boot could not be determined (mode %u)\n",
 				   mode);
 			break;
 		}
