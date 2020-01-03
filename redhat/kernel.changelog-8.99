@@ -1,3 +1,22 @@
+* Fri Jan 03 2020 Jeremy Cline <jcline@redhat.com> [5.5.0-0.rc2.1.elrdy]
+- v5.5-rc2 rebase
+- Convert pr_warning to pr_warn in secureboot.c (Jeremy Cline)
+- Enable CRYPTO_BLAKE2B as its being selected automatically (Jeremy Cline)
+- kernel.spec.template: Clean up stray *.h.s files (Laura Abbott)
+- Build the SRPM in the CI job (Jeremy Cline)
+- Fix up released_kernel case (Laura Abbott)
+- Add label so the Gitlab to email bridge ignores the changelog (Jeremy Cline)
+- New configs in net/tls (Jeremy Cline)
+- New configs in net/tipc (Jeremy Cline)
+- New configs in lib/kunit (Jeremy Cline)
+- New configs in lib/Kconfig.debug (Jeremy Cline)
+- New configs in drivers/ptp (Jeremy Cline)
+- New configs in drivers/nvme (Jeremy Cline)
+- New configs in drivers/net/phy (Jeremy Cline)
+- New configs in drivers/crypto (Jeremy Cline)
+- New configs in crypto/Kconfig (Jeremy Cline)
+- New configs in arch/arm64 (Jeremy Cline)
+
 * Fri Dec 13 2019 Jeremy Cline <jcline@redhat.com> [5.5.0-0.rc1.1.elrdy]
 - v5.5-rc1 rebase
 - Used Python 3 for scripts/jobserver-exec (Jeremy Cline)
