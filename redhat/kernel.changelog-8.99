@@ -1,3 +1,10 @@
+* Fri Jan 03 2020 Jeremy Cline <jcline@redhat.com> [5.5.0-0.rc3.1.elrdy]
+- v5.5-rc3 rebase
+- Turn on BLAKE2B for Fedora (Jeremy Cline)
+- configs: Adjust CONFIG_MPLS_ROUTING and CONFIG_MPLS_IPTUNNEL (Laura Abbott)
+- New configs in lib/crypto (Jeremy Cline)
+- New configs in drivers/char (Jeremy Cline)
+
 * Fri Jan 03 2020 Jeremy Cline <jcline@redhat.com> [5.5.0-0.rc2.1.elrdy]
 - v5.5-rc2 rebase
 - Convert pr_warning to pr_warn in secureboot.c (Jeremy Cline)
