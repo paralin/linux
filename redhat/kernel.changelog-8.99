@@ -1,3 +1,6 @@
+* Mon Jan 06 2020 Jeremy Cline <jcline@redhat.com> [5.5.0-0.rc4.1.elrdy]
+- v5.5-rc4 rebase
+
 * Fri Jan 03 2020 Jeremy Cline <jcline@redhat.com> [5.5.0-0.rc3.1.elrdy]
 - v5.5-rc3 rebase
 - Turn on BLAKE2B for Fedora (Jeremy Cline)
