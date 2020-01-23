@@ -1,3 +1,6 @@
+* Thu Jan 23 2020 Jeremy Cline <jcline@redhat.com> [5.5.0-0.rc7.1.elrdy]
+- v5.5-rc7 rebase
+
 * Wed Jan 15 2020 Jeremy Cline <jcline@redhat.com> [5.5.0-0.rc6.1.elrdy]
 - v5.5-rc6 rebase
 - s390: Lock down the kernel when the IPL secure flag is set (Jeremy Cline)
