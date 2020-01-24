@@ -135,7 +135,7 @@ static int sgm3140_probe(struct platform_device *pdev)
 
 	init_data.fwnode = of_fwnode_handle(child_node);
 	init_data.devicename = SGM3140_NAME;
-	init_data.default_label = ":"; // TODO ?
+	init_data.default_label = NULL;
 
 	platform_set_drvdata(pdev, priv);
 
@@ -158,7 +158,7 @@ static int sgm3140_probe(struct platform_device *pdev)
 		goto err_v4l2_flash_init;
 	}
 
-	//of_node_put(child_node); // FIXME
+	of_node_put(child_node);
 
 	dev_err(&pdev->dev, "sgm3140 registered successfully!\n");
 
