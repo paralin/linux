@@ -117,7 +117,7 @@
 #define SUN8I_I2S_TX_CHAN_MAP_REG	0x44
 #define SUN8I_I2S_TX_CHAN_SEL_REG	0x34
 #define SUN8I_I2S_TX_CHAN_OFFSET_MASK		GENMASK(13, 12)
-#define SUN8I_I2S_TX_CHAN_OFFSET(offset)	(offset << 12)
+#define SUN8I_I2S_TX_CHAN_OFFSET(offset)	((offset) << 12)
 #define SUN8I_I2S_TX_CHAN_EN_MASK		GENMASK(11, 4)
 #define SUN8I_I2S_TX_CHAN_EN(num_chan)		(((1 << num_chan) - 1) << 4)
 
@@ -179,6 +179,8 @@ struct sun4i_i2s {
 	struct regmap_field	*field_fmt_sr;
 
 	const struct sun4i_i2s_quirks	*variant;
+	
+	bool pinephone_hack;
 };
 
 struct sun4i_i2s_clk_div {
@@ -245,6 +247,9 @@ static int sun4i_i2s_get_bclk_div(struct sun4i_i2s *i2s,
 	const struct sun4i_i2s_clk_div *dividers = i2s->variant->bclk_dividers;
 	int div = parent_rate / sampling_rate / word_size / channels;
 	int i;
+	printk(KERN_ERR "parent_rate: %ld, sampling_rate: %d, channels: %d, word_size: %d\n",
+			parent_rate, sampling_rate, channels, word_size);
+	printk(KERN_ERR "div: %d\n", div);
 
 	for (i = 0; i < i2s->variant->num_bclk_dividers; i++) {
 		const struct sun4i_i2s_clk_div *bdiv = &dividers[i];
@@ -347,6 +352,15 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
 		dev_err(dai->dev, "Unsupported MCLK divider: %d\n", mclk_div);
 		return -EINVAL;
 	}
+
+	// Modem-audio only
+	//if (i2s->variant->is_h3_i2s_based) {
+	if (i2s->variant->num_bclk_dividers == ARRAY_SIZE(sun8i_i2s_clk_div)) {
+		bclk_div = 6;
+		mclk_div = 5;
+	}
+
+	dev_err(dai->dev, "bclk_div: %d, mclk_div: %d\n", bclk_div, mclk_div);
 
 	regmap_write(i2s->regmap, SUN4I_I2S_CLK_DIV_REG,
 		     SUN4I_I2S_CLK_DIV_BCLK(bclk_div) |
@@ -454,6 +468,17 @@ static int sun8i_i2s_set_chan_cfg(const struct sun4i_i2s *i2s,
 	default:
 		return -EINVAL;
 	}
+
+	// Modem-audio only
+	//if (i2s->variant->is_h3_i2s_based) {
+	if (i2s->variant->num_bclk_dividers == ARRAY_SIZE(sun8i_i2s_clk_div)) {
+		// HACK to get the value to 0x100
+		lrck_period = lrck_period * 16;
+	}
+
+	printk(KERN_ERR "i2s lrck_period: %d\n", lrck_period);
+	printk(KERN_ERR "i2s channels: %d\n", channels);
+	printk(KERN_ERR "i2s physical_width: %d\n", params_physical_width(params));
 
 	regmap_update_bits(i2s->regmap, SUN4I_I2S_FMT0_REG,
 			   SUN8I_I2S_FMT0_LRCK_PERIOD_MASK,
@@ -663,7 +688,7 @@ static int sun8i_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
 			   SUN8I_I2S_CTRL_MODE_MASK, mode);
 	regmap_update_bits(i2s->regmap, SUN8I_I2S_TX_CHAN_SEL_REG,
 			   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
-			   SUN8I_I2S_TX_CHAN_OFFSET(offset));
+			   SUN8I_I2S_TX_CHAN_OFFSET(i2s->pinephone_hack ? 0 : offset));
 	regmap_update_bits(i2s->regmap, SUN8I_I2S_RX_CHAN_SEL_REG,
 			   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
 			   SUN8I_I2S_TX_CHAN_OFFSET(offset));
@@ -1206,6 +1231,9 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "Failed to determine the quirks to use\n");
 		return -ENODEV;
 	}
+
+	if (of_find_property(pdev->dev.of_node, "pinephone-channel-offset-hack", NULL))
+		i2s->pinephone_hack = true;
 
 	i2s->bus_clk = devm_clk_get(&pdev->dev, "apb");
 	if (IS_ERR(i2s->bus_clk)) {
