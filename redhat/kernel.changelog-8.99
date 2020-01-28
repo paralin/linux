@@ -1,3 +1,7 @@
+* Tue Jan 28 2020 Jeremy Cline <jcline@redhat.com> [5.5.0-1.elrdy]
+- v5.5 rebase
+- Revert "Turn off CONFIG_AX25" (Laura Abbott)
+
 * Thu Jan 23 2020 Jeremy Cline <jcline@redhat.com> [5.5.0-0.rc7.1.elrdy]
 - v5.5-rc7 rebase
 
