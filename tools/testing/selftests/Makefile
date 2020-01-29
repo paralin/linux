@@ -32,6 +32,7 @@ TARGETS += memory-hotplug
 TARGETS += mount
 TARGETS += mqueue
 TARGETS += net
+TARGETS += net/mptcp
 TARGETS += netfilter
 TARGETS += networking/timestamping
 TARGETS += nsfs
@@ -50,6 +51,7 @@ TARGETS += splice
 TARGETS += static_keys
 TARGETS += sync
 TARGETS += sysctl
+TARGETS += timens
 ifneq (1, $(quicktest))
 TARGETS += timers
 endif

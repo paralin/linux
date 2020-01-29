@@ -267,7 +267,7 @@ static short _rtl92e_check_nic_enough_desc(struct net_device *dev, int prio)
 	return 0;
 }
 
-static void _rtl92e_tx_timeout(struct net_device *dev)
+static void _rtl92e_tx_timeout(struct net_device *dev, unsigned int txqueue)
 {
 	struct r8192_priv *priv = rtllib_priv(dev);
 
@@ -2463,7 +2463,7 @@ static int _rtl92e_pci_probe(struct pci_dev *pdev,
 	}
 
 
-	ioaddr = (unsigned long)ioremap_nocache(pmem_start, pmem_len);
+	ioaddr = (unsigned long)ioremap(pmem_start, pmem_len);
 	if (ioaddr == (unsigned long)NULL) {
 		netdev_err(dev, "ioremap failed!");
 		goto err_rel_mem;
