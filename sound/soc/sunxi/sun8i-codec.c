@@ -16,7 +16,9 @@
 #include <linux/of_device.h>
 #include <linux/pm_runtime.h>
 #include <linux/regmap.h>
+#include <linux/regulator/consumer.h>
 #include <linux/log2.h>
+#include <linux/mfd/ac100.h>
 
 #include <sound/pcm_params.h>
 #include <sound/soc.h>
@@ -156,17 +158,25 @@
 			     SNDRV_PCM_RATE_192000|\
 			     SNDRV_PCM_RATE_KNOT)
 
+#define AC100_NUM_SUPPLIES 4
+
 struct sun8i_codec {
 	struct regmap	*regmap;
 	struct clk	*clk_module;
 	struct clk	*clk_bus;
 	bool		inverted_lrck;
+
+	struct regmap	*ac100_regmap;
+	struct regulator_bulk_data supplies[AC100_NUM_SUPPLIES];
 };
 
 static int sun8i_codec_runtime_resume(struct device *dev)
 {
 	struct sun8i_codec *scodec = dev_get_drvdata(dev);
 	int ret;
+
+	if (scodec->ac100_regmap)
+		return 0;
 
 	ret = clk_prepare_enable(scodec->clk_module);
 	if (ret) {
@@ -202,6 +212,9 @@ err_disable_modclk:
 static int sun8i_codec_runtime_suspend(struct device *dev)
 {
 	struct sun8i_codec *scodec = dev_get_drvdata(dev);
+
+	if (scodec->ac100_regmap)
+		return 0;
 
 	regcache_cache_only(scodec->regmap, true);
 	regcache_mark_dirty(scodec->regmap);
@@ -1048,9 +1061,14 @@ static const struct snd_soc_dapm_route sun8i_codec_dapm_routes[] = {
 	{ "SYSCLK", NULL, "AIF1CLK" },
 };
 
+static int ac100_codec_component_probe(struct snd_soc_component *component);
+
 static int sun8i_codec_component_probe(struct snd_soc_component *component)
 {
 	struct sun8i_codec *scodec = snd_soc_component_get_drvdata(component);
+
+	if (scodec->ac100_regmap)
+                return ac100_codec_component_probe(component);
 
 	/* Set AIF1CLK clock source to PLL */
 	regmap_update_bits(scodec->regmap, SUN8I_SYSCLK_CTL,
@@ -1084,7 +1102,7 @@ static const struct snd_soc_component_driver sun8i_soc_component = {
 	.non_legacy_dai_naming	= 1,
 };
 
-static const struct regmap_config sun8i_codec_regmap_config = {
+static struct regmap_config sun8i_codec_regmap_config = {
 	.reg_bits	= 32,
 	.reg_stride	= 4,
 	.val_bits	= 32,
@@ -1093,11 +1111,168 @@ static const struct regmap_config sun8i_codec_regmap_config = {
 	.cache_type	= REGCACHE_FLAT,
 };
 
+/* AC100 Codec Support (digital parts) */
+
+static int sun8i_codec_ac100_regmap_read(void *context, unsigned int reg, unsigned int *val)
+{
+	struct sun8i_codec *scodec = context;
+	int ret;
+
+	ret = regmap_read(scodec->ac100_regmap, reg / 4, val);
+	if (ret == 0)
+		pr_err("R%02x => %04x\n", reg / 4, *val);
+
+	return ret;
+}
+
+static int sun8i_codec_ac100_regmap_write(void *context, unsigned int reg, unsigned int val)
+{
+	struct sun8i_codec *scodec = context;
+
+	pr_err("W%02x <= %04x\n", reg / 4, val);
+
+	return regmap_write(scodec->ac100_regmap, reg / 4, val);
+}
+
+static struct regmap_bus sun8i_codec_ac100_regmap_bus = {
+	.reg_write = sun8i_codec_ac100_regmap_write,
+	.reg_read = sun8i_codec_ac100_regmap_read,
+};
+
+static const char *const ac100_supply_names[AC100_NUM_SUPPLIES] = {
+	"LDOIN",
+	"AVCC",
+	"VDDIO1",
+	"VDDIO2",
+};
+
+#define AC100_SYSCLK_CTRL_PLLCLK_ENA_OFF                        15
+#define AC100_SYSCLK_CTRL_PLLCLK_ENA_MASK                       BIT(15)
+#define AC100_SYSCLK_CTRL_PLLCLK_ENA_DISABLED                   0
+#define AC100_SYSCLK_CTRL_PLLCLK_ENA_ENABLED                    BIT(15)
+#define AC100_SYSCLK_CTRL_PLLCLK_SRC_OFF                        12
+#define AC100_SYSCLK_CTRL_PLLCLK_SRC_MASK                       GENMASK(13, 12)
+#define AC100_SYSCLK_CTRL_PLLCLK_SRC_MCLK1                      (0x0 << 12)
+#define AC100_SYSCLK_CTRL_PLLCLK_SRC_MCLK2                      (0x1 << 12)
+#define AC100_SYSCLK_CTRL_PLLCLK_SRC_BCLK1                      (0x2 << 12)
+#define AC100_SYSCLK_CTRL_PLLCLK_SRC_BCLK2                      (0x3 << 12)
+#define AC100_SYSCLK_CTRL_I2S1CLK_ENA_OFF                       11
+#define AC100_SYSCLK_CTRL_I2S1CLK_ENA_MASK                      BIT(11)
+#define AC100_SYSCLK_CTRL_I2S1CLK_ENA_DISABLED                  0
+#define AC100_SYSCLK_CTRL_I2S1CLK_ENA_ENABLED                   BIT(11)
+#define AC100_SYSCLK_CTRL_I2S1CLK_SRC_OFF                       8
+#define AC100_SYSCLK_CTRL_I2S1CLK_SRC_MASK                      GENMASK(9, 8)
+#define AC100_SYSCLK_CTRL_I2S1CLK_SRC_MCLK1                     (0x0 << 8)
+#define AC100_SYSCLK_CTRL_I2S1CLK_SRC_MCLK2                     (0x1 << 8)
+#define AC100_SYSCLK_CTRL_I2S1CLK_SRC_PLL                       (0x2 << 8)
+#define AC100_SYSCLK_CTRL_I2S2CLK_ENA_OFF                       7
+#define AC100_SYSCLK_CTRL_I2S2CLK_ENA_MASK                      BIT(7)
+#define AC100_SYSCLK_CTRL_I2S2CLK_ENA_DISABLED                  0
+#define AC100_SYSCLK_CTRL_I2S2CLK_ENA_ENABLED                   BIT(7)
+#define AC100_SYSCLK_CTRL_I2S2CLK_SRC_OFF                       4
+#define AC100_SYSCLK_CTRL_I2S2CLK_SRC_MASK                      GENMASK(5, 4)
+#define AC100_SYSCLK_CTRL_I2S2CLK_SRC_MCLK1                     (0x0 << 4)
+#define AC100_SYSCLK_CTRL_I2S2CLK_SRC_MCLK2                     (0x1 << 4)
+#define AC100_SYSCLK_CTRL_I2S2CLK_SRC_PLL                       (0x2 << 4)
+#define AC100_SYSCLK_CTRL_SYSCLK_ENA_OFF                        3
+#define AC100_SYSCLK_CTRL_SYSCLK_ENA_MASK                       BIT(3)
+#define AC100_SYSCLK_CTRL_SYSCLK_ENA_DISABLED                   0
+#define AC100_SYSCLK_CTRL_SYSCLK_ENA_ENABLED                    BIT(3)
+#define AC100_SYSCLK_CTRL_SYSCLK_SRC_OFF                        0
+#define AC100_SYSCLK_CTRL_SYSCLK_SRC_MASK                       BIT(0)
+#define AC100_SYSCLK_CTRL_SYSCLK_SRC_I2S1CLK                    0
+#define AC100_SYSCLK_CTRL_SYSCLK_SRC_I2S2CLK                    BIT(0)
+
+
+static int ac100_codec_component_probe(struct snd_soc_component *component)
+{
+	struct sun8i_codec *scodec = snd_soc_component_get_drvdata(component);
+
+        // The system clock(SYSCLK) of AC100 must be 512*fs(fs=48KHz or 44.1KHz)
+
+        // Source clocks from the SoC
+
+        regmap_update_bits(scodec->ac100_regmap, AC100_SYSCLK_CTRL,
+                            AC100_SYSCLK_CTRL_I2S1CLK_SRC_MASK,
+                            AC100_SYSCLK_CTRL_I2S1CLK_SRC_MCLK1);
+        regmap_update_bits(scodec->ac100_regmap, AC100_SYSCLK_CTRL,
+                            AC100_SYSCLK_CTRL_I2S2CLK_SRC_MASK,
+                            AC100_SYSCLK_CTRL_I2S2CLK_SRC_MCLK1);
+        regmap_update_bits(scodec->ac100_regmap, AC100_SYSCLK_CTRL,
+                            AC100_SYSCLK_CTRL_SYSCLK_SRC_MASK,
+                            AC100_SYSCLK_CTRL_SYSCLK_SRC_I2S1CLK);
+        return 0;
+}
+
+static int sun8i_codec_probe_ac100(struct platform_device *pdev)
+{
+	struct ac100_dev *ac100 = dev_get_drvdata(pdev->dev.parent);
+	struct device* dev = &pdev->dev;
+	struct sun8i_codec *scodec;
+	int ret, i;
+
+	scodec = devm_kzalloc(dev, sizeof(*scodec), GFP_KERNEL);
+	if (!scodec)
+		return -ENOMEM;
+
+	scodec->ac100_regmap = ac100->regmap;
+	platform_set_drvdata(pdev, scodec);
+
+	// caching is done by the MFD regmap
+	sun8i_codec_regmap_config.cache_type = REGCACHE_NONE;
+
+	// we need to create a custom regmap_bus that will map reads/writes to the MFD regmap
+	scodec->regmap = __regmap_lockdep_wrapper(__devm_regmap_init,
+		 "ac100-regmap-codec", dev,
+		  &sun8i_codec_ac100_regmap_bus, scodec,
+		  &sun8i_codec_regmap_config);
+	if (IS_ERR(scodec->regmap)) {
+		dev_err(dev, "Failed to create our regmap\n");
+		return PTR_ERR(scodec->regmap);
+	}
+
+	for (i = 0; i < ARRAY_SIZE(scodec->supplies); i++)
+		scodec->supplies[i].supply = ac100_supply_names[i];
+
+        ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(scodec->supplies),
+                                      scodec->supplies);
+        if (ret != 0) {
+              if (ret != -EPROBE_DEFER)
+                       dev_err(dev, "Failed to request supplies: %d\n", ret);
+                return ret;
+        }
+
+	ret = regulator_bulk_enable(ARRAY_SIZE(scodec->supplies),
+				    scodec->supplies);
+	if (ret != 0) {
+		dev_err(dev, "Failed to enable supplies: %d\n", ret);
+		return ret;
+	}
+
+	ret = devm_snd_soc_register_component(dev, &sun8i_soc_component,
+					      sun8i_codec_dais,
+					      ARRAY_SIZE(sun8i_codec_dais));
+	if (ret) {
+		dev_err(dev, "Failed to register codec\n");
+		goto err_disable_reg;
+	}
+
+	return ret;
+
+err_disable_reg:
+	regulator_bulk_disable(ARRAY_SIZE(scodec->supplies),
+			       scodec->supplies);
+	return ret;
+}
+
 static int sun8i_codec_probe(struct platform_device *pdev)
 {
 	struct sun8i_codec *scodec;
 	void __iomem *base;
 	int ret;
+
+	if (of_device_is_compatible(pdev->dev.of_node, "x-powers,ac100-codec"))
+		return sun8i_codec_probe_ac100(pdev);
 
 	scodec = devm_kzalloc(&pdev->dev, sizeof(*scodec), GFP_KERNEL);
 	if (!scodec)
@@ -1161,6 +1336,14 @@ err_pm_disable:
 
 static int sun8i_codec_remove(struct platform_device *pdev)
 {
+	struct sun8i_codec *scodec = platform_get_drvdata(pdev);
+
+	if (scodec->ac100_regmap) {
+		regulator_bulk_disable(ARRAY_SIZE(scodec->supplies),
+				       scodec->supplies);
+		return 0;
+	}
+
 	pm_runtime_disable(&pdev->dev);
 	if (!pm_runtime_status_suspended(&pdev->dev))
 		sun8i_codec_runtime_suspend(&pdev->dev);
@@ -1176,6 +1359,9 @@ static const struct of_device_id sun8i_codec_of_match[] = {
 	{
 		.compatible = "allwinner,sun50i-a64-codec",
 		.data = (void *)0,
+	},
+	{
+		.compatible = "x-powers,ac100-codec",
 	},
 	{}
 };
