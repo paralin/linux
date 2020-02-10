@@ -67,6 +67,7 @@ static void sgm3140_powerdown_timer(struct timer_list *t)
 	struct sgm3140 *priv = from_timer(priv, t, powerdown_timer);
 
 	gpiod_set_value_cansleep(priv->enable_gpio, 0);
+	gpiod_set_value_cansleep(priv->flash_gpio, 0);
 }
 
 #if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
