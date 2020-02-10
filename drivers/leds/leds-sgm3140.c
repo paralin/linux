@@ -63,6 +63,7 @@ int sgm3140_brightness_set(struct led_classdev *led_cdev,
 	return 0;
 }
 
+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
 static void sgm3140_init_v4l2_flash_config(struct sgm3140 *priv,
 					   struct v4l2_flash_config *v4l2_sd_cfg)
 {
@@ -81,6 +82,12 @@ static void sgm3140_init_v4l2_flash_config(struct sgm3140 *priv,
 	//v4l2_sd_cfg->has_external_strobe = led_cfg->has_external_strobe;
 }
 
+#else
+static void sgm3140_init_v4l2_flash_config(struct sgm3140 *priv,
+					   struct v4l2_flash_config *v4l2_sd_cfg)
+{
+}
+#endif
 //static const struct v4l2_flash_ops v4l2_flash_ops = {
 //	.external_strobe_set = max77693_led_external_strobe_set,
 //};
