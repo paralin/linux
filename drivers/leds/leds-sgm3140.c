@@ -138,8 +138,6 @@ static int sgm3140_probe(struct platform_device *pdev)
 	led_cdev = &fled_cdev->led_cdev;
 
 	fled_cdev->ops = &sgm3140_flash_ops;
-	// TODO ?
-//	fled_cdev->timeout.max = 300000; /* 300ms */
 
 	led_cdev->brightness_set_blocking = sgm3140_brightness_set;
 	led_cdev->max_brightness = LED_ON;
