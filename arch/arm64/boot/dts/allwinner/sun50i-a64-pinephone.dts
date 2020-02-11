@@ -253,6 +253,28 @@
 		touchscreen-size-x = <720>;
 		touchscreen-size-y = <1440>;
 	};
+
+	anx7688@58 {
+		compatible = "analogix,anx7688";
+		reg = <0x58>;
+		status = "okay";
+		panel-flags = <0>;
+		enable-gpios = <&pio 3 10 GPIO_ACTIVE_HIGH>; /* PD10 */
+		reset-gpios = <&r_pio 0 9 GPIO_ACTIVE_HIGH>; /* PL9 */
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			anx_hdmi_in: endpoint {
+				remote-endpoint = <&hdmi_out>;
+			};
+		};
+
+		port@2 {
+			reg = <2>;
+		};
+	};
 };
 
 &i2c1 {

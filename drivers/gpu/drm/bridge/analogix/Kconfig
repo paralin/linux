@@ -22,6 +22,15 @@ config DRM_ANALOGIX_ANX78XX
 	  the HDMI output of an application processor to MyDP
 	  or DisplayPort.
 
+config DRM_ANALOGIX_ANX7688
+	tristate "Analogix ANX7688 bridge"
+	select DRM_ANALOGIX_DP
+	select DRM_KMS_HELPER
+	help
+	  ANX7688 is an ultra-low power 4K mobile HD transmitter designed
+	  for portable devices. It converts HDMI of an application processor 
+	  to USB Type-C displayport alt-mode.
+
 config DRM_ANALOGIX_DP
 	tristate
 	depends on DRM
