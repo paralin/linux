@@ -31,6 +31,7 @@ Core utilities
    generic-radix-tree
    memory-allocation
    mm-api
+   pin_user_pages
    gfp_mask-from-fs-io
    timekeeping
    boot-time-mm
@@ -40,6 +41,7 @@ Core utilities
    gcc-plugins
    symbol-namespaces
    padata
+   ioctl
 
 
 Interfaces for kernel debugging
