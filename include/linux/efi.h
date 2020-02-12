@@ -1145,6 +1145,8 @@ static inline bool efi_enabled(int feature)
 }
 extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
 
+extern void __init efi_set_secure_boot(enum efi_secureboot_mode mode);
+
 bool __pure __efi_soft_reserve_enabled(void);
 
 static inline bool __pure efi_soft_reserve_enabled(void)
@@ -1152,7 +1154,6 @@ static inline bool __pure efi_soft_reserve_enabled(void)
 	return IS_ENABLED(CONFIG_EFI_SOFT_RESERVE)
 		&& __efi_soft_reserve_enabled();
 }
-extern void __init efi_set_secure_boot(enum efi_secureboot_mode mode);
 #else
 static inline bool efi_enabled(int feature)
 {
@@ -1167,11 +1168,12 @@ efi_capsule_pending(int *reset_type)
 	return false;
 }
 
+static inline void efi_set_secure_boot(enum efi_secureboot_mode mode) {}
+
 static inline bool efi_soft_reserve_enabled(void)
 {
 	return false;
 }
-static inline void efi_set_secure_boot(enum efi_secureboot_mode mode) {}
 #endif
 
 extern int efi_status_to_err(efi_status_t status);
@@ -1551,12 +1553,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
 extern void efi_call_virt_check_flags(unsigned long flags, const char *call);
 extern unsigned long efi_call_virt_save_flags(void);
 
-enum efi_secureboot_mode {
-	efi_secureboot_mode_unset,
-	efi_secureboot_mode_unknown,
-	efi_secureboot_mode_disabled,
-	efi_secureboot_mode_enabled,
-};
 enum efi_secureboot_mode efi_get_secureboot(void);
 
 #ifdef CONFIG_RESET_ATTACK_MITIGATION

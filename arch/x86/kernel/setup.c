@@ -18,7 +18,6 @@
 #include <linux/sfi.h>
 #include <linux/tboot.h>
 #include <linux/security.h>
-
 #include <linux/usb/xhci-dbgp.h>
 
 #include <uapi/linux/mount.h>
