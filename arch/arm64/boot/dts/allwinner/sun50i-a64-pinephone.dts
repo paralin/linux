@@ -257,6 +257,16 @@
 		touchscreen-size-x = <720>;
 		touchscreen-size-y = <1440>;
 	};
+
+	anx7688@28 {
+		compatible = "analogix,anx7688";
+		reg = <0x28>;
+		interrupt-parent = <&r_pio>;
+		interrupts = <0 8 IRQ_TYPE_EDGE_BOTH>, <0 11 IRQ_TYPE_EDGE_FALLING>; /* PL8, PL11 */
+		cabledet-gpios = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
+		enable-gpios = <&pio 3 10 GPIO_ACTIVE_LOW>; /* PD10 */
+		reset-gpios = <&r_pio 0 9 GPIO_ACTIVE_LOW>; /* PL9 */
+	};
 };
 
 &i2c1 {
@@ -527,6 +537,7 @@
 };
 
 &reg_ldo_io1 {
+	regulator-always-on;
 	regulator-min-microvolt = <1800000>;
 	regulator-max-microvolt = <1800000>;
 	regulator-name = "vcc-1v8-typec";
