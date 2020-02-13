@@ -1,3 +1,6 @@
+* Wed Feb 12 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc1.2.elrdy]
+- Disable CONFIG_DRM_DP_CEC temporarily (Jeremy Cline)
+
 * Wed Feb 12 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc1.1.elrdy]
 - v5.6-rc1 rebase
 - Fix up the EFI secureboot rebase (Jeremy Cline)
