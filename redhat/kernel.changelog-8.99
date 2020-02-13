@@ -1,3 +1,23 @@
+* Thu Feb 13 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc1.4.elrdy]
+- Package bpftool-gen man page (Jeremy Cline)
+
+* Thu Feb 13 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc1.3.elrdy]
+- Used Python 3 for scripts/jobserver-exec (Jeremy Cline)
+
+* Wed Feb 12 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc1.2.elrdy]
+- Disable CONFIG_DRM_DP_CEC temporarily (Jeremy Cline)
+
+* Wed Feb 12 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc1.1.elrdy]
+- v5.6-rc1 rebase
+- Fix up the EFI secureboot rebase (Jeremy Cline)
+- distgit-changelog: handle multiple y-stream BZ numbers (Bruno Meneguele)
+- redhat/kernel.spec: remove all inline comments (Bruno Meneguele)
+- redhat/genspec: awk unknown whitespace regex pattern (Bruno Meneguele)
+- Improve the readability of gen_config_patches.sh (Jeremy Cline)
+- Fix some awkward edge cases in gen_config_patches.sh (Jeremy Cline)
+- Updated changelog (Jeremy Cline)
+- Update the CI environment to use Fedora 31 (Jeremy Cline)
+
 * Tue Jan 28 2020 Jeremy Cline <jcline@redhat.com> [5.5.0-1.elrdy]
 - v5.5 rebase
 - Revert "Turn off CONFIG_AX25" (Laura Abbott)
