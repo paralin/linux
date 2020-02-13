@@ -1,3 +1,6 @@
+* Thu Feb 13 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc1.4.elrdy]
+- Package bpftool-gen man page (Jeremy Cline)
+
 * Thu Feb 13 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc1.3.elrdy]
 - Used Python 3 for scripts/jobserver-exec (Jeremy Cline)
 
