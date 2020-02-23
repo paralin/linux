@@ -84,6 +84,12 @@
 		compatible = "operating-points-v2";
 		opp-shared;
 
+                opp-480000000 {
+                        opp-hz = /bits/ 64 <480000000>;
+                        opp-microvolt = <1040000>;
+                        clock-latency-ns = <244144>; /* 8 32k periods */
+                };
+
 		opp-648000000 {
 			opp-hz = /bits/ 64 <648000000>;
 			opp-microvolt = <1040000>;
@@ -128,6 +134,7 @@
 			clocks = <&ccu CLK_CPUX>;
 			clock-names = "cpu";
 			operating-points-v2 = <&cpu0_opp_table>;
+                        cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0 &SYS_SLEEP_0>;
 			#cooling-cells = <2>;
 		};
 
@@ -138,6 +145,7 @@
 			enable-method = "psci";
 			next-level-cache = <&L2>;
 			operating-points-v2 = <&cpu0_opp_table>;
+                        cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0 &SYS_SLEEP_0>;
 		};
 
 		cpu2: cpu@2 {
@@ -147,6 +155,7 @@
 			enable-method = "psci";
 			next-level-cache = <&L2>;
 			operating-points-v2 = <&cpu0_opp_table>;
+                        cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0 &SYS_SLEEP_0>;
 		};
 
 		cpu3: cpu@3 {
@@ -156,6 +165,38 @@
 			enable-method = "psci";
 			next-level-cache = <&L2>;
 			operating-points-v2 = <&cpu0_opp_table>;
+                        cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0 &SYS_SLEEP_0>;
+		};
+
+		idle-states {
+			entry-method = "psci";
+
+			CPU_SLEEP_0: cpu-sleep-0 {
+				compatible = "arm,idle-state";
+				arm,psci-suspend-param = <0x0010000>;
+				entry-latency-us = <230>;
+				exit-latency-us = <570>;
+				min-residency-us = <1000>;
+				local-timer-stop;
+			};
+
+			CLUSTER_SLEEP_0: cluster-sleep-0 {
+				compatible = "arm,idle-state";
+				arm,psci-suspend-param = <0x1010000>;
+				entry-latency-us = <500>;
+				exit-latency-us = <1000>;
+				min-residency-us = <2500>;
+				local-timer-stop;
+			};
+
+			SYS_SLEEP_0: sys-sleep-0 {
+				compatible = "arm,idle-state";
+				arm,psci-suspend-param = <0x2010000>;
+				entry-latency-us = <2000000>;
+				exit-latency-us = <2000000>;
+				min-residency-us = <2000000>;
+				local-timer-stop;
+			};
 		};
 
 		L2: l2-cache {
