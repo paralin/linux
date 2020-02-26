@@ -14,4 +14,13 @@ config RH_DISABLE_DEPRECATED
 
 	  Unless you want a restricted kernel, say N here.
 
+config RH_FEDORA
+	bool "Used to determine if a configuration targets Fedora"
+	help
+	  Fedora and the Always Ready kernel are maintained side-by-side. This
+	  configuration is used to determine if a configuration is targeting
+	  Fedora, mainly for patches that add configuration options specifically
+	  for Fedora or EL kernels. An example of this is Fedora changing the
+	  FORCE_MAX_ZONEORDER default for ARM.
+
 endmenu
