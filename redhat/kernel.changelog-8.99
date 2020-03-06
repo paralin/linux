@@ -1,3 +1,6 @@
+* Fri Mar 06 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc4.2.elrdy]
+- Disable CONFIG_DRM_DP_CEC temporarily (Jeremy Cline)
+
 * Fri Mar 06 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc4.1.elrdy]
 - v5.6-rc4 rebase
 - redhat: rh_kabi: deduplication friendly structs (Jiri Benc)
