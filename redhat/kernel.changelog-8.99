@@ -1,3 +1,8 @@
+* Mon Mar 09 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc5.1.elrdy]
+- v5.6-rc5 rebase
+- Pull in the latest configuration changes from Fedora (Jeremy Cline)
+- configs: enable CONFIG_NET_SCH_CBS (Marcelo Ricardo Leitner)
+
 * Fri Mar 06 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc4.2.elrdy]
 - Disable CONFIG_DRM_DP_CEC temporarily (Jeremy Cline)
 
