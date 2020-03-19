@@ -698,7 +698,6 @@ Source3001: kernel-local
 ## Patches needed for building this package
 
 Patch1: patch-%{rpmversion}-redhat.patch
-Patch2: patch-%{rpmversion}-fedora.patch
 
 # empty final patch to facilitate testing of kernel patches
 Patch999999: linux-kernel-test.patch
@@ -1198,9 +1197,6 @@ mv linux-%%TARBALL_VERSION%% linux-%{KVERREL}
 cd linux-%{KVERREL}
 
 ApplyOptionalPatch patch-%{rpmversion}-redhat.patch
-%if 0%{?fedora}
-ApplyOptionalPatch patch-%{rpmversion}-fedora.patch
-%endif
 ApplyOptionalPatch linux-kernel-test.patch
 
 # END OF PATCH APPLICATIONS

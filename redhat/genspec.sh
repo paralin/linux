@@ -236,24 +236,9 @@ test -n "$SPECFILE" &&
 
 if [ "$SINGLE_TARBALL" = 0 ]; then
 	git diff -p --no-renames --stat $MARKER.. ":(exclude,top)redhat" ":(exclude,top)makefile" ":(exclude,top)configs" ":(exclude,top).gitattributes" ":(exclude,top).gitignore"> $SOURCES/patch-${RPMVERSION}-redhat.patch
-
-	# Sanity check that fedora-patches is based on top of ark-patches as
-	# Fedora is supposed to be a super-set of ARK.
-	REMOTE=$(git remote -v | grep -E "gitlab.com(:|/)cki-project/kernel-ark.git" | awk '{ print $1 }' | head -n 1)
-	if [ -z "$REMOTE" ]; then
-		echo "Missing remote; run 'git remote add <name> https://gitlab.com/cki-project/kernel-ark.git'"
-		exit 1
-	fi
-	if git branch -r --contains "$REMOTE"/ark-patches | grep -q "$REMOTE"/fedora-patches; then
-		git diff -p --no-renames --stat "$REMOTE"/ark-patches.."$REMOTE"/fedora-patches ":(exclude,top)redhat" ":(exclude,top)makefile" ":(exclude,top)configs" ":(exclude,top).gitattributes" ":(exclude,top).gitignore"> $SOURCES/patch-${RPMVERSION}-fedora.patch
-	else
-		echo "The fedora-patches branch needs to be based on ark-patches!"
-		exit 1
-	fi
 else
 	# Need an empty file for dist-git compatibility
 	touch $SOURCES/patch-${RPMVERSION}-redhat.patch
-	touch $SOURCES/patch-${RPMVERSION}-fedora.patch
 fi
 
 for opt in $BUILDOPTS; do
