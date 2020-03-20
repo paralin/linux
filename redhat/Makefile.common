@@ -28,7 +28,7 @@ else
   PREBUILD:=
 endif
 
-DIST ?=.elrdy
+DIST ?=.fc33
 IS_FEDORA:=$(shell ! echo $(DIST) | grep -q fc; echo $$?)
 # If VERSION_ON_UPSTREAM is set, the versioning of the rpm package is based
 # on a branch tracking upstream. This allows for generating rpms
@@ -146,7 +146,7 @@ CHANGELOG_PREV:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(shell expr $(RHEL_MINO
 ifeq ("$(DIST)", ".elrdy")
   RHPRODUCT:=rhel-ready
 else ifeq ("$(IS_FEDORA)", "1")
-  RHPRODUCT:=rhel-ready
+  RHPRODUCT:=master
 else
   RHPRODUCT:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
 endif
