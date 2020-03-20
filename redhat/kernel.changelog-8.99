@@ -1,3 +1,6 @@
+* Fri Mar 20 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc6.2.elrdy]
+- Revert "[redhat] Apply a second patch set in Fedora build roots" (Jeremy Cline)
+
 * Tue Mar 17 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc6.1.elrdy]
 - v5.6-rc6 rebase
 
