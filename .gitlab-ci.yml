@@ -1,0 +1,10 @@
+# CI definitions for ark-patches and internal are maintained in a single file
+# outside the main repository because the two branches are regularly merged
+# together in release branches. Rather than trying to keep the two branches in
+# sync or have merge conflicts each time we merge the two branches, the
+# definition is stored externally and included in each branch.
+#
+# To update any CI jobs, please submit any merge requests to
+# https://gitlab.com/cki-project/kernel-ark-ci/.
+include:
+  - remote: 'https://gitlab.com/cki-project/kernel-ark-ci/raw/master/gitlab-ci.yml'
