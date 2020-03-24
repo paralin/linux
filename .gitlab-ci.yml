@@ -1,0 +1,2 @@
+include:
+  - remote: 'https://gitlab.com/cki-project/kernel-ark/raw/internal/.gitlab-ci.yml'
