@@ -241,8 +241,7 @@ sources-rh: $(TARBALL)
 		configs/$(PACKAGE_NAME)-*.config \
 		keys/*.cer \
 		update_scripts.sh \
-		mod-extra.* \
-		mod-extra-blacklist.sh \
+		mod-blacklist.sh \
 		mod-internal.list \
 		mod-sign.sh \
 		configs/flavors \
