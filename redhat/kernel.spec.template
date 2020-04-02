@@ -403,12 +403,16 @@ Summary: The Linux kernel
 %if 0%{?fedora}
 %define nobuildarches i386
 %else
-%define nobuildarches i386 i686
+%define nobuildarches i386 i686 %{arm}
 %endif
 
 %ifarch %nobuildarches
+# disable BuildKernel commands
 %define with_up 0
 %define with_debug 0
+%define with_pae 0
+%define with_zfcpdump 0
+
 %define with_debuginfo 0
 %define with_perf 0
 %define with_tools 0
