@@ -24,8 +24,20 @@
 		/* Backlight configuration differs per PinePhone revision. */
 	};
 
+	bt_sco_codec: bt-sco-codec {
+		#sound-dai-cells = <1>;
+		compatible = "linux,bt-sco";
+		sound-name-prefix = "Bluetooth";
+	};
+
 	chosen {
 		stdout-path = "serial0:115200n8";
+	};
+
+	ec25_codec: ec25-codec {
+		#sound-dai-cells = <0>;
+		compatible = "quectel,ec25";
+		sound-name-prefix = "Baseband";
 	};
 
 	i2c_csi: i2c-csi {
@@ -80,6 +92,8 @@
 };
 
 &codec {
+	pinctrl-names = "default";
+	pinctrl-0 = <&aif2_pins>, <&aif3_pins>;
 	status = "okay";
 };
 
@@ -342,6 +356,11 @@
 	vcc-pf-supply = <&reg_dcdc1>;
 	vcc-pg-supply = <&reg_dldo4>;
 	vcc-ph-supply = <&reg_dcdc1>;
+
+	i2s0_pins: i2s0-pins {
+		pins = "PB4", "PB5", "PB6", "PB7";
+		function = "i2s0";
+	};
 };
 
 &r_pio {
@@ -512,14 +531,47 @@
 			"Internal Speaker", "Speaker Amp OUTR",
 			"Speaker Amp INL", "LINEOUT",
 			"Speaker Amp INR", "LINEOUT",
-			"Left DAC", "AIF1 Slot 0 Left",
-			"Right DAC", "AIF1 Slot 0 Right",
-			"AIF1 Slot 0 Left ADC", "Left ADC",
-			"AIF1 Slot 0 Right ADC", "Right ADC",
+			"Left DAC", "DAC Left",
+			"Right DAC", "DAC Right",
+			"ADC Left", "Left ADC",
+			"ADC Right", "Right ADC",
 			"Internal Microphone", "MBIAS",
 			"MIC1", "Internal Microphone",
 			"Headset Microphone", "HBIAS",
 			"MIC2", "Headset Microphone";
+
+	simple-audio-card,dai-link@1 {
+		format = "dsp_a";
+		frame-master = <&link1_cpu>;
+		bitclock-master = <&link1_cpu>;
+		bitclock-inversion;
+		codec-to-codec;
+
+		link1_cpu: cpu {
+			sound-dai = <&ec25_codec>;
+		};
+
+		link1_codec: codec {
+			sound-dai = <&codec 1>;
+		};
+	};
+
+	simple-audio-card,dai-link@2 {
+		format = "dsp_a";
+		frame-master = <&link2_cpu>;
+		bitclock-master = <&link2_cpu>;
+		bitclock-inversion;
+		frame-inversion;
+		codec-to-codec;
+
+		link2_cpu: cpu {
+			sound-dai = <&bt_sco_codec 0>;
+		};
+
+		link2_codec: codec {
+			sound-dai = <&codec 2>;
+		};
+	};
 };
 
 &uart0 {
