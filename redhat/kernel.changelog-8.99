@@ -1,3 +1,21 @@
+* Mon Apr 13 2020 Jeremy Cline <jcline@redhat.com> [5.7.0-0.rc1.1.fc33]
+- v5.7-rc1 rebase
+- tty/sysrq: Export sysrq_mask() (Dmitry Safonov)
+- e1000e: bump up timeout to wait when ME un-configure ULP mode (Aaron Ma)
+- Drop RH_FEDORA in favor of the now-merged RHEL_DIFFERENCES (Jeremy Cline)
+- Sync up Fedora configs from the first week of the merge window (Jeremy Cline)
+- Add a script to test if all commits are signed off (Jeremy Cline)
+- Fix a painfully obvious YAML syntax error in .gitlab-ci.yml (Jeremy Cline)
+- Migrate blacklisting floppy.ko to mod-blacklist.sh (Don Zickus)
+- kernel packaging: Combine mod-blacklist.sh and mod-extra-blacklist.sh (Don Zickus)
+- kernel packaging: Fix extra namespace collision (Don Zickus)
+- mod-extra.sh: Rename to mod-blacklist.sh (Don Zickus)
+- mod-extra.sh: Make file generic (Don Zickus)
+- Fix make rh-configs-arch (Don Zickus)
+- Add in armv7hl kernel header support (Don Zickus)
+- Disable all BuildKernel commands when only building headers (Don Zickus)
+- Add RHMAINTAINERS file and supporting conf (Don Zickus)
+
 * Mon Mar 30 2020 Jeremy Cline <jcline@redhat.com> [5.6.0-0.rc7.1.elrdy]
 - v5.6-rc7 rebase
 - Drop any gitlab-ci patches from ark-patches (Jeremy Cline)
