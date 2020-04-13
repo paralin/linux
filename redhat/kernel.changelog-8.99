@@ -1,3 +1,6 @@
+* Mon Apr 13 2020 Jeremy Cline <jcline@redhat.com> [5.7.0-0.rc1.2.fc33]
+- Add sharedbuffer_configuration.py to the pathfix.py script (Jeremy Cline)
+
 * Mon Apr 13 2020 Jeremy Cline <jcline@redhat.com> [5.7.0-0.rc1.1.fc33]
 - v5.7-rc1 rebase
 - tty/sysrq: Export sysrq_mask() (Dmitry Safonov)
