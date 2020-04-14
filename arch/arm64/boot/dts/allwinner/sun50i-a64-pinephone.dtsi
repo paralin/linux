@@ -71,6 +71,11 @@
 			gpios = <&pio 3 19 GPIO_ACTIVE_HIGH>; /* PD19 */
 			retain-state-suspended;
 		};
+
+		vibrator {
+			label = "vibrator";
+			gpios = <&pio 3 2 GPIO_ACTIVE_HIGH>; /* PD2 */
+		};
 	};
 
 	reg_usb0_vbus: usb0-vbus {
@@ -122,12 +127,6 @@
 		compatible = "simple-audio-amplifier";
 		enable-gpios = <&pio 2 7 GPIO_ACTIVE_HIGH>; /* PC7 */
 		sound-name-prefix = "Speaker Amp";
-	};
-
-	vibrator {
-		compatible = "gpio-vibrator";
-		enable-gpios = <&pio 3 2 GPIO_ACTIVE_HIGH>; /* PD2 */
-		vcc-supply = <&reg_dcdc1>;
 	};
 
 	sgm3140: led-controller {
