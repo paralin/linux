@@ -1,3 +1,6 @@
+* Mon Apr 20 2020 Jeremy Cline <jcline@redhat.com> [5.7.0-0.rc2.2]
+- Package gpio-watch in kernel-tools (Jeremy Cline)
+
 * Mon Apr 20 2020 Jeremy Cline <jcline@redhat.com> [5.7.0-0.rc2.1]
 - v5.7-rc2 rebase
 - Add a README to the dist-git repository (Jeremy Cline)
