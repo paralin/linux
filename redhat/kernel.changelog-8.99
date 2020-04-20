@@ -1,3 +1,12 @@
+* Mon Apr 20 2020 Jeremy Cline <jcline@redhat.com> [5.7.0-0.rc2.1]
+- v5.7-rc2 rebase
+- Add a README to the dist-git repository (Jeremy Cline)
+- Copy distro files rather than moving them (Jeremy Cline)
+- Drop DIST from release commits and tags (Jeremy Cline)
+- Place the buildid before the dist in the release (Jeremy Cline)
+- Sync up with Fedora arm configuration prior to merging (Jeremy Cline)
+- Disable CONFIG_PROTECTED_VIRTUALIZATION_GUEST for zfcpdump (Jeremy Cline)
+
 * Tue Apr 14 2020 Jeremy Cline <jcline@redhat.com> [5.7.0-0.rc1.3.fc33]
 - Include bpftool-struct_ops man page in the bpftool package (Jeremy Cline)
 
