@@ -1,3 +1,14 @@
+* Thu Apr 23 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc2.20200423git7adc4b399952.1]
+- 7adc4b399952 rebase
+- Match template format in kernel.spec.template ("Justin M. Forbes")
+- Break out the Patches into individual files for dist-git ("Justin M. Forbes")
+- Break the Red Hat patch into individual commits (Jeremy Cline)
+- Adjust module filtering so CONFIG_DRM_DP_CEC can be set (Jeremy Cline)
+- Add a script to generate release tags and branches (Jeremy Cline)
+- Set CONFIG_VDPA for fedora ("Justin M. Forbes")
+- Provide defaults in ark-rebase-patches.sh (Jeremy Cline)
+- Default ark-rebase-patches.sh to not report issues (Jeremy Cline)
+
 * Mon Apr 20 2020 Jeremy Cline <jcline@redhat.com> [5.7.0-0.rc2.2]
 - Package gpio-watch in kernel-tools (Jeremy Cline)
 
