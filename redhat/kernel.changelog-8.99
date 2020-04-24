@@ -1,3 +1,6 @@
+* Fri Apr 24 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc2.20200424gitb4f633221f0a.1]
+- b4f633221f0a rebase
+
 * Thu Apr 23 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc2.20200423git7adc4b399952.1]
 - 7adc4b399952 rebase
 - Match template format in kernel.spec.template ("Justin M. Forbes")
