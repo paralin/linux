@@ -1,3 +1,10 @@
+* Sun Apr 26 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc3.1]
+- v5.7-rc3 rebase
+- Add cec to the filter overrides ("Justin M. Forbes")
+- Add overrides to filter-modules.sh ("Justin M. Forbes")
+- Adjust the changelog update script to not push anything (Jeremy Cline)
+- Drop --target noarch from the rh-rpms make target (Jeremy Cline)
+
 * Fri Apr 24 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc2.20200424gitb4f633221f0a.1]
 - b4f633221f0a rebase
 
