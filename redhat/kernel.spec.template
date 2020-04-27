@@ -570,6 +570,8 @@ BuildRequires: asciidoc
 # xzcat -qq ${TARBALL} | git get-tar-commit-id
 Source0: linux-%%TARBALL_VERSION%%.tar.xz
 
+Source1: Makefile.rhelver
+
 
 # Name of the packaged file containing signing key
 %ifarch ppc64le
@@ -702,8 +704,6 @@ Source3002: Patchlist
 Source4000: README.rst
 
 ## Patches needed for building this package
-
-Patch1: patch-%{rpmversion}-redhat.patch
 
 %if !%{nopatches}
 
@@ -1206,8 +1206,7 @@ ApplyOptionalPatch()
 mv linux-%%TARBALL_VERSION%% linux-%{KVERREL}
 
 cd linux-%{KVERREL}
-
-ApplyOptionalPatch patch-%{rpmversion}-redhat.patch
+cp -a %{SOURCE1} .
 
 %if !%{nopatches}
 
