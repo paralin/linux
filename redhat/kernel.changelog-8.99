@@ -1,3 +1,14 @@
+* Wed Apr 29 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc3.20200429git1d2cc5ac6f66.1]
+- 1d2cc5ac6f66 rebase
+- Add cec to the filter overrides ("Justin M. Forbes")
+- Add overrides to filter-modules.sh ("Justin M. Forbes")
+- Copy Makefile.rhelver as a source file rather than a patch (Jeremy Cline)
+- Move the sed to clear the patch templating outside of conditionals ("Justin M. Forbes")
+- Only include open merge requests with "Include in Releases" label (Jeremy Cline)
+- Exit non-zero if the tag already exists for a release (Jeremy Cline)
+- Adjust the changelog update script to not push anything (Jeremy Cline)
+- Drop --target noarch from the rh-rpms make target (Jeremy Cline)
+
 * Fri Apr 24 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc2.20200424gitb4f633221f0a.1]
 - b4f633221f0a rebase
 
