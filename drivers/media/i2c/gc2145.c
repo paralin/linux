@@ -1602,7 +1602,7 @@ static int gc2145_setup_mode(struct gc2145_dev *sensor)
 	scaling_desired = width <= GC2145_SENSOR_WIDTH_MAX / 2
 			&& height <= GC2145_SENSOR_HEIGHT_MAX / 2;
 
-	pclk2 = 60000000;
+	pclk2 = 50000000;
 
 	ret = gc2145_set_2pclk(sensor, &pclk2, false);
 	if (ret < 0)
