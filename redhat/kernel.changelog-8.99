@@ -1,3 +1,7 @@
+* Fri May 01 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc3.20200501gitc45e8bccecaf.1]
+- c45e8bccecaf rebase
+- Updated changelog for the release based on 1d2cc5ac6f66 ("CKI@GitLab")
+
 * Wed Apr 29 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc3.20200429git1d2cc5ac6f66.1]
 - 1d2cc5ac6f66 rebase
 - Add cec to the filter overrides ("Justin M. Forbes")
