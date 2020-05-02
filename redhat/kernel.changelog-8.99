@@ -1,3 +1,9 @@
+* Sat May 02 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc3.20200502git690e2aba7beb.1]
+- 690e2aba7beb rebase
+- Updated changelog for the release based on c45e8bccecaf ("CKI@GitLab")
+- Drop the requirement to have a remote called linus (Jeremy Cline)
+- Rename 'internal' branch to 'os-build' (Don Zickus)
+
 * Fri May 01 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc3.20200501gitc45e8bccecaf.1]
 - c45e8bccecaf rebase
 - Updated changelog for the release based on 1d2cc5ac6f66 ("CKI@GitLab")
