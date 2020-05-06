@@ -1,3 +1,7 @@
+* Wed May 06 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc4.20200506gitdc56c5acd850.1]
+- dc56c5acd850 rebase
+- Updated changelog for the release based on 47cf1b422e60 ("CKI@GitLab")
+
 * Tue May 05 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc4.20200505git47cf1b422e60.1]
 - 47cf1b422e60 rebase
 - Build ARK against ELN (Don Zickus)
