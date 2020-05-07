@@ -37,7 +37,7 @@ git checkout os-build
 git checkout os-build
 ./redhat/scripts/ci/ark-update-configs.sh "$UPSTREAM_REF" "$PROJECT_ID"
 
-if git tag -v "$UPSTREAM_REF" > /dev/null 2>&1; then
+if git tag -v "$(git describe --exact-match "$UPSTREAM_REF")"; then
 	git checkout -b ark/"$UPSTREAM_REF" ark/patches/"$UPSTREAM_REF"
 	RELEASE_BRANCHES=" ark/$UPSTREAM_REF ark/patches/$UPSTREAM_REF"
 else

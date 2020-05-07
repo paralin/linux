@@ -102,7 +102,7 @@ else
 	exit 2
 fi
 
-if git tag -v "$UPSTREAM_REF" > /dev/null 2>&1; then
+if git tag -v "$(git describe --exact-match "$UPSTREAM_REF")"; then
 	printf "Creating branch \"ark/patches/%s\"\n" "$UPSTREAM_REF"
 	git branch ark/patches/"$UPSTREAM_REF"
 	printf "Don't forget to run 'git push <remote> ark/patches/%s'\n" "$UPSTREAM_REF"
