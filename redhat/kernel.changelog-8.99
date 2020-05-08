@@ -1,3 +1,7 @@
+* Fri May 08 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc4.20200508git79dede78c057.1]
+- 79dede78c057 rebase
+- Updated changelog for the release based on a811c1fa0a02 ("CKI@GitLab")
+
 * Thu May 07 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc4.20200507gita811c1fa0a02.1]
 - a811c1fa0a02 rebase
 - perf cs-etm: Move defined of traceid_list (Leo Yan)
