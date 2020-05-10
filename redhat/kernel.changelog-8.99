@@ -1,3 +1,7 @@
+* Sun May 10 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc4.20200510gite99332e7b4cd.1]
+- e99332e7b4cd rebase
+- Updated changelog for the release based on d5eeab8d7e26 ("CKI@GitLab")
+
 * Sat May 09 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc4.20200509gitd5eeab8d7e26.1]
 - d5eeab8d7e26 rebase
 - Add zero-commit to format-patch options ("Justin M. Forbes")
