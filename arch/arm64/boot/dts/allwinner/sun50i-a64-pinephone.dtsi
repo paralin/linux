@@ -20,8 +20,14 @@
 	backlight: backlight {
 		compatible = "pwm-backlight";
 		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-		brightness-levels = <0 10 20 30 40 50 60 70 80 90 100>;
-		default-brightness-level = <8>;
+		brightness-levels = <
+			774  793  814  842
+			882  935  1003 1088
+			1192 1316 1462 1633
+			1830 2054 2309 2596 
+			2916 3271 3664 4096>;
+		num-interpolated-steps = <50>;
+		default-brightness-level = <512>;
 		enable-gpios = <&pio 7 10 GPIO_ACTIVE_HIGH>; /* PH10 */
 	};
 
