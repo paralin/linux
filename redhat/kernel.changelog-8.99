@@ -1,3 +1,8 @@
+* Tue May 12 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc5.20200512git152036d1379f.1]
+- 152036d1379f rebase
+- Updated changelog for the release based on v5.7-rc5 ("CKI@GitLab")
+- Fix "multiple files for package kernel-tools" (Pablo Greco)
+
 * Mon May 11 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc5.1]
 - v5.7-rc5 rebase
 - Updated changelog for the release based on e99332e7b4cd ("CKI@GitLab")
