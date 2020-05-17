@@ -1,3 +1,7 @@
+* Sun May 17 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc5.20200517git3d1c1e5931ce.1]
+- 3d1c1e5931ce rebase
+- Updated changelog for the release based on 12bf0b632ed0 ("CKI@GitLab")
+
 * Sat May 16 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc5.20200516git12bf0b632ed0.1]
 - 12bf0b632ed0 rebase
 - Updated changelog for the release based on 1ae7efb38854 ("CKI@GitLab")
