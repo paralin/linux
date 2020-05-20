@@ -139,6 +139,10 @@
 	status = "okay";
 };
 
+&i2s2 {
+	status = "okay";
+};
+
 &mmc0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&mmc0_pins>;
@@ -400,6 +404,10 @@
 	tcon0_out_anx6345: endpoint {
 		remote-endpoint = <&anx6345_in_tcon0>;
 	};
+};
+
+&sound_hdmi {
+	status = "okay";
 };
 
 &uart0 {
