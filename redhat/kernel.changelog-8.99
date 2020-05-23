@@ -1,3 +1,14 @@
+* Sat May 23 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc6.20200523git444565650a5f.1]
+- 444565650a5f rebase
+- x86: Fix compile issues with rh_check_supported() (Don Zickus)
+- redhat/Makefile: Fix RHEL8 python warning (Prarit Bhargava)
+- kernel.spec: fix 'make scripts' for kernel-devel package (Brian Masney)
+- Makefile: correct help text for dist-cross-<arch>-rpms (Brian Masney)
+- Add Documentation back to kernel-devel as it has Kconfig now ("Justin M. Forbes")
+- Updated changelog for the release based on 642b151f45dd ("CKI@GitLab")
+- redhat: Change Makefile target names to dist- (Prarit Bhargava)
+- configs: Disable Serial IR driver (Prarit Bhargava)
+
 * Tue May 19 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc6.20200519git642b151f45dd.1]
 - 642b151f45dd rebase
 - pwm: lpss: Fix get_state runtime-pm reference handling (Hans de Goede)
