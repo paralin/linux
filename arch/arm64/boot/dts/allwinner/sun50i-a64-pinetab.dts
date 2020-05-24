@@ -25,8 +25,13 @@
 	backlight: backlight {
 		compatible = "pwm-backlight";
 		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-		brightness-levels = <0 16 18 20 22 24 26 29 32 35 38 42 46 51 56 62 68 75 83 91 100>;
-		default-brightness-level = <15>;
+		brightness-levels = <
+			256 512 768 1024
+			1280 1536 1792 2048
+			2304 2560 2816 3072
+			3328 3584 3840 4096>;
+		num-interpolated-steps = <256>;
+		default-brightness-level = <2048>;
 		enable-gpios = <&pio 3 23 GPIO_ACTIVE_HIGH>; /* PD23 */
 		power-supply = <&vdd_bl>;
 	};
