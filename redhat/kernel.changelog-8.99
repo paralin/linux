@@ -1,3 +1,7 @@
+* Mon May 25 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc7.1]
+- v5.7-rc7 rebase
+- Updated changelog for the release based on caffb99b6929 ("CKI@GitLab")
+
 * Sun May 24 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc6.20200524gitcaffb99b6929.1]
 - caffb99b6929 rebase
 - Updated changelog for the release based on 444565650a5f ("CKI@GitLab")
