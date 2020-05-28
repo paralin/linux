@@ -1,3 +1,7 @@
+* Thu May 28 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc7.20200528gitb0c3ba31be3e.1]
+- b0c3ba31be3e rebase
+- Updated changelog for the release based on 444fc5cde643 ("CKI@GitLab")
+
 * Wed May 27 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc7.20200527git444fc5cde643.1]
 - 444fc5cde643 rebase
 - platform/x86: sony-laptop: SNC calls should handle BUFFER types (Mattia Dongili)
