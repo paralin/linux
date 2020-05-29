@@ -28,6 +28,9 @@ clogf="$SOURCES/changelog"
 HIDE_REDHAT=1;
 # hide entries for unsupported arches
 HIDE_UNSUPPORTED_ARCH=1;
+# Set up for broken out patches
+plistf="$SOURCES/Patchlist"
+pnum=2
 # override LC_TIME to avoid date conflicts when building the srpm
 LC_TIME=
 STAMP=$(echo $MARKER | cut -f 1 -d '-' | sed -e "s/v//");
@@ -243,11 +246,27 @@ test -n "$SPECFILE" &&
 
 
 if [ "$SINGLE_TARBALL" = 0 ]; then
-	git diff -p --no-renames --stat $MARKER.. ":(exclude,top)redhat" ":(exclude,top)makefile" ":(exclude,top)configs" ":(exclude,top).gitattributes" ":(exclude,top).gitignore"> $SOURCES/patch-${RPMVERSION}-redhat.patch
-else
-	# Need an empty file for dist-git compatibility
-	touch $SOURCES/patch-${RPMVERSION}-redhat.patch
+	truncate -s 0 $plistf
+	COMMITS=$(git log --reverse --pretty=format:"%h" --no-merges "$MARKER".. \
+		":(exclude,top).get_maintainer.conf" \
+		":(exclude,top).gitattributes" \
+		":(exclude,top).gitignore" \
+		":(exclude,top).gitlab-ci.yml" \
+		":(exclude,top)makefile" \
+		":(exclude,top)Makefile.rhelver" \
+		":(exclude,top)redhat")
+	for c in $COMMITS; do
+		patch=$(git format-patch --zero-commit -1 "$c")
+		echo "$patch" >> $plistf
+		mv $patch $SOURCES/
+		sed -i "s/%%PATCHLIST%%/Patch$pnum: $patch\n%%PATCHLIST%%/" $SPECFILE
+		sed -i "s/%%APPLYPATCH%%/ApplyOptionalPatch $patch\n%%APPLYPATCH%%/" $SPECFILE
+		((pnum++))
+	done
 fi
+
+sed -i "s/%%PATCHLIST%%//" $SPECFILE
+sed -i "s/%%APPLYPATCH%%//" $SPECFILE
 
 for opt in $BUILDOPTS; do
 	add_opt=
