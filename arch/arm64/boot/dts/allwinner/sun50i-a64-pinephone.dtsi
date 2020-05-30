@@ -341,6 +341,7 @@
 };
 
 &de {
+	allwinner,pipelines = <&mixer0>;
 	status = "okay";
 };
 
@@ -818,4 +819,12 @@
 
 &usbphy {
 	status = "okay";
+};
+
+&mixer1 {
+	status = "disabled";
+};
+
+&tcon1 {
+	status = "disabled";
 };
