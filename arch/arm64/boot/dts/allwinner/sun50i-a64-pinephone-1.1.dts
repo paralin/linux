@@ -22,6 +22,15 @@
 			wakeup-event-action = <EV_ACT_ASSERTED>;
 			wakeup-source;
 		};
+
+                ring-indicator2 {
+                        label = "Ring Indicator v2";
+                        gpios = <&r_pio 0 6 GPIO_ACTIVE_LOW>; /* PL6 */
+                        linux,code = <KEY_WAKEUP>;
+                        wakeup-event-action = <EV_ACT_ASSERTED>;
+                        wakeup-source;
+                };
+
 	};
 };
 
