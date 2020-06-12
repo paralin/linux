@@ -1,3 +1,28 @@
+* Fri Jun 12 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc0.20200612gitb791d1bdf921.1]
+- b791d1bdf921 rebase
+- PCI: tegra: Revert raw_violation_fixup for tegra124 (Nicolas Chauvet)
+- One more Fedora config update ("Justin M. Forbes")
+- Change ark CONFIG_COMMON_CLK to yes, it is selected already by other options ("Justin M. Forbes")
+- Fix PATCHLEVEL for merge window ("Justin M. Forbes")
+- More module filtering for Fedora ("Justin M. Forbes")
+- Update filters for rnbd in Fedora ("Justin M. Forbes")
+- redhat/Makefile.common: fix RPMKSUBLEVEL condition (Ondrej Mosnacek)
+- redhat/Makefile: silence KABI tar output (Ondrej Mosnacek)
+- Fix up module filtering for 5.8 ("Justin M. Forbes")
+- More Fedora config work ("Justin M. Forbes")
+- RTW88BE and CE have been extracted to their own modules ("Justin M. Forbes")
+- Set CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK for Fedora ("Justin M. Forbes")
+- Arm64 Use Branch Target Identification for kernel ("Justin M. Forbes")
+- Fedora config updates ("Justin M. Forbes")
+- Change value of CONFIG_SECURITY_SELINUX_CHECKREQPROT_VALUE ("Justin M. Forbes")
+- Fix configs for Fedora ("Justin M. Forbes")
+- Fix update_scripts.sh unselective pattern sub (David Howells)
+- Updated changelog for the release based on b0c3ba31be3e ("CKI@GitLab")
+- Drop the static path configuration for the Sphinx docs (Jeremy Cline)
+- Sign off generated configuration patches (Jeremy Cline)
+- Use __make macro instead of make (Tom Stellard)
+- redhat/configs: Enable CONFIG_SMC91X and disable CONFIG_SMC911X (Prarit Bhargava) [http://bugzilla.redhat.com/1722136]
+
 * Thu May 28 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc7.20200528gitb0c3ba31be3e.1]
 - b0c3ba31be3e rebase
 - Updated changelog for the release based on 444fc5cde643 ("CKI@GitLab")
