@@ -1,3 +1,7 @@
+* Sat Jun 13 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc0.20200613gitdf2fbf5bfa0e.1]
+- df2fbf5bfa0e rebase
+- Updated changelog for the release based on b791d1bdf921 (Fedora Kernel Team)
+
 * Fri Jun 12 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc0.20200612gitb791d1bdf921.1]
 - b791d1bdf921 rebase
 - PCI: tegra: Revert raw_violation_fixup for tegra124 (Nicolas Chauvet)
