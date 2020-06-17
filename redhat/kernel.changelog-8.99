@@ -1,3 +1,7 @@
+* Wed Jun 17 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc1.20200617git69119673bd50.1]
+- 69119673bd50 rebase
+- Updated changelog for the release based on a5dc8300df75 (Fedora Kernel Team)
+
 * Tue Jun 16 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc1.20200616gita5dc8300df75.1]
 - a5dc8300df75 rebase
 - Fedora config update for rc1 ("Justin M. Forbes")
