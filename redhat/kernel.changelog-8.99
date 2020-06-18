@@ -1,3 +1,10 @@
+* Thu Jun 18 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc1.20200618git1b5044021070.1]
+- 1b5044021070 rebase
+- redhat/Makefile: Add fedora-configs and rh-configs make targets (Prarit Bhargava)
+- Updated changelog for the release based on 69119673bd50 (Fedora Kernel Team)
+- redhat/configs: Use SHA512 for module signing (Prarit Bhargava)
+- genspec.sh: 'touch' empty Patchlist file for single tarball (Don Zickus)
+
 * Wed Jun 17 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc1.20200617git69119673bd50.1]
 - 69119673bd50 rebase
 - Updated changelog for the release based on a5dc8300df75 (Fedora Kernel Team)
