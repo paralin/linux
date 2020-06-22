@@ -580,10 +580,6 @@
 
 #include "axp803.dtsi"
 
-&ac_power_supply {
-	status = "okay";
-};
-
 &axp_adc {
 	x-powers,ts-as-gpadc;
 };
