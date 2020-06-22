@@ -1,3 +1,7 @@
+* Mon Jun 22 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc2.20200622git625d3449788f.1]
+- 625d3449788f rebase
+- Updated changelog for the release based on 1b5044021070 (Fedora Kernel Team)
+
 * Thu Jun 18 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc1.20200618git1b5044021070.1]
 - 1b5044021070 rebase
 - redhat/Makefile: Add fedora-configs and rh-configs make targets (Prarit Bhargava)
