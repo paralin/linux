@@ -1,3 +1,9 @@
+* Tue Jun 23 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc2.20200623gitdd0d718152e4.1]
+- dd0d718152e4 rebase
+- Add new bpf man pages ("Justin M. Forbes")
+- Add default option for CONFIG_ARM64_BTI_KERNEL to pending-common so that eln kernels build ("Justin M. Forbes")
+- Updated changelog for the release based on 625d3449788f (Fedora Kernel Team)
+
 * Mon Jun 22 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc2.20200622git625d3449788f.1]
 - 625d3449788f rebase
 - Updated changelog for the release based on 1b5044021070 (Fedora Kernel Team)
