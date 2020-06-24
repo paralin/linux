@@ -54,7 +54,12 @@ int rtw_adhoc_tx_pwr = 1;
 int rtw_soft_ap = 0;
 /* int smart_ps = 1; */
 #ifdef CONFIG_POWER_SAVING
-	int rtw_power_mgnt = PS_MODE_MAX;
+	// Setting PS_MODE_ACTIVE by default keeps the power saving code in the
+	// driver but works around an issue where the 8723cs won't leave Leisure
+	// Power Saving mode without long delays. Allows for testing different
+	// firmwares.
+	// int rtw_power_mgnt = PS_MODE_MAX;
+	int rtw_power_mgnt = PS_MODE_ACTIVE;
 	#ifdef CONFIG_IPS_LEVEL_2
 		int rtw_ips_mode = IPS_LEVEL_2;
 	#else
