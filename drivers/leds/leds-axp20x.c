@@ -29,6 +29,8 @@
 struct axp20x_led {
 	struct led_classdev cdev;
 	struct regmap *regmap;
+	struct led_trigger chg_a_trigger;
+	struct led_trigger chg_b_trigger;
 };
 
 static int axp20x_led_set(struct led_classdev *led_cdev,
@@ -141,6 +143,48 @@ static struct attribute *axp20x_led_attrs[] = {
 
 ATTRIBUTE_GROUPS(axp20x_led);
 
+static int axp20x_set_mode(struct led_classdev *led_cdev, int mode,
+			   bool charger_ctl)
+{
+	struct axp20x_led *led = container_of(led_cdev, struct axp20x_led, cdev);
+	int ret;
+
+	ret = regmap_update_bits(led->regmap, AXP20X_CHRG_CTRL2,
+				 AXP20X_CHRG_CTRL2_MODE,
+				 mode ? AXP20X_CHRG_CTRL2_MODE : 0);
+	if (ret)
+		return ret;
+
+	ret = regmap_update_bits(led->regmap, AXP20X_OFF_CTRL,
+				 AXP20X_CHGLED_CTRL_MASK,
+				 charger_ctl ? AXP20X_CHGLED_CTRL_CHARGER :
+				 AXP20X_CHGLED_CTRL_USER);
+	if (ret)
+		return ret;
+
+	return 0;
+}
+
+static int axp20x_trig_charge_a_activate(struct led_classdev *led_cdev)
+{
+	return axp20x_set_mode(led_cdev, 0, true);
+}
+
+static int axp20x_trig_charge_b_activate(struct led_classdev *led_cdev)
+{
+	return axp20x_set_mode(led_cdev, 1, true);
+}
+
+static void axp20x_trig_charge_a_deactivate(struct led_classdev *led_cdev)
+{
+	axp20x_set_mode(led_cdev, 0, false);
+}
+
+static void axp20x_trig_charge_b_deactivate(struct led_classdev *led_cdev)
+{
+	axp20x_set_mode(led_cdev, 1, false);
+}
+
 static int axp20x_led_probe(struct platform_device *pdev)
 {
 	struct axp20x_dev *axp20x;
@@ -172,8 +216,30 @@ static int axp20x_led_probe(struct platform_device *pdev)
 
 	ret = devm_led_classdev_register(pdev->dev.parent, &led->cdev);
 	if (ret) {
-		dev_err(&pdev->dev, "Failed to register device %s\n",
+		dev_err(&pdev->dev, "Failed to register led %s\n",
 			led->cdev.name);
+		return ret;
+	}
+
+	led->chg_a_trigger.name = "charger-mode-a";
+	led->chg_a_trigger.private_led = &led->cdev;
+	led->chg_a_trigger.activate = axp20x_trig_charge_a_activate;
+	led->chg_a_trigger.deactivate = axp20x_trig_charge_a_deactivate;
+
+	led->chg_b_trigger.name = "charger-mode-b";
+	led->chg_b_trigger.private_led = &led->cdev;
+	led->chg_b_trigger.activate = axp20x_trig_charge_b_activate;
+	led->chg_b_trigger.deactivate = axp20x_trig_charge_b_deactivate;
+
+	ret = devm_led_trigger_register(pdev->dev.parent, &led->chg_a_trigger);
+	if (ret) {
+		dev_err(&pdev->dev, "Failed to register charger trigger A\n");
+		return ret;
+	}
+
+	ret = devm_led_trigger_register(pdev->dev.parent, &led->chg_b_trigger);
+	if (ret) {
+		dev_err(&pdev->dev, "Failed to register charger trigger B\n");
 		return ret;
 	}
 
