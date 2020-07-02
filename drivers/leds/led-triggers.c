@@ -50,7 +50,8 @@ ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
 
 	down_read(&triggers_list_lock);
 	list_for_each_entry(trig, &trigger_list, next_trig) {
-		if (sysfs_streq(buf, trig->name)) {
+		if (sysfs_streq(buf, trig->name) &&
+		    (!trig->private_led || trig->private_led == led_cdev)) {
 			down_write(&led_cdev->trigger_lock);
 			led_trigger_set(led_cdev, trig);
 			up_write(&led_cdev->trigger_lock);
@@ -95,6 +96,9 @@ static int led_trigger_format(char *buf, size_t size,
 	list_for_each_entry(trig, &trigger_list, next_trig) {
 		bool hit = led_cdev->trigger &&
 			!strcmp(led_cdev->trigger->name, trig->name);
+
+		if (trig->private_led && trig->private_led != led_cdev)
+			continue;
 
 		len += led_trigger_snprintf(buf + len, size - len,
 					    " %s%s%s", hit ? "[" : "",
@@ -243,7 +247,8 @@ void led_trigger_set_default(struct led_classdev *led_cdev)
 	down_read(&triggers_list_lock);
 	down_write(&led_cdev->trigger_lock);
 	list_for_each_entry(trig, &trigger_list, next_trig) {
-		if (!strcmp(led_cdev->default_trigger, trig->name)) {
+		if (!strcmp(led_cdev->default_trigger, trig->name) &&
+		    (!trig->private_led || trig->private_led == led_cdev)) {
 			led_cdev->flags |= LED_INIT_DEFAULT_TRIGGER;
 			led_trigger_set(led_cdev, trig);
 			break;
@@ -280,7 +285,8 @@ int led_trigger_register(struct led_trigger *trig)
 	down_write(&triggers_list_lock);
 	/* Make sure the trigger's name isn't already in use */
 	list_for_each_entry(_trig, &trigger_list, next_trig) {
-		if (!strcmp(_trig->name, trig->name)) {
+		if (!strcmp(_trig->name, trig->name) &&
+		    (!_trig->private_led || _trig->private_led == trig->private_led)) {
 			up_write(&triggers_list_lock);
 			return -EEXIST;
 		}
