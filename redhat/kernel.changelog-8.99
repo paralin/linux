@@ -1,3 +1,11 @@
+* Fri Jul 17 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc5.20200717git07a56bb875af.1]
+- 07a56bb875af rebase
+- redhat/configs: Fix common CONFIGs (Prarit Bhargava)
+- redhat/configs: General CONFIG cleanups (Prarit Bhargava)
+- redhat/configs: Update & generalize evaluate_configs (Prarit Bhargava)
+- arch/x86: Remove vendor specific CPU ID checks (Prarit Bhargava)
+- Updated changelog for the release based on e9919e11e219 (Fedora Kernel Team)
+
 * Wed Jul 15 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc5.20200715gite9919e11e219.1]
 - e9919e11e219 rebase
 - arm64: dts: sun50i-a64-pinephone: Add touchscreen support (Ondrej Jirman)
