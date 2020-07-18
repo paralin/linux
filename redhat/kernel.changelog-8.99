@@ -1,3 +1,7 @@
+* Sat Jul 18 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc5.20200718git6a70f89cc58f.1]
+- 6a70f89cc58f rebase
+- Updated changelog for the release based on 07a56bb875af (Fedora Kernel Team)
+
 * Fri Jul 17 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc5.20200717git07a56bb875af.1]
 - 07a56bb875af rebase
 - redhat/configs: Fix common CONFIGs (Prarit Bhargava)
