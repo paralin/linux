@@ -1,3 +1,7 @@
+* Sun Jul 19 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc5.20200719gitf932d58abc38.1]
+- f932d58abc38 rebase
+- Updated changelog for the release based on 6a70f89cc58f (Fedora Kernel Team)
+
 * Sat Jul 18 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc5.20200718git6a70f89cc58f.1]
 - 6a70f89cc58f rebase
 - Updated changelog for the release based on 07a56bb875af (Fedora Kernel Team)
