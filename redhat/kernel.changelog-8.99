@@ -1,3 +1,8 @@
+* Tue Jul 21 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc6.20200721git4fa640dc5230.1]
+- 4fa640dc5230 rebase
+- Updated changelog for the release based on 5714ee50bb43 (Fedora Kernel Team)
+- redhat/docs: Add Fedora RPM tagging date (Prarit Bhargava)
+
 * Mon Jul 20 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc6.20200720git5714ee50bb43.1]
 - 5714ee50bb43 rebase
 - Updated changelog for the release based on f932d58abc38 (Fedora Kernel Team)
