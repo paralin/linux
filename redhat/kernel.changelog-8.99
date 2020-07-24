@@ -1,3 +1,7 @@
+* Fri Jul 24 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc6.20200724gitf37e99aca03f.1]
+- f37e99aca03f rebase
+- Updated changelog for the release based on d15be546031c (Fedora Kernel Team)
+
 * Thu Jul 23 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc6.20200723gitd15be546031c.1]
 - d15be546031c rebase
 - fedora: arm: Update some meson config options (Peter Robinson)
