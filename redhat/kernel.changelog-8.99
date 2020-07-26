@@ -1,3 +1,7 @@
+* Sun Jul 26 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc6.20200726git04300d66f0a0.1]
+- 04300d66f0a0 rebase
+- Updated changelog for the release based on 23ee3e4e5bd2 (Fedora Kernel Team)
+
 * Sat Jul 25 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc6.20200725git23ee3e4e5bd2.1]
 - 23ee3e4e5bd2 rebase
 - Enable CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG ("Justin M. Forbes")
