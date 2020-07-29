@@ -1,3 +1,9 @@
+* Wed Jul 29 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc7.20200729git6ba1b005ffc3.1]
+- 6ba1b005ffc3 rebase
+- Revert "dt-bindings: Add doc for Pine64 Pinebook Pro" (Peter Robinson)
+- fedora: enable LEDS_SGM3140 for arm configs (Peter Robinson)
+- Updated changelog for the release based on v5.8-rc7 (Fedora Kernel Team)
+
 * Mon Jul 27 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc7.1]
 - v5.8-rc7 rebase
 - Updated changelog for the release based on 04300d66f0a0 (Fedora Kernel Team)
