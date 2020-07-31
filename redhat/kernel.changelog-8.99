@@ -1,3 +1,9 @@
+* Fri Jul 31 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc7.20200731git417385c47ef7.1]
+- 417385c47ef7 rebase
+- Add new certs for dual signing with boothole ("Justin M. Forbes")
+- Update secureboot signing for dual keys ("Justin M. Forbes")
+- Updated changelog for the release based on d3590ebf6f91 (Fedora Kernel Team)
+
 * Thu Jul 30 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc7.20200730gitd3590ebf6f91.1]
 - d3590ebf6f91 rebase
 - Updated changelog for the release based on 6ba1b005ffc3 (Fedora Kernel Team)
