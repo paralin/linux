@@ -215,8 +215,13 @@ static int mfd_add_device(struct device *parent, int id,
 				ret = mfd_match_of_node_to_dev(pdev, np, cell);
 				if (ret == -EAGAIN)
 					continue;
-				if (ret)
+				if (ret) {
+					if (ret == -ENODEV) {
+						/* Ignore disabled devices error free */
+						ret = 0;
+					}
 					goto fail_alias;
+				}
 
 				break;
 			}
