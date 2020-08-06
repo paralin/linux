@@ -20,6 +20,13 @@ else
   endif
 endif
 
+
+ifeq ("$(IS_FEDORA)", "1")
+   DIST_TARGET=fedora
+else
+   DIST_TARGET=rhel
+endif
+
 ifeq ("$(NO_CONFIGCHECKS)","1")
    PROCESS_CONFIGS_OPTS=
    PROCESS_CONFIGS_CHECK_OPTS=
@@ -131,20 +138,20 @@ dist-configs-commit: dist-configs-prep
 	./process_configs.sh -z $(PACKAGE_NAME) $(KVERSION) "" $(FLAVOR)
 
 dist-configs: dist-configs-prep
-	@cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh "$(FLAVOR)" 1; \
+	@cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh rhel 1; \
 	./process_configs.sh $(PROCESS_CONFIGS_OPTS) $(PACKAGE_NAME) $(KVERSION)
 
-fedora-configs: FLAVOR = fedora
+fedora-configs: DIST_TARGET=fedora
 fedora-configs: dist-configs
 
-rh-configs: FLAVOR = rhel
+rh-configs: DIST_TARGET=rhel
 rh-configs: dist-configs
 
 dist-configs-check: dist-configs-prep
 	cd $(REDHAT)/configs; ./process_configs.sh $(PROCESS_CONFIGS_CHECK_OPTS) $(PACKAGE_NAME)
 
 dist-configs-prep: dist-clean-configs
-	cd $(REDHAT)/configs; ./build_configs.sh "$(PACKAGE_NAME)" "$(ARCH_MACH)" "$(FLAVOR)"
+	cd $(REDHAT)/configs; TARGET=$(DIST_TARGET) ./build_configs.sh $(PACKAGE_NAME) $(ARCH_MACH)
 
 dist-configs-arch: ARCH_MACH = $(MACH)
 dist-configs-arch: dist-configs

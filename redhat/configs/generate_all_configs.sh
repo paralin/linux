@@ -25,7 +25,7 @@ for i in kernel-*-$PRIMARY.config; do
 	mv $i $NEW
 done
 
-rm -f kernel-*-$SECONDARY.config
+rm kernel-*-$SECONDARY.config
 
 if [ $DEBUGBUILDSENABLED -eq 0 ]; then
 	for i in kernel-*debug*.config; do
