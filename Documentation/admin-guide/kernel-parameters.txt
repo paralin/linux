@@ -832,6 +832,21 @@
 			useful to also enable the page_owner functionality.
 			on: enable the feature
 
+	debugfs=    	[KNL] This parameter enables what is exposed to userspace
+			and debugfs internal clients.
+			Format: { on, no-mount, off }
+			on: 	All functions are enabled.
+			no-mount:
+				Filesystem is not registered but kernel clients can
+			        access APIs and a crashkernel can be used to read
+				its content. There is nothing to mount.
+			off: 	Filesystem is not registered and clients
+			        get a -EPERM as result when trying to register files
+				or directories within debugfs.
+				This is equivalent of the runtime functionality if
+				debugfs was not enabled in the kernel at all.
+			Default value is set in build-time with a kernel configuration.
+
 	debugpat	[X86] Enable PAT debugging
 
 	decnet.addr=	[HW,NET]
@@ -900,6 +915,10 @@
 
 	disable_radix	[PPC]
 			Disable RADIX MMU mode on POWER9
+
+	radix_hcall_invalidate=on  [PPC/PSERIES]
+			Disable RADIX GTSE feature and use hcall for TLB
+			invalidate.
 
 	disable_tlbie	[PPC]
 			Disable TLBIE instruction. Currently does not work
@@ -4674,7 +4693,7 @@
 			fragmentation.  Defaults to 1 for systems with
 			more than 32MB of RAM, 0 otherwise.
 
-	slub_debug[=options[,slabs]]	[MM, SLUB]
+	slub_debug[=options[,slabs][;[options[,slabs]]...]	[MM, SLUB]
 			Enabling slub_debug allows one to determine the
 			culprit if slab objects become corrupted. Enabling
 			slub_debug can create guard zones around objects and
@@ -5789,8 +5808,9 @@
 			panic() code such as dumping handler.
 
 	xen_nopvspin	[X86,XEN]
-			Disables the ticketlock slowpath using Xen PV
-			optimizations.
+			Disables the qspinlock slowpath using Xen PV optimizations.
+			This parameter is obsoleted by "nopvspin" parameter, which
+			has equivalent effect for XEN platform.
 
 	xen_nopv	[X86]
 			Disables the PV optimizations forcing the HVM guest to
@@ -5815,6 +5835,11 @@
 			Disables the PV optimizations forcing the guest to run
 			as generic guest with no PV drivers. Currently support
 			XEN HVM, KVM, HYPER_V and VMWARE guest.
+
+	nopvspin	[X86,XEN,KVM]
+			Disables the qspinlock slow path using PV optimizations
+			which allow the hypervisor to 'idle' the guest on lock
+			contention.
 
 	xirc2ps_cs=	[NET,PCMCIA]
 			Format:
