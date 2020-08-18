@@ -1,3 +1,32 @@
+* Tue Aug 18 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc1.20200818git06a4ec1d9dc6.1]
+- 06a4ec1d9dc6 rebase
+- First half of config updates for Fedora ("Justin M. Forbes")
+- Add config options that only show up when we prep on arm ("Justin M. Forbes")
+- Config updates for Fedora ("Justin M. Forbes")
+- fedora: enable enery model (Peter Robinson)
+- iio: enable LTR-559 light and proximity sensor (Peter Robinson)
+- iio: chemical: enable some popular chemical and partical sensors (Peter Robinson)
+- More mismatches ("Justin M. Forbes")
+- Fedora config change due to deps ("Justin M. Forbes")
+- CONFIG_SND_SOC_MAX98390 is now selected by SND_SOC_INTEL_DA7219_MAX98357A_GENERIC ("Justin M. Forbes")
+- Config change required for build part 2 ("Justin M. Forbes")
+- Config change required for build ("Justin M. Forbes")
+- Updates for Fedora arm architectures for the 5.9 window (Peter Robinson)
+- Enable ARM_SMCCC_SOC_ID on all aarch64 kernels (Peter Robinson)
+- Enable ZSTD compression algorithm on all kernels (Peter Robinson)
+- Fedora config update ("Justin M. Forbes")
+- Revert "Merge branch 'make_configs_fix' into 'os-build'" (Justin Forbes)
+- Use the configs/generic config for SND_HDA_INTEL everywhere (Peter Robinson)
+- redhat/configs/process_configs.sh: Remove *.config.orig files (Prarit Bhargava)
+- redhat/configs/process_configs.sh: Add process_configs_known_broken flag (Prarit Bhargava)
+- redhat/Makefile: Fix '*-configs' targets (Prarit Bhargava)
+- Updated changelog for the release based on v5.8 (Fedora Kernel Team)
+- Add ability to sync upstream through Makefile (Don Zickus)
+- Add master merge check (Don Zickus)
+- Replace hardcoded values 'os-build' and project id with variables (Don Zickus)
+- gitattributes: Remove unnecesary export restrictions (Prarit Bhargava)
+- redhat/Makefile.common: Fix MARKER (Prarit Bhargava)
+
 * Mon Aug 03 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-1]
 - v5.8 rebase
 - Updated changelog for the release based on ac3a0c847296 (Fedora Kernel Team)
