@@ -43,6 +43,7 @@
 #include <linux/interrupt.h>
 #include <linux/device.h>
 #include <linux/cdev.h>
+#include <linux/kfifo.h>
 #include <linux/module.h>
 #include <linux/poll.h>
 #include <linux/spinlock.h>
@@ -57,33 +58,6 @@
 #include <linux/rfkill.h>
 
 #define DRIVER_NAME "modem-power"
-
-/* uapi ioctl interface */
-
-#define MPWR_STATE_NONE	0
-#define MPWR_STATE_OFF	1
-#define MPWR_STATE_ON	2
-#define MPWR_STATE_KILLED	3
-
-struct mpwr_power_state {
-	u32 now;
-	u32 target;
-	u32 wanted;
-};
-
-/* just a very simple interface for now */
-struct mpwr_atcmd {
-	u8 cmd[512];
-	u8 res[4096 - 512 - 8];
-	u32 res_len;
-	s32 errno;
-};
-
-#define MPWR_IOCTL_RESET _IO('A', 0)
-#define MPWR_IOCTL_STATE _IOWR('A', 4, struct mpwr_power_state)
-#define MPWR_IOCTL_ATCMD _IOWR('A', 5, struct mpwr_atcmd)
-
-/* uapi ioctl interface end */
 
 enum {
 	MPWR_REQ_NONE = 0,
@@ -145,6 +119,8 @@ struct mpwr_dev {
 	char msg[4096];
         int msg_len;
         int msg_ok;
+	//struct kfifo kfifo;
+	DECLARE_KFIFO(kfifo, unsigned char, 4096);
 
 	/* power */
 	struct regulator *regulator;
@@ -203,6 +179,9 @@ enum {
 	/* config options */
         MPWR_F_DUMB_POWERUP,
         MPWR_F_WAIT_RDY,
+	/* file */
+	MPWR_F_OPEN,
+	MPWR_F_OVERFLOW,
 };
 
 static struct class* mpwr_class;
@@ -486,7 +465,8 @@ static int mpwr_eg25_power_up(struct mpwr_dev* mpwr)
 
 	if (!wakeup_ok) {
 		dev_err(mpwr->dev, "The modem looks kill-switched\n");
-		set_bit(MPWR_F_KILLSWITCHED, mpwr->flags);
+		if (!test_and_set_bit(MPWR_F_KILLSWITCHED, mpwr->flags))
+			sysfs_notify(&mpwr->dev->kobj, NULL, "killswitched");
 		goto err_shutdown;
 	}
 
@@ -495,7 +475,8 @@ static int mpwr_eg25_power_up(struct mpwr_dev* mpwr)
 		goto err_shutdown;
 	}
 
-	clear_bit(MPWR_F_KILLSWITCHED, mpwr->flags);
+	if (test_and_clear_bit(MPWR_F_KILLSWITCHED, mpwr->flags))
+		sysfs_notify(&mpwr->dev->kobj, NULL, "killswitched");
 
 	if (test_bit(MPWR_F_DUMB_POWERUP, mpwr->flags))
 		goto powered_up;
@@ -786,6 +767,8 @@ static void mpwr_finish_pdn_work(struct work_struct *work)
 
 static void mpwr_eg25_receive_msg(struct mpwr_dev *mpwr, const char *msg)
 {
+	unsigned int msg_len;
+
 	if (!strcmp(msg, "POWERED DOWN")) {
                 set_bit(MPWR_F_GOT_PDN, mpwr->flags);
 		wake_up(&mpwr->wait);
@@ -815,6 +798,21 @@ static void mpwr_eg25_receive_msg(struct mpwr_dev *mpwr, const char *msg)
 		wake_up(&mpwr->wait);
                 return;
 	}
+
+	if (!test_bit(MPWR_F_OPEN, mpwr->flags))
+		return;
+
+	msg_len = strlen(msg);
+
+	if (msg_len + 1 > kfifo_avail(&mpwr->kfifo)) {
+		if (!test_and_set_bit(MPWR_F_OVERFLOW, mpwr->flags))
+			wake_up(&mpwr->wait);
+		return;
+	}
+
+	kfifo_in(&mpwr->kfifo, msg, msg_len);
+	kfifo_in(&mpwr->kfifo, "\n", 1);
+	wake_up(&mpwr->wait);
 }
 
 static void mpwr_host_ready_work(struct work_struct *work)
@@ -945,13 +943,20 @@ static void mpwr_power_down(struct mpwr_dev* mpwr)
 	}
 
 	dev_info(dev, "powering down");
+
 	set_bit(MPWR_F_POWER_CHANGE_INPROGRESS, mpwr->flags);
+	sysfs_notify(&mpwr->dev->kobj, NULL, "is_busy");
+
 	ret = mpwr->variant->power_down(mpwr);
+
 	clear_bit(MPWR_F_POWER_CHANGE_INPROGRESS, mpwr->flags);
+	sysfs_notify(&mpwr->dev->kobj, NULL, "is_busy");
+
 	if (ret) {
 		dev_err(dev, "power down failed");
 	} else {
 		clear_bit(MPWR_F_POWERED, mpwr->flags);
+		sysfs_notify(&mpwr->dev->kobj, NULL, "powered");
 		dev_info(mpwr->dev, "powered down in %lld ms\n",
 			 ktime_ms_delta(ktime_get(), start));
 	}
@@ -972,13 +977,20 @@ static void mpwr_power_up(struct mpwr_dev* mpwr)
 	}
 
 	dev_info(dev, "powering up");
+
 	set_bit(MPWR_F_POWER_CHANGE_INPROGRESS, mpwr->flags);
+	sysfs_notify(&mpwr->dev->kobj, NULL, "is_busy");
+
 	ret = mpwr->variant->power_up(mpwr);
+
 	clear_bit(MPWR_F_POWER_CHANGE_INPROGRESS, mpwr->flags);
+	sysfs_notify(&mpwr->dev->kobj, NULL, "is_busy");
+
 	if (ret) {
 		dev_err(dev, "power up failed");
 	} else {
 		set_bit(MPWR_F_POWERED, mpwr->flags);
+		sysfs_notify(&mpwr->dev->kobj, NULL, "powered");
 		dev_info(mpwr->dev, "powered up in %lld ms\n",
 			 ktime_ms_delta(ktime_get(), start));
 	}
@@ -987,114 +999,11 @@ static void mpwr_power_up(struct mpwr_dev* mpwr)
 // }}}
 // {{{ chardev
 
-static long mpwr_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
-{
-	struct mpwr_dev* mpwr = fp->private_data;
-	void __user *parg = (void __user *)arg;
-	struct mpwr_power_state state;
-	struct mpwr_atcmd *at;
-	unsigned long flags;
-	int ret = -ENOSYS;
-
-	if (cmd == MPWR_IOCTL_ATCMD) {
-		at = kmalloc(sizeof *at, GFP_KERNEL);
-		if (!at) {
-			return -ENOMEM;
-		}
-
-		if (copy_from_user(at, parg, sizeof *at)) {
-			kfree(at);
-			return -EFAULT;
-		}
-
-		mutex_lock(&mpwr->modem_lock);
-		if (!test_bit(MPWR_F_POWERED, mpwr->flags)) {
-			mutex_unlock(&mpwr->modem_lock);
-			kfree(at);
-			return -ENODEV;
-		}
-
-		gpiod_direction_output(mpwr->dtr_gpio, 0);
-
-		msleep(5);
-
-		at->cmd[sizeof(at->cmd) - 1] = 0;
-		ret = mpwr_serdev_at_cmd(mpwr, at->cmd, 10000);
-		at->errno = ret;
-
-		gpiod_direction_output(mpwr->dtr_gpio, 1);
-
-		mutex_unlock(&mpwr->modem_lock);
-
-		if (!ret) {
-			at->res_len = mpwr->msg_len;
-			if (at->res_len > sizeof(at->res)) {
-				kfree(at);
-				return -E2BIG;
-			}
-
-			if (at->res_len)
-				memcpy(at->res, mpwr->msg, at->res_len);
-		}
-
-		if (copy_to_user(parg, at, sizeof *at)) {
-			kfree(at);
-			return -EFAULT;
-		}
-
-		kfree(at);
-		return 0;
-	}
-
-	if (!capable(CAP_SYS_ADMIN))
-		return -EACCES;
-
-	if (cmd == MPWR_IOCTL_STATE) {
-		if (copy_from_user(&state, parg, sizeof state))
-			return -EFAULT;
-
-		spin_lock_irqsave(&mpwr->lock, flags);
-
-		if (state.wanted == MPWR_STATE_ON)
-			mpwr->last_request = MPWR_REQ_PWUP;
-		else if (state.wanted == MPWR_STATE_OFF)
-			mpwr->last_request = MPWR_REQ_PWDN;
-
-		state.target = MPWR_STATE_NONE;
-		if (mpwr->last_request == MPWR_REQ_PWUP)
-			state.target = MPWR_STATE_ON;
-		else if (mpwr->last_request == MPWR_REQ_PWDN)
-			state.target = MPWR_STATE_OFF;
-
-		state.now = test_bit(MPWR_F_POWERED, mpwr->flags)
-			? MPWR_STATE_ON : MPWR_STATE_OFF;
-
-		if (test_bit(MPWR_F_KILLSWITCHED, mpwr->flags))
-			state.now = MPWR_STATE_KILLED;
-
-		spin_unlock_irqrestore(&mpwr->lock, flags);
-
-		if (copy_to_user(parg, &state, sizeof state))
-			return -EFAULT;
-
-		queue_work(mpwr->wq, &mpwr->power_work);
-		return 0;
-	}
-
-	if (cmd == MPWR_IOCTL_RESET) {
-		spin_lock_irqsave(&mpwr->lock, flags);
-		mpwr->last_request = MPWR_REQ_RESET;
-		spin_unlock_irqrestore(&mpwr->lock, flags);
-		queue_work(mpwr->wq, &mpwr->power_work);
-		return 0;
-	}
-
-	return -ENOSYS;
-}
-
 static int mpwr_release(struct inode *ip, struct file *fp)
 {
-	//struct mpwr_dev* mpwr = fp->private_data;
+	struct mpwr_dev* mpwr = fp->private_data;
+
+	clear_bit(MPWR_F_OPEN, mpwr->flags);
 
 	return 0;
 }
@@ -1105,16 +1014,62 @@ static int mpwr_open(struct inode *ip, struct file *fp)
 
 	fp->private_data = mpwr;
 
+	if (test_and_set_bit(MPWR_F_OPEN, mpwr->flags))
+		return -EBUSY;
+
 	nonseekable_open(ip, fp);
+	return 0;
+}
+
+static ssize_t mpwr_read(struct file *fp, char __user *buf, size_t len,
+			 loff_t *off)
+{
+	struct mpwr_dev* mpwr = fp->private_data;
+	int non_blocking = fp->f_flags & O_NONBLOCK;
+	unsigned int copied;
+	int ret;
+
+	if (non_blocking && kfifo_is_empty(&mpwr->kfifo))
+		return -EWOULDBLOCK;
+
+	ret = wait_event_interruptible(mpwr->wait,
+				       !kfifo_is_empty(&mpwr->kfifo)
+				       || test_bit(MPWR_F_OVERFLOW, mpwr->flags));
+	if (ret)
+		return ret;
+
+	if (test_and_clear_bit(MPWR_F_OVERFLOW, mpwr->flags)) {
+		if (len < 9)
+			return -E2BIG;
+		if (copy_to_user(buf, "OVERFLOW\n", 9))
+			return -EFAULT;
+		return 9;
+	}
+
+	ret = kfifo_to_user(&mpwr->kfifo, buf, len, &copied);
+
+	return ret ? ret : copied;
+}
+
+static unsigned int mpwr_poll(struct file *fp, poll_table *wait)
+{
+	struct mpwr_dev* mpwr = fp->private_data;
+
+	poll_wait(fp, &mpwr->wait, wait);
+
+	if (!kfifo_is_empty(&mpwr->kfifo))
+		return EPOLLIN | EPOLLRDNORM;
+
 	return 0;
 }
 
 static const struct file_operations mpwr_fops = {
 	.owner		= THIS_MODULE,
-	.unlocked_ioctl	= mpwr_ioctl,
 	.open		= mpwr_open,
 	.release	= mpwr_release,
 	.llseek		= noop_llseek,
+	.read		= mpwr_read,
+	.poll		= mpwr_poll,
 };
 
 // }}}
@@ -1180,7 +1135,8 @@ static void mpwr_wd_timer_fn(struct timer_list *t)
 	spin_lock(&mpwr->lock);
 	if (!gpiod_get_value(mpwr->wakeup_gpio)) {
 		if (ktime_ms_delta(ktime_get(), mpwr->last_wakeup) > 5000) {
-			set_bit(MPWR_F_KILLSWITCHED, mpwr->flags);
+			if (!test_and_set_bit(MPWR_F_KILLSWITCHED, mpwr->flags))
+				sysfs_notify(&mpwr->dev->kobj, NULL, "killswitched");
 			wake_up(&mpwr->wait);
 			dev_warn(mpwr->dev, "modem looks killswitched at runtime!\n");
 		}
@@ -1193,7 +1149,7 @@ static void mpwr_wd_timer_fn(struct timer_list *t)
 // {{{ sysfs
 
 static ssize_t powered_show(struct device *dev,
-				    struct device_attribute *attr, char *buf)
+			    struct device_attribute *attr, char *buf)
 {
 	struct mpwr_dev *mpwr = platform_get_drvdata(to_platform_device(dev));
 
@@ -1202,8 +1158,8 @@ static ssize_t powered_show(struct device *dev,
 }
 
 static ssize_t powered_store(struct device *dev,
-				     struct device_attribute *attr,
-				     const char *buf, size_t len)
+			     struct device_attribute *attr,
+			     const char *buf, size_t len)
 {
 	struct mpwr_dev *mpwr = platform_get_drvdata(to_platform_device(dev));
 	unsigned long flags;
@@ -1224,7 +1180,7 @@ static ssize_t powered_store(struct device *dev,
 }
 
 static ssize_t dumb_powerup_show(struct device *dev,
-				    struct device_attribute *attr, char *buf)
+				 struct device_attribute *attr, char *buf)
 {
 	struct mpwr_dev *mpwr = platform_get_drvdata(to_platform_device(dev));
 
@@ -1233,8 +1189,8 @@ static ssize_t dumb_powerup_show(struct device *dev,
 }
 
 static ssize_t dumb_powerup_store(struct device *dev,
-				     struct device_attribute *attr,
-				     const char *buf, size_t len)
+				  struct device_attribute *attr,
+				  const char *buf, size_t len)
 {
 	struct mpwr_dev *mpwr = platform_get_drvdata(to_platform_device(dev));
 	bool val;
@@ -1253,7 +1209,7 @@ static ssize_t dumb_powerup_store(struct device *dev,
 }
 
 static ssize_t wait_rdy_show(struct device *dev,
-				    struct device_attribute *attr, char *buf)
+			     struct device_attribute *attr, char *buf)
 {
 	struct mpwr_dev *mpwr = platform_get_drvdata(to_platform_device(dev));
 
@@ -1262,8 +1218,8 @@ static ssize_t wait_rdy_show(struct device *dev,
 }
 
 static ssize_t wait_rdy_store(struct device *dev,
-				     struct device_attribute *attr,
-				     const char *buf, size_t len)
+			      struct device_attribute *attr,
+			      const char *buf, size_t len)
 {
 	struct mpwr_dev *mpwr = platform_get_drvdata(to_platform_device(dev));
 	bool val;
@@ -1281,14 +1237,61 @@ static ssize_t wait_rdy_store(struct device *dev,
 	return len;
 }
 
+static ssize_t killswitched_show(struct device *dev,
+				 struct device_attribute *attr, char *buf)
+{
+	struct mpwr_dev *mpwr = platform_get_drvdata(to_platform_device(dev));
+
+	return scnprintf(buf, PAGE_SIZE, "%u\n",
+			 !!test_bit(MPWR_F_KILLSWITCHED, mpwr->flags));
+}
+
+static ssize_t is_busy_show(struct device *dev,
+			    struct device_attribute *attr, char *buf)
+{
+	struct mpwr_dev *mpwr = platform_get_drvdata(to_platform_device(dev));
+
+	return scnprintf(buf, PAGE_SIZE, "%u\n",
+			 !!test_bit(MPWR_F_POWER_CHANGE_INPROGRESS, mpwr->flags));
+}
+
+static ssize_t hard_reset_store(struct device *dev,
+				struct device_attribute *attr,
+				const char *buf, size_t len)
+{
+	struct mpwr_dev *mpwr = platform_get_drvdata(to_platform_device(dev));
+	unsigned long flags;
+	bool val;
+	int ret;
+
+	ret = kstrtobool(buf, &val);
+	if (ret)
+		return ret;
+
+	if (val) {
+		spin_lock_irqsave(&mpwr->lock, flags);
+		mpwr->last_request = MPWR_REQ_RESET;
+		spin_unlock_irqrestore(&mpwr->lock, flags);
+		queue_work(mpwr->wq, &mpwr->power_work);
+	}
+
+	return len;
+}
+
 static DEVICE_ATTR_RW(powered);
 static DEVICE_ATTR_RW(dumb_powerup);
 static DEVICE_ATTR_RW(wait_rdy);
+static DEVICE_ATTR_RO(killswitched);
+static DEVICE_ATTR_RO(is_busy);
+static DEVICE_ATTR_WO(hard_reset);
 
 static struct attribute *mpwr_attrs[] = {
 	&dev_attr_powered.attr,
 	&dev_attr_dumb_powerup.attr,
 	&dev_attr_wait_rdy.attr,
+	&dev_attr_killswitched.attr,
+	&dev_attr_is_busy.attr,
+	&dev_attr_hard_reset.attr,
 	NULL,
 };
 
@@ -1345,6 +1348,7 @@ static int mpwr_probe_generic(struct device *dev, struct mpwr_dev **mpwr_out)
 	INIT_WORK(&mpwr->power_work, &mpwr_work_handler);
 	INIT_WORK(&mpwr->finish_pdn_work, &mpwr_finish_pdn_work);
         INIT_DELAYED_WORK(&mpwr->host_ready_work, mpwr_host_ready_work);
+	INIT_KFIFO(mpwr->kfifo);
 	set_bit(MPWR_F_WAIT_RDY, mpwr->flags);
 
 	ret = of_property_read_string(np, "char-device-name", &cdev_name);
