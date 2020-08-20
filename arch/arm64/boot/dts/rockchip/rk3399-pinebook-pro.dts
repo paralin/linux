@@ -19,7 +19,13 @@
 	compatible = "pine64,pinebook-pro", "rockchip,rk3399";
 
 	chosen {
+		bootargs = "earlycon=uart8250,mmio32,0xff1a0000";
 		stdout-path = "serial2:1500000n8";
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x0 0x00200000 0x0 0xf7e00000>;
 	};
 
 	backlight: edp-backlight {
@@ -104,7 +110,8 @@
 			default-state = "on";
 			function = LED_FUNCTION_POWER;
 			gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
-			label = "green:power";
+			label = "green:disk-activity";
+			linux,default-trigger = "mmc2-inverted";
 		};
 
 		red_led: led-1 {
@@ -130,6 +137,12 @@
 
 		/* WL_REG_ON on module */
 		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
+	};
+
+	/* first 128k(0xff8d0000~0xff8f0000) for ddr and ATF */
+	sram@ff8d0000 {
+		compatible = "mmio-sram";
+		reg = <0x0 0xff8d0000 0x0 0x20000>; /* 128k */
 	};
 
 	/* Audio components */
@@ -379,8 +392,16 @@
 	};
 };
 
+&cluster1_opp {
+	opp08 {
+		opp-hz = /bits/ 64 <2000000000>;
+		opp-microvolt = <1300000>;
+	};
+};
+
 &cdn_dp {
 	status = "okay";
+	extcon = <&fusb0>;
 };
 
 &cpu_b0 {
@@ -705,7 +726,7 @@
 
 		connector {
 			compatible = "usb-c-connector";
-			data-role = "host";
+			data-role = "dual";
 			label = "USB-C";
 			op-sink-microwatt = <1000000>;
 			power-role = "dual";
@@ -714,6 +735,9 @@
 			source-pdos =
 				<PDO_FIXED(5000, 1400, PDO_FIXED_USB_COMM)>;
 			try-power-role = "sink";
+
+			extcon-cables = <1 2 5 6 9 10 12 44>;
+			typec-altmodes = <0xff01 1 0x001c0000 1>;
 
 			ports {
 				#address-cells = <1>;
@@ -930,6 +954,29 @@
 	status = "okay";
 };
 
+&rockchip_suspend {
+	status = "okay";
+	rockchip,sleep-debug-en = <1>;
+	rockchip,sleep-mode-config = <
+		(0
+		| RKPM_SLP_ARMPD
+		| RKPM_SLP_PERILPPD
+		| RKPM_SLP_DDR_RET
+		| RKPM_SLP_PLLPD
+		| RKPM_SLP_CENTER_PD
+		| RKPM_SLP_AP_PWROFF
+		)
+	>;
+	rockchip,pwm-regulator-config = <
+		(0
+		| PWM2_REGULATOR_EN
+		)
+	>;
+	rockchip,power-ctrl =
+		<&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>,
+		<&gpio1 RK_PB6 GPIO_ACTIVE_HIGH>;
+};
+
 &saradc {
 	vref-supply = <&vcca1v8_s3>;
 	status = "okay";
@@ -982,6 +1029,7 @@
 };
 
 &tcphy0 {
+	extcon = <&fusb0>;
 	status = "okay";
 };
 
