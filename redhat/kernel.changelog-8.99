@@ -1,3 +1,10 @@
+* Fri Aug 21 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc1.20200821gitda2968ff879b.1]
+- da2968ff879b rebase
+- Temporarily remove cdomain from sphinx documentation ("Justin M. Forbes")
+- Work around for gcc bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96377 ("Justin M. Forbes")
+- Updated changelog for the release based on 18445bf405cb (Fedora Kernel Team)
+- enable PROTECTED_VIRTUALIZATION_GUEST for all s390x kernels (=?UTF-8?q?Dan=20Hor=C3=A1k?=)
+
 * Wed Aug 19 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc1.20200819git18445bf405cb.1]
 - 18445bf405cb rebase
 - Add mlx5_vdpa to module filter for Fedora ("Justin M. Forbes")
