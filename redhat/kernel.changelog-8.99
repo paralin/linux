@@ -1,3 +1,7 @@
+* Sat Aug 22 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc1.20200822gitf873db9acd3c.1]
+- f873db9acd3c rebase
+- Updated changelog for the release based on da2968ff879b (Fedora Kernel Team)
+
 * Fri Aug 21 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc1.20200821gitda2968ff879b.1]
 - da2968ff879b rebase
 - Temporarily remove cdomain from sphinx documentation ("Justin M. Forbes")
