@@ -1,3 +1,7 @@
+* Thu Aug 27 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc2.20200827git15bc20c6af4c.1]
+- 15bc20c6af4c rebase
+- Updated changelog for the release based on 2ac69819ba9e (Fedora Kernel Team)
+
 * Wed Aug 26 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc2.20200826git2ac69819ba9e.1]
 - 2ac69819ba9e rebase
 - Updated changelog for the release based on 6a9dc5fd6170 (Fedora Kernel Team)
