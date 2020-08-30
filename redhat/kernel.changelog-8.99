@@ -1,3 +1,7 @@
+* Sun Aug 30 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc2.20200830git1127b219ce94.1]
+- 1127b219ce94 rebase
+- Updated changelog for the release based on 4d41ead6ead9 (Fedora Kernel Team)
+
 * Sat Aug 29 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc2.20200829git4d41ead6ead9.1]
 - 4d41ead6ead9 rebase
 - mod-sign.sh: Fix syntax flagged by shellcheck (Ben Crocker)
