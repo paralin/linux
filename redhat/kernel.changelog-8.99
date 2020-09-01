@@ -1,3 +1,9 @@
+* Tue Sep 01 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.20200901gitb51594df17d0.1]
+- b51594df17d0 rebase
+- Fedora filter update ("Justin M. Forbes")
+- Config update for Fedora ("Justin M. Forbes")
+- Updated changelog for the release based on v5.9-rc3 (Fedora Kernel Team)
+
 * Mon Aug 31 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.1]
 - v5.9-rc3 rebase
 - Updated changelog for the release based on 1127b219ce94 (Fedora Kernel Team)
