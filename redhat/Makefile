@@ -305,32 +305,33 @@ dist-rpm-baseonly: dist-sources
 # unless you know what you're doing, you don't want to use the next three ones
 dist-release-finish: setup-source
 	@cp $(SOURCES)/$(CHANGELOG) $(REDHAT)/$(CHANGELOG)
-	@git add $(REDHAT)/$(CHANGELOG)
 	@echo $(MARKER) > $(REDHAT)/marker
-	@git add $(REDHAT)/marker
-	@git commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(BUILDID)"
-	@$(MAKE) dist-configs
-	@$(MAKE) dist-kabi
-	@$(MAKE) dist-kabi-dup
-	@$(MAKE) sources-rh
+	@# if neither changelog nor marker was updated, skip bumping a release
+	git diff-index --quiet HEAD && (echo "Nothing changed, skipping updates"; exit 0) || true
+	$(REDHAT)/scripts/new_release.sh $(REDHAT) $(__YSTREAM) $(__ZSTREAM); \
+	git add $(REDHAT)/$(CHANGELOG); \
+	git add $(REDHAT)/marker; \
+	git commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(BUILDID)"; \
+
 dist-release: dist-clean-sources
-	@$(REDHAT)/scripts/new_release.sh $(REDHAT) $(__YSTREAM) $(__ZSTREAM)
 	@$(MAKE) dist-release-finish
 dist-release-tag:
 	@git tag -a -m "$(PACKAGE_NAME)-$(STAMP_VERSION)-$(PKGRELEASE)" $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PKGRELEASE)
 
-DIST_BRANCH ?= "os-build"
-dist-merge-upstream:
+git-tree-check:
 	@if test -n "$(DIST_PUSH)" && test -z "$(shell git remote get-url gitlab 2>/dev/null)"; then \
 		echo -e "Please run 'git remote add gitlab <url>' to enable git-push.\n"; \
 		exit 1; \
 	fi
+	@git diff-index --quiet HEAD || \
+		{ echo -e "Dirty tree, please clean before merging.\n"; exit 1; }
+
+DIST_BRANCH ?= "os-build"
+dist-merge-upstream: git-tree-check
 	@if test "$(shell git branch --show-current)" != "$(DIST_BRANCH)"; then \
 		echo -e "Please checkout $(DIST_BRANCH) branch before merging.\n"; \
 		exit 1; \
 		fi;
-	@(shell git --no-optional-locks status -uno --porcelain 2>/dev/null || \
-		{ echo -e "Dirty tree, please clean before merging.\n"; exit 1; })
 
 	@# If TAG is empty, script defaults to master:HEAD
 	@$(REDHAT)/scripts/ci/ark-rebase-patches.sh $(TAG) || exit 1
@@ -339,7 +340,14 @@ dist-merge-upstream:
 dist-merge-upstream-push: DIST_PUSH="1"
 dist-merge-upstream-push: dist-merge-upstream
 
+dist-fedora-release: git-tree-check
 
+	@# If TAG is empty, script defaults to master:HEAD
+	@cd ..; $(REDHAT)/scripts/ci/ark-create-release.sh $(TAG) || \
+		(echo "Unable to create release tag"; exit 1)
+
+dist-fedora-release-push: DIST_PUSH="1"
+dist-fedora-release-push: dist-fedora-release
 
 .PHONY: dist-brew dist-koji
 dist-brew : BUILD_FLAGS ?= $(BREW_FLAGS) $(TEST_FLAGS)
@@ -361,7 +369,7 @@ $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec:
 dist-git-test: export RH_DIST_GIT_TEST="1"
 dist-git-test: dist-git
 
-dist-git: dist-srpm $(TARBALL) $(KABI_TARBALL) $(KABIDW_TARBALL)
+dist-git: dist-srpm $(KABI_TARBALL) $(KABIDW_TARBALL)
 ifeq ("$(RHDISTGIT_BRANCH)", "")
  $(error RHDISTGIT_BRANCH unset)
 endif
