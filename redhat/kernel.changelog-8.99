@@ -1,3 +1,13 @@
+* Fri Sep 04 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.20200904git59126901f200.0.test]
+- 59126901f200 rebase
+- Updated changelog for the release based on fc3abb53250a (Fedora Kernel Team)
+- Swap how ark-latest is built (Don Zickus)
+- Add extra version bump to os-build branch (Don Zickus)
+- dist-release: Avoid needless version bump. (Don Zickus)
+- Add dist-fedora-release target (Don Zickus)
+- Remove redundant code in dist-release (Don Zickus)
+- Makefile.common rename TAG to _TAG (Don Zickus)
+
 * Thu Sep 03 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.20200903gitfc3abb53250a.1]
 - fc3abb53250a rebase
 - Fedora config change ("Justin M. Forbes")
