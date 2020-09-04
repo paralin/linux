@@ -1,3 +1,6 @@
+* Fri Sep 04 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.20200904git59126901f200.1]
+- Merge ark-patches
+
 * Fri Sep 04 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.20200904git59126901f200.0.test]
 - 59126901f200 rebase
 - Updated changelog for the release based on fc3abb53250a (Fedora Kernel Team)
