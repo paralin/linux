@@ -1,3 +1,6 @@
+* Sat Sep 05 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.20200905gitc70672d8d316.2]
+- Merge ark-patches
+
 * Sat Sep 05 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.20200905gitc70672d8d316.1.test]
 - c70672d8d316 rebase
 - Fedora confi gupdate ("Justin M. Forbes")
