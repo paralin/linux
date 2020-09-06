@@ -1,3 +1,6 @@
+* Sun Sep 06 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.20200906gitdd9fb9bb3340.3]
+- Merge ark-patches
+
 * Sun Sep 06 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.20200906gitdd9fb9bb3340.2.test]
 - dd9fb9bb3340 rebase
 - include/linux/log2.h: add missing () around n in roundup_pow_of_two() (Jason Gunthorpe)
