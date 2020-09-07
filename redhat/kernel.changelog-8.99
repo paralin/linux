@@ -1,3 +1,29 @@
+* Mon Sep 07 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.3.test]
+- v5.9-rc4 rebase
+- Linux 5.9-rc4 (Linus Torvalds)
+- Updated changelog for the release based on dd9fb9bb3340 (Fedora Kernel Team)
+- io_uring: fix linked deferred ->files cancellation (Pavel Begunkov)
+- io_uring: fix cancel of deferred reqs with ->files (Pavel Begunkov)
+- io_uring: fix explicit async read/write mapping for large segments (Jens Axboe)
+- x86/entry: Unbreak 32bit fast syscall (Thomas Gleixner)
+- x86/debug: Allow a single level of #DB recursion (Andy Lutomirski)
+- x86/entry: Fix AC assertion (Peter Zijlstra)
+- tracing/kprobes, x86/ptrace: Fix regs argument order for i386 (Vamshi K Sthambamkadi)
+- iommu/vt-d: Handle 36bit addressing for x86-32 (Chris Wilson)
+- iommu/amd: Do not use IOMMUv2 functionality when SME is active (Joerg Roedel)
+- iommu/amd: Do not force direct mapping when SME is active (Joerg Roedel)
+- iommu/amd: Use cmpxchg_double() when updating 128-bit IRTE (Suravee Suthikulpanit)
+- iommu/amd: Restore IRTE.RemapEn bit after programming IRTE (Suravee Suthikulpanit)
+- iommu/vt-d: Fix NULL pointer dereference in dev_iommu_priv_set() (Lu Baolu)
+- iommu/vt-d: Serialize IOMMU GCMD register modifications (Lu Baolu)
+- MAINTAINERS: Update QUALCOMM IOMMU after Arm SMMU drivers move (Lukas Bulwahn)
+- xen: add helpers to allocate unpopulated memory (Roger Pau Monne)
+- memremap: rename MEMORY_DEVICE_DEVDAX to MEMORY_DEVICE_GENERIC (Roger Pau Monne)
+- xen/balloon: add header guard (Roger Pau Monne)
+- x86, fakenuma: Fix invalid starting node ID (Huang Ying)
+- x86/mm/32: Bring back vmalloc faulting on x86_32 (Joerg Roedel)
+- x86/cmdline: Disable jump tables for cmdline.c (Arvind Sankar)
+
 * Sun Sep 06 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc3.20200906gitdd9fb9bb3340.3]
 - Merge ark-patches
 
