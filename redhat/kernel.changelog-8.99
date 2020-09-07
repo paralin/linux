@@ -1,3 +1,6 @@
+* Mon Sep 07 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.4]
+- Merge ark-patches
+
 * Mon Sep 07 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.3.test]
 - v5.9-rc4 rebase
 - Linux 5.9-rc4 (Linus Torvalds)
