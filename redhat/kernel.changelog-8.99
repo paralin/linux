@@ -1,3 +1,12 @@
+* Thu Sep 10 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.20200910git7fe10096c150.5.test]
+- 7fe10096c150 rebase
+- kernel.spec: don't override upstream compiler flags for ppc64le (=?UTF-8?q?Dan=20Hor=C3=A1k?=)
+- SUNRPC: stop printk reading past end of string ("J. Bruce Fields")
+- NFS: Zero-stateid SETATTR should first return delegation (Chuck Lever)
+- padata: fix possible padata_works_lock deadlock (Daniel Jordan)
+- NFSv4.1 handle ERR_DELAY error reclaiming locking state on delegation recall (Olga Kornievskaia)
+- xprtrdma: Release in-flight MRs on disconnect (Chuck Lever)
+
 * Wed Sep 09 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.20200909git34d4ddd359db.4.test]
 - 34d4ddd359db rebase
 - Revert "drm/i915/gem: Delete unused code" (Dave Airlie)
