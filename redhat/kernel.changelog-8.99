@@ -1,3 +1,6 @@
+* Fri Sep 11 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.20200911git581cb3a26baf.7]
+- Merge ark-patches
+
 * Fri Sep 11 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.20200911git581cb3a26baf.6.test]
 - 581cb3a26baf rebase
 - f2fs: Return EOF on unaligned end of file DIO read (Gabriel Krisman Bertazi)
