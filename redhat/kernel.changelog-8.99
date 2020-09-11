@@ -1,3 +1,9 @@
+* Fri Sep 11 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.20200911git581cb3a26baf.6.test]
+- 581cb3a26baf rebase
+- f2fs: Return EOF on unaligned end of file DIO read (Gabriel Krisman Bertazi)
+- f2fs: fix indefinite loop scanning for free nid (Sahitya Tummala)
+- f2fs: Fix type of section block count variables (Shin'ichiro Kawasaki)
+
 * Thu Sep 10 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.20200910git7fe10096c150.5.test]
 - 7fe10096c150 rebase
 - kernel.spec: don't override upstream compiler flags for ppc64le (=?UTF-8?q?Dan=20Hor=C3=A1k?=)
