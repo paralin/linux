@@ -11,6 +11,7 @@
  *
  */
 
+#include <linux/input.h>
 #include <linux/io.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -21,9 +22,11 @@
 
 #include <sound/soc.h>
 #include <sound/soc-dapm.h>
+#include <sound/jack.h>
 #include <sound/tlv.h>
 
 #include "sun8i-adda-pr-regmap.h"
+#include "sun8i-codec.h"
 
 /* Codec analog control register offsets and bit fields */
 #define SUN50I_ADDA_HP_CTRL		0x00
@@ -116,8 +119,24 @@
 #define SUN50I_ADDA_HS_MBIAS_CTRL	0x0e
 #define SUN50I_ADDA_HS_MBIAS_CTRL_MMICBIASEN	7
 
-#define SUN50I_ADDA_JACK_MIC_CTRL	0x1d
+#define SUN50I_ADDA_MDET_CTRL			0x1c
+#define SUN50I_ADDA_MDET_CTRL_SELDETADCFS	4
+#define SUN50I_ADDA_MDET_CTRL_SELDETADCFS_MASK	(0x7<<4)
+#define SUN50I_ADDA_MDET_CTRL_SELDETADCDB	2
+#define SUN50I_ADDA_MDET_CTRL_SELDETADCDB_MASK	(0x3<<2)
+
+#define SUN50I_ADDA_JACK_MIC_CTRL		0x1d
+#define SUN50I_ADDA_JACK_MIC_CTRL_JACKDETEN	7
+#define SUN50I_ADDA_JACK_MIC_CTRL_INNERRESEN	6
 #define SUN50I_ADDA_JACK_MIC_CTRL_HMICBIASEN	5
+#define SUN50I_ADDA_JACK_MIC_CTRL_MICADCEN	4
+
+struct sun50i_codec {
+	struct sun8i_jack_detection	jackdet;
+	struct sun8i_codec		*codec_data;
+	struct snd_soc_jack		jack;
+	bool				internal_bias_resistor;
+};
 
 /* mixer controls */
 static const struct snd_kcontrol_new sun50i_a64_codec_mixer_controls[] = {
@@ -471,6 +490,76 @@ static const struct snd_soc_dapm_route sun50i_a64_codec_routes[] = {
 	{ "EARPIECE", NULL, "Earpiece Amp" },
 };
 
+static void sun50i_a64_enable_micdet(struct snd_soc_component *component, bool enable)
+{
+	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
+
+	if (enable) {
+		snd_soc_dapm_force_enable_pin(dapm, "HBIAS");
+		snd_soc_dapm_sync(dapm);
+
+		regmap_update_bits(component->regmap, SUN50I_ADDA_JACK_MIC_CTRL,
+				   BIT(SUN50I_ADDA_JACK_MIC_CTRL_MICADCEN),
+				   BIT(SUN50I_ADDA_JACK_MIC_CTRL_MICADCEN));
+	} else {
+		regmap_update_bits(component->regmap, SUN50I_ADDA_JACK_MIC_CTRL,
+				   BIT(SUN50I_ADDA_JACK_MIC_CTRL_MICADCEN), 0);
+	}
+}
+
+static struct snd_soc_jack_pin sun50i_a64_codec_pins[] = {
+	{
+		.pin = "Headphone",
+		.mask = SND_JACK_HEADPHONE,
+	},
+	{
+		.pin = "Headset Microphone",
+		.mask = SND_JACK_MICROPHONE,
+	},
+};
+
+static int sun50i_a64_codec_probe(struct snd_soc_component *component)
+{
+	struct sun50i_codec *scodec = snd_soc_component_get_drvdata(component);
+	struct snd_soc_card *card = component->card;
+	int ret;
+
+	if (scodec->internal_bias_resistor) {
+		regmap_update_bits(component->regmap,
+				   SUN50I_ADDA_JACK_MIC_CTRL,
+				   BIT(SUN50I_ADDA_JACK_MIC_CTRL_INNERRESEN),
+				   BIT(SUN50I_ADDA_JACK_MIC_CTRL_INNERRESEN));
+	}
+
+	regmap_write(component->regmap, SUN50I_ADDA_MDET_CTRL,
+		     (0x6 << SUN50I_ADDA_MDET_CTRL_SELDETADCFS) |
+		     (0x2 << SUN50I_ADDA_MDET_CTRL_SELDETADCDB));
+	regmap_update_bits(component->regmap, SUN50I_ADDA_JACK_MIC_CTRL,
+			   BIT(SUN50I_ADDA_JACK_MIC_CTRL_JACKDETEN),
+			   BIT(SUN50I_ADDA_JACK_MIC_CTRL_JACKDETEN));
+
+	scodec->jackdet.component = component;
+	scodec->jackdet.enable_micdet = sun50i_a64_enable_micdet;
+
+	ret = snd_soc_card_jack_new(card, "Headphone Jack",
+				    SND_JACK_HEADSET | SND_JACK_BTN_0 |
+				    SND_JACK_BTN_1 | SND_JACK_BTN_2,
+				    &scodec->jack, sun50i_a64_codec_pins,
+				    ARRAY_SIZE(sun50i_a64_codec_pins));
+	if (ret) {
+		dev_err(card->dev, "failed to create jack (%d)\n", ret);
+		return ret;
+	}
+
+	snd_jack_set_key(scodec->jack.jack, SND_JACK_BTN_0, KEY_PLAYPAUSE);
+	snd_jack_set_key(scodec->jack.jack, SND_JACK_BTN_1, KEY_VOLUMEUP);
+	snd_jack_set_key(scodec->jack.jack, SND_JACK_BTN_2, KEY_VOLUMEDOWN);
+
+	return sun8i_codec_set_jack_detect(scodec->codec_data,
+					   &scodec->jackdet,
+					   &scodec->jack);
+}
+
 static int sun50i_a64_codec_suspend(struct snd_soc_component *component)
 {
 	return regmap_update_bits(component->regmap, SUN50I_ADDA_HP_CTRL,
@@ -491,6 +580,7 @@ static const struct snd_soc_component_driver sun50i_codec_analog_cmpnt_drv = {
 	.num_dapm_widgets	= ARRAY_SIZE(sun50i_a64_codec_widgets),
 	.dapm_routes		= sun50i_a64_codec_routes,
 	.num_dapm_routes	= ARRAY_SIZE(sun50i_a64_codec_routes),
+	.probe			= sun50i_a64_codec_probe,
 	.suspend		= sun50i_a64_codec_suspend,
 	.resume			= sun50i_a64_codec_resume,
 };
@@ -505,8 +595,41 @@ MODULE_DEVICE_TABLE(of, sun50i_codec_analog_of_match);
 
 static int sun50i_codec_analog_probe(struct platform_device *pdev)
 {
+	struct device_node *node = pdev->dev.of_node;
+	struct device_node *codec_node;
+	struct platform_device *codec_pdev;
+	struct sun8i_codec *codec_data;
+	struct sun50i_codec *scodec;
 	struct regmap *regmap;
 	void __iomem *base;
+
+	if (!node) {
+		dev_err(&pdev->dev, "of node is missing.\n");
+		return -ENODEV;
+	}
+
+	codec_node = of_parse_phandle(node, "allwinner,codec", 0);
+	if (!codec_node) {
+		dev_err(&pdev->dev, "codec phandle is missing.\n");
+		return -ENODEV;
+	}
+
+	/*
+	 * Return -EAGAIN in case of failure as this data is required, but we
+	 * can't be sure the digital codec has been probed before the first
+	 * call to this function.
+	 */
+	codec_pdev = of_find_device_by_node(codec_node);
+	if (!codec_pdev)
+		return -EAGAIN;
+
+	codec_data = platform_get_drvdata(codec_pdev);
+	if (!codec_data)
+		return -EAGAIN;
+
+	scodec = devm_kzalloc(&pdev->dev, sizeof(*scodec), GFP_KERNEL);
+	if (!scodec)
+		return -ENOMEM;
 
 	base = devm_platform_ioremap_resource(pdev, 0);
 	if (IS_ERR(base)) {
@@ -519,6 +642,12 @@ static int sun50i_codec_analog_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "Failed to create regmap\n");
 		return PTR_ERR(regmap);
 	}
+
+	scodec->internal_bias_resistor = of_property_read_bool(node,
+					"allwinner,internal-bias-resistor");
+	scodec->codec_data = codec_data;
+
+	platform_set_drvdata(pdev, scodec);
 
 	return devm_snd_soc_register_component(&pdev->dev,
 					       &sun50i_codec_analog_cmpnt_drv,
