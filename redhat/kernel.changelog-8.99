@@ -1,3 +1,6 @@
+* Sat Sep 12 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.20200912git729e3d091984.8]
+- Merge ark-patches
+
 * Sat Sep 12 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.20200912git729e3d091984.7.test]
 - 729e3d091984 rebase
 - dist-merge-upstream: Checkout known branch for ci scripts (Don Zickus)
