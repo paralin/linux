@@ -1,3 +1,16 @@
+* Sun Sep 13 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.20200913gitef2e9a563b0c.8.test]
+- ef2e9a563b0c rebase
+- Updated changelog for the release based on 729e3d091984 (Fedora Kernel Team)
+- seccomp: don't leave dangling ->notif if file allocation fails (Tycho Andersen)
+- mailmap, MAINTAINERS: move to tycho.pizza (Tycho Andersen)
+- seccomp: don't leak memory when filter install races (Tycho Andersen)
+- btrfs: fix NULL pointer dereference after failure to create snapshot (Filipe Manana)
+- btrfs: free data reloc tree on failed mount (Josef Bacik)
+- btrfs: require only sector size alignment for parent eb bytenr (Qu Wenruo)
+- btrfs: fix lockdep splat in add_missing_dev (Josef Bacik)
+- cifs: fix DFS mount with cifsacl/modefromsid (Ronnie Sahlberg)
+- dax: fix detection of dax support for non-persistent memory block devices (Coly Li)
+
 * Sat Sep 12 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc4.20200912git729e3d091984.8]
 - Merge ark-patches
 
