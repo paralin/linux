@@ -1,3 +1,6 @@
+* Tue Sep 15 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc5.20200915gitfc4f28bb3daf.11]
+- Merge ark-patches
+
 * Tue Sep 15 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc5.20200915gitfc4f28bb3daf.10.test]
 - fc4f28bb3daf rebase
 - vgacon: remove software scrollback support (Linus Torvalds)
