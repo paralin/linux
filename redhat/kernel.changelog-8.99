@@ -1,3 +1,13 @@
+* Tue Sep 22 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200922git98477740630f.12.test]
+- 98477740630f rebase
+- dax: Fix compilation for CONFIG_DAX && !CONFIG_FS_DAX (Jan Kara)
+- Updated changelog for the release based on v5.9-rc6 (Fedora Kernel Team)
+- Revert "KVM: Check the allocation of pv cpu mask" (Vitaly Kuznetsov)
+- KVM: arm64: Remove S1PTW check from kvm_vcpu_dabt_iswrite() (Marc Zyngier)
+- KVM: arm64: Assume write fault on S1PTW permission fault on instruction fetch (Marc Zyngier)
+- rcu-tasks: Prevent complaints of unused show_rcu_tasks_classic_gp_kthread() ("Paul E. McKenney")
+- docs: kvm: add documentation for KVM_CAP_S390_DIAG318 (Collin Walling)
+
 * Mon Sep 21 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.12]
 - Merge ark-patches
 
