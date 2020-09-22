@@ -1,3 +1,6 @@
+* Tue Sep 22 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200922git98477740630f.13]
+- Merge ark-patches
+
 * Tue Sep 22 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200922git98477740630f.12.test]
 - 98477740630f rebase
 - dax: Fix compilation for CONFIG_DAX && !CONFIG_FS_DAX (Jan Kara)
