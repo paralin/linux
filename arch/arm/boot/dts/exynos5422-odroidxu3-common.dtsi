@@ -470,6 +470,7 @@
 	status = "okay";
 	mmc-pwrseq = <&emmc_pwrseq>;
 	card-detect-delay = <200>;
+        non-removable;
 	samsung,dw-mshc-ciu-div = <3>;
 	samsung,dw-mshc-sdr-timing = <0 4>;
 	samsung,dw-mshc-ddr-timing = <0 2>;
