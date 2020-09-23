@@ -1,3 +1,6 @@
+* Wed Sep 23 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200923git805c6d3c1921.14]
+- Merge ark-patches
+
 * Wed Sep 23 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200923git805c6d3c1921.13.test]
 - 805c6d3c1921 rebase
 - Updated changelog for the release based on 98477740630f (Fedora Kernel Team)
