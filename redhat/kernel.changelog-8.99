@@ -1,3 +1,6 @@
+* Thu Sep 24 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200924gitc9c9e6a49f89.15]
+- Merge ark-patches
+
 * Thu Sep 24 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200924gitc9c9e6a49f89.14.test]
 - c9c9e6a49f89 rebase
 - mm: move the copy_one_pte() pte_present check into the caller (Linus Torvalds)
