@@ -1,3 +1,19 @@
+* Thu Sep 24 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200924gitc9c9e6a49f89.14.test]
+- c9c9e6a49f89 rebase
+- mm: move the copy_one_pte() pte_present check into the caller (Linus Torvalds)
+- mm: split out the non-present case from copy_one_pte() (Linus Torvalds)
+- Updated changelog for the release based on 805c6d3c1921 (Fedora Kernel Team)
+- dm crypt: document encrypted keyring key option (Milan Broz)
+- dm crypt: document new no_workqueue flags (Milan Broz)
+- btrfs: fix put of uninitialized kobject after seed device delete (Anand Jain)
+- tools/bootconfig: Add testcase for tailing space (Masami Hiramatsu)
+- tools/bootconfig: Add testcases for repeated key with brace (Masami Hiramatsu)
+- lib/bootconfig: Fix to remove tailing spaces after value (Masami Hiramatsu)
+- lib/bootconfig: Fix a bug of breaking existing tree nodes (Masami Hiramatsu)
+- dm: fix comment in dm_process_bio() (Mike Snitzer)
+- dm: fix bio splitting and its bio completion order for regular IO (Mike Snitzer)
+- btrfs: fix overflow when copying corrupt csums for a message (Johannes Thumshirn)
+
 * Wed Sep 23 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200923git805c6d3c1921.14]
 - Merge ark-patches
 
