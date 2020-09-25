@@ -1,3 +1,18 @@
+* Fri Sep 25 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200925git171d4ff79f96.15.test]
+- 171d4ff79f96 rebase
+- mm: fix misplaced unlock_page in do_wp_page() (Linus Torvalds)
+- Updated changelog for the release based on c9c9e6a49f89 (Fedora Kernel Team)
+- Revert "ALSA: usb-audio: Disable Lenovo P620 Rear line-in volume control" (Kai-Heng Feng)
+- media: dt-bindings: media: imx274: Convert to json-schema (Jacopo Mondi)
+- Revert "ALSA: hda - Fix silent audio output and corrupted input on MSI X570-A PRO" (Takashi Iwai)
+- ALSA: usb-audio: Add delay quirk for H570e USB headsets (Joakim Tjernlund)
+- ALSA: hda/realtek: Enable front panel headset LED on Lenovo ThinkStation P520 (Kai-Heng Feng)
+- ALSA: hda/realtek - Couldn't detect Mic if booting with headset plugged (Hui Wang)
+- ALSA: asihpi: fix iounmap in error handler (Tom Rix)
+- media: media/v4l2: remove V4L2_FLAG_MEMORY_NON_CONSISTENT flag (Sergey Senozhatsky)
+- mmc: mmc_spi: Fix mmc_spi_dma_alloc() return type for !HAS_DMA (Geert Uytterhoeven)
+- media: cec-adap.c: don't use flush_scheduled_work() (Hans Verkuil)
+
 * Thu Sep 24 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200924gitc9c9e6a49f89.15]
 - Merge ark-patches
 
