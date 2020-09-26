@@ -1,3 +1,9 @@
+* Sat Sep 26 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200926git7c7ec3226f5f.16.test]
+- 7c7ec3226f5f rebase
+- Filter out upstream commits from changelog (Don Zickus)
+- Merge Upstream script fixes (Don Zickus)
+- Updated changelog for the release based on 171d4ff79f96 (Fedora Kernel Team)
+
 * Fri Sep 25 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200925git171d4ff79f96.16]
 - Merge ark-patches
 
