@@ -1,3 +1,8 @@
+* Sun Sep 27 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200927gita1bffa48745a.17.test]
+- a1bffa48745a rebase
+- Updated changelog for the release based on 7c7ec3226f5f (Fedora Kernel Team)
+- Create Patchlist.changelog file (Don Zickus)
+
 * Sat Sep 26 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc6.20200926git7c7ec3226f5f.17]
 - Merge ark-patches
 
