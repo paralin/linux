@@ -1,3 +1,6 @@
+* Tue Sep 29 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc7.20]
+- Merge ark-patches
+
 * Tue Sep 29 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc7.19.test]
 - Separate merge-upstream and release stages (Don Zickus)
 - Re-enable CONFIG_IR_SERIAL on Fedora (Prarit Bhargava)
