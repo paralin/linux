@@ -1,3 +1,6 @@
+* Fri Oct 02 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc7.20201002git60e720931556.23]
+- Merge ark-patches
+
 * Fri Oct 02 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc7.20201002git60e720931556.22.test]
 - 60e720931556 rebase
 - New configs in drivers/pinctrl (Fedora Kernel Team)
