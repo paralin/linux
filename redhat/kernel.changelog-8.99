@@ -1,3 +1,6 @@
+* Sat Oct 03 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc7.20201003git472e5b056f00.24]
+- Merge ark-patches
+
 * Sat Oct 03 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc7.20201003git472e5b056f00.23.test]
 - 472e5b056f00 rebase
 - Set SquashFS decompression options for all flavors to match RHEL (Bohdan Khomutskyi)
