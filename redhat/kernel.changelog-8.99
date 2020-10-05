@@ -1,3 +1,6 @@
+* Mon Oct 05 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc8.27]
+- Merge ark-patches
+
 * Mon Oct 05 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc8.26.test]
 - v5.9-rc8 rebase
 - Updated changelog for the release based on 22fbc037cd32 (Fedora Kernel Team)
