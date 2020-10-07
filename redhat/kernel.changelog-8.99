@@ -1,3 +1,10 @@
+* Wed Oct 07 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc8.20201007git7575fdda569b.28.test]
+- 7575fdda569b rebase
+- New configs in drivers/misc (Jeremy Cline)
+- New configs in drivers/net/wireless ("Justin M. Forbes")
+- New configs in drivers/phy (Fedora Kernel Team)
+- New configs in drivers/tty (Fedora Kernel Team)
+
 * Tue Oct 06 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc8.28]
 - Merge ark-patches
 
