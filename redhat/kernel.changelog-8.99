@@ -1,3 +1,9 @@
+* Fri Oct 09 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc8.20201009git7575fdda569b.31]
+- Modify patchlist changelog output (Don Zickus)
+- Filter out LTO build options from the perl ccopts ("Justin M. Forbes")
+- Temporarily remove cdomain from sphinx documentation ("Justin M. Forbes")
+- Work around for gcc bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96377 ("Justin M. Forbes")
+
 * Fri Oct 09 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc8.20201009git7575fdda569b.30.test]
 - Updated changelog for the release based on 7575fdda569b (Fedora Kernel Team)
 - Fix path location for ark-update-configs.sh (Don Zickus)
