@@ -1,3 +1,9 @@
+* Sat Oct 10 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc8.20201010git583090b1b823.31.test]
+- 583090b1b823 rebase
+- redhat/self-test: Initial commit (Ben Crocker)
+- generate_all_configs.sh: Fix syntax flagged by shellcheck (Ben Crocker)
+- process_configs.sh: Fix syntax flagged by shellcheck (Ben Crocker)
+
 * Fri Oct 09 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc8.20201009git7575fdda569b.31]
 - Modify patchlist changelog output (Don Zickus)
 - Filter out LTO build options from the perl ccopts ("Justin M. Forbes")
