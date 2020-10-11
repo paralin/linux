@@ -1,3 +1,6 @@
+* Sun Oct 11 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc8.20201011git6f2f486d57c4.32.test]
+- 6f2f486d57c4 rebase
+
 * Sat Oct 10 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc8.20201010git583090b1b823.31.test]
 - 583090b1b823 rebase
 - redhat/self-test: Initial commit (Ben Crocker)
