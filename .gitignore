@@ -153,11 +153,15 @@ x509.genkey
 # Clang's compilation database file
 /compile_commands.json
 
+<<<<<<< HEAD
 #
 # Red Hat
 #
 configs/*.config
 localversion
+
+# Documentation toolchain
+sphinx_*/
 
 # GitLab CI configuration
 !.gitlab-ci.yml
