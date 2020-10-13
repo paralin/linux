@@ -1,3 +1,6 @@
+* Tue Oct 13 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201013git865c50e1d279.37.test]
+- 865c50e1d279 rebase
+
 * Tue Oct 13 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-35.test]
 - Disable Speakup synth DECEXT ("Justin M. Forbes")
 - Enable Speakup for Fedora since it is out of staging ("Justin M. Forbes")
