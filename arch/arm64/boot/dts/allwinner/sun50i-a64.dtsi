@@ -157,6 +157,7 @@
 	timer {
 		compatible = "arm,armv8-timer";
 		allwinner,erratum-unknown1;
+		arm,no-tick-in-suspend;
 		interrupts = <GIC_PPI 13
 			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
 			     <GIC_PPI 14
@@ -636,6 +637,7 @@
 			reg = <0x01c20000 0x400>;
 			clocks = <&osc24M>, <&rtc 0>;
 			clock-names = "hosc", "losc";
+			protected-clocks = <CLK_BUS_MSGBOX>;
 			#clock-cells = <1>;
 			#reset-cells = <1>;
 		};
@@ -1210,6 +1212,7 @@
 			clocks = <&osc24M>, <&rtc 0>, <&rtc 2>,
 				 <&ccu CLK_PLL_PERIPH0>;
 			clock-names = "hosc", "losc", "iosc", "pll-periph";
+			protected-clocks = <CLK_APB0_TWD>;
 			#clock-cells = <1>;
 			#reset-cells = <1>;
 		};
