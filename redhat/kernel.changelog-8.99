@@ -1,3 +1,7 @@
+* Thu Oct 15 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201015git3e4fb4346c78.41.test]
+- 3e4fb4346c78 rebase
+- WIP: redhat/docs: Update documentation for single branch workflow (Prarit Bhargava)
+
 * Thu Oct 15 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201015gitb5fc7a89e58b.40.test]
 - Add CONFIG_ARM64_MTE which is not picked up by the config scripts for some reason ("Justin M. Forbes")
 
