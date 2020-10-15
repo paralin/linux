@@ -1,3 +1,6 @@
+* Thu Oct 15 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201015gitb5fc7a89e58b.40.test]
+- Add CONFIG_ARM64_MTE which is not picked up by the config scripts for some reason ("Justin M. Forbes")
+
 * Wed Oct 14 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201014gitb5fc7a89e58b.39.test]
 - b5fc7a89e58b rebase
 
