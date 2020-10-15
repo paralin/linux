@@ -695,6 +695,11 @@ static int ov5640_write_reg(struct ov5640_dev *sensor, u16 reg, u8 val)
 	return 0;
 }
 
+static int ov5640_write_reg_bulk(struct ov5640_dev *sensor, u16 start, u8* data, int length)
+{
+	return 0;
+}
+
 static int ov5640_read_reg(struct ov5640_dev *sensor, u16 reg, u8 *val)
 {
 	struct i2c_client *client = sensor->i2c_client;
@@ -1177,6 +1182,26 @@ static int ov5640_load_regs(struct ov5640_dev *sensor,
 
 	return ov5640_set_timings(sensor, mode);
 }
+
+/* read white balance */
+static int ov5640_get_white_balance(struct ov5640_dev *sensor)
+{
+	int ret;
+	u16 red_balance, blue_balance;
+
+	ret = ov5640_read_reg16(sensor, OV5640_REG_AWB_R_GAIN, &red_balance);
+	if (ret)
+		return ret;
+	ret = ov5640_read_reg16(sensor, OV5640_REG_AWB_B_GAIN, &blue_balance);
+	if (ret)
+		return ret;
+
+	sensor->ctrls.red_balance->val = red_balance;
+	sensor->ctrls.blue_balance->val = blue_balance;
+
+	return ret;
+}
+
 
 static int ov5640_set_autoexposure(struct ov5640_dev *sensor, bool on)
 {
@@ -2022,10 +2047,14 @@ static int ov5640_copy_fw_to_device(struct ov5640_dev *sensor,
 					const struct firmware *fw)
 {
 	struct i2c_client *client = sensor->i2c_client;
-	const u8 *data = (const u8 *)fw->data;
+	struct i2c_msg msg;
+	u8 buf[64];
 	u8 fw_status;
+	unsigned addr;
 	int i;
 	int ret;
+
+	dev_info(&client->dev, "firmware upload start\n");
 
 	// Putting MCU in reset state
 	ret = ov5640_write_reg(sensor, OV5640_REG_SYS_RESET00, 0x20);
@@ -2033,10 +2062,23 @@ static int ov5640_copy_fw_to_device(struct ov5640_dev *sensor,
 		return ret;
 
 	// Write firmware
-	for (i = 0; i < fw->size / sizeof(u8); i++)
-		ov5640_write_reg(sensor,
-				OV5640_REG_FIRMWARE_BASE + i, 
-				data[i]);
+	for (addr = 0; addr < fw->size; addr += sizeof(buf) - 2) {
+		memset(buf, 0, sizeof buf);
+		buf[0] = (OV5640_REG_FIRMWARE_BASE + addr) >> 8;
+		buf[1] = (OV5640_REG_FIRMWARE_BASE + addr) & 0xff;
+		memcpy(buf+2, fw->data + addr, min_t(unsigned, fw->size - addr, sizeof(buf) - 2));
+		
+		msg.addr = client->addr;
+		msg.flags = client->flags;
+		msg.buf = buf;
+		msg.len = sizeof(buf);
+
+		ret = i2c_transfer(client->adapter, &msg, 1);
+		
+		if (ret < 0) {
+			return ret;
+		}
+	}
 
 	// Reset MCU state
 	ov5640_write_reg(sensor, OV5640_REG_FW_CMD_MAIN, 0x00);
@@ -2862,6 +2904,11 @@ static int ov5640_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
 			return val;
 		sensor->ctrls.af_status->val = val;
 		break;
+	case V4L2_CID_AUTO_WHITE_BALANCE:
+		val = ov5640_get_white_balance(sensor);
+		if (val < 0)
+			return val;
+		break;
 	}
 
 	return 0;
@@ -3020,8 +3067,10 @@ static int ov5640_init_controls(struct ov5640_dev *sensor)
 	ctrls->pixel_rate->flags |= V4L2_CTRL_FLAG_READ_ONLY;
 	ctrls->gain->flags |= V4L2_CTRL_FLAG_VOLATILE;
 	ctrls->exposure->flags |= V4L2_CTRL_FLAG_VOLATILE;
+	ctrls->red_balance->flags |= V4L2_CTRL_FLAG_VOLATILE;
+	ctrls->blue_balance->flags |= V4L2_CTRL_FLAG_VOLATILE;
 
-	v4l2_ctrl_auto_cluster(3, &ctrls->auto_wb, 0, false);
+	v4l2_ctrl_auto_cluster(3, &ctrls->auto_wb, 0, true);
 	v4l2_ctrl_auto_cluster(2, &ctrls->auto_gain, 0, true);
 	v4l2_ctrl_auto_cluster(2, &ctrls->auto_exp, 1, true);
 	v4l2_ctrl_cluster(4, &ctrls->focus_auto);
