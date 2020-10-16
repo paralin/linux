@@ -1,3 +1,7 @@
+* Fri Oct 16 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201016git9ff9b0d392ea.43.test]
+- 9ff9b0d392ea rebase
+- Partial revert: Add master merge check (Don Zickus)
+
 * Fri Oct 16 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201016git578a7155c5a1.42.test]
 - 578a7155c5a1 rebase
 - Update Maintainers doc to reflect workflow changes (Don Zickus)
