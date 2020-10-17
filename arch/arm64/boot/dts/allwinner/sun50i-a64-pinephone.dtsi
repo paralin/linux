@@ -51,6 +51,18 @@
 		};
 	};
 
+	hdmi-connector {
+		/* This should use the USB type C binding. */
+		compatible = "hdmi-connector";
+		type = "a";
+
+		port {
+			hdmi_con_in: endpoint {
+				remote-endpoint = <&hdmi_out_con>;
+			};
+		};
+	};
+
 	i2c_csi: i2c-csi {
 		compatible = "i2c-gpio";
 		sda-gpios = <&pio 4 13 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>; /* PE13 */
@@ -249,6 +261,21 @@
 	status = "okay";
 };
 
+&hdmi {
+	hvcc-supply = <&reg_dldo1>;
+	status = "okay";
+};
+
+&hdmi_out {
+	hdmi_out_con: endpoint {
+		remote-endpoint = <&hdmi_con_in>;
+	};
+};
+
+&hdmi_sound {
+	status = "okay";
+};
+
 &i2c0 {
 	status = "okay";
 
@@ -379,6 +406,10 @@
 			};
 		};
 	};
+};
+
+&i2s2 {
+	status = "okay";
 };
 
 &lradc {
