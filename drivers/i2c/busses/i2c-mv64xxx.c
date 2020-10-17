@@ -17,6 +17,7 @@
 #include <linux/interrupt.h>
 #include <linux/mv643xx_i2c.h>
 #include <linux/platform_device.h>
+#include <linux/pm_runtime.h>
 #include <linux/reset.h>
 #include <linux/io.h>
 #include <linux/of.h>
@@ -714,6 +715,10 @@ mv64xxx_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
 	struct mv64xxx_i2c_data *drv_data = i2c_get_adapdata(adap);
 	int rc, ret = num;
 
+	rc = pm_runtime_get_sync(&adap->dev);
+	if (rc < 0)
+		return rc;
+
 	BUG_ON(drv_data->msgs != NULL);
 	drv_data->msgs = msgs;
 	drv_data->num_msgs = num;
@@ -728,6 +733,9 @@ mv64xxx_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
 
 	drv_data->num_msgs = 0;
 	drv_data->msgs = NULL;
+
+	pm_runtime_mark_last_busy(&adap->dev);
+	pm_runtime_put_autosuspend(&adap->dev);
 
 	return ret;
 }
@@ -951,6 +959,11 @@ mv64xxx_i2c_probe(struct platform_device *pd)
 		goto exit_free_irq;
 	}
 
+	pm_runtime_set_active(&pd->dev);
+	pm_runtime_set_autosuspend_delay(&pd->dev, 1000);
+	pm_runtime_use_autosuspend(&pd->dev);
+	pm_runtime_enable(&pd->dev);
+
 	return 0;
 
 exit_free_irq:
@@ -969,8 +982,24 @@ mv64xxx_i2c_remove(struct platform_device *dev)
 {
 	struct mv64xxx_i2c_data		*drv_data = platform_get_drvdata(dev);
 
+	pm_runtime_get_sync(&dev->dev);
+
 	i2c_del_adapter(&drv_data->adapter);
 	free_irq(drv_data->irq, drv_data);
+	reset_control_assert(drv_data->rstc);
+	clk_disable_unprepare(drv_data->reg_clk);
+	clk_disable_unprepare(drv_data->clk);
+
+	pm_runtime_put_noidle(&dev->dev);
+	pm_runtime_disable(&dev->dev);
+
+	return 0;
+}
+
+static int __maybe_unused mv64xxx_i2c_runtime_suspend(struct device *dev)
+{
+	struct mv64xxx_i2c_data *drv_data = dev_get_drvdata(dev);
+
 	reset_control_assert(drv_data->rstc);
 	clk_disable_unprepare(drv_data->reg_clk);
 	clk_disable_unprepare(drv_data->clk);
@@ -978,31 +1007,34 @@ mv64xxx_i2c_remove(struct platform_device *dev)
 	return 0;
 }
 
-#ifdef CONFIG_PM
-static int mv64xxx_i2c_resume(struct device *dev)
+static int __maybe_unused mv64xxx_i2c_runtime_resume(struct device *dev)
 {
 	struct mv64xxx_i2c_data *drv_data = dev_get_drvdata(dev);
+
+	if (!IS_ERR(drv_data->clk))
+		clk_prepare_enable(drv_data->clk);
+	if (!IS_ERR(drv_data->reg_clk))
+		clk_prepare_enable(drv_data->reg_clk);
+	reset_control_reset(drv_data->rstc);
 
 	mv64xxx_i2c_hw_init(drv_data);
 
 	return 0;
 }
 
-static const struct dev_pm_ops mv64xxx_i2c_pm = {
-	.resume = mv64xxx_i2c_resume,
+static const struct dev_pm_ops mv64xxx_i2c_pm_ops = {
+	SET_RUNTIME_PM_OPS(mv64xxx_i2c_runtime_suspend,
+			   mv64xxx_i2c_runtime_resume, NULL)
+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+				      pm_runtime_force_resume)
 };
-
-#define mv64xxx_i2c_pm_ops (&mv64xxx_i2c_pm)
-#else
-#define mv64xxx_i2c_pm_ops NULL
-#endif
 
 static struct platform_driver mv64xxx_i2c_driver = {
 	.probe	= mv64xxx_i2c_probe,
 	.remove	= mv64xxx_i2c_remove,
 	.driver	= {
 		.name	= MV64XXX_I2C_CTLR_NAME,
-		.pm     = mv64xxx_i2c_pm_ops,
+		.pm     = &mv64xxx_i2c_pm_ops,
 		.of_match_table = mv64xxx_i2c_of_match_table,
 	},
 };
