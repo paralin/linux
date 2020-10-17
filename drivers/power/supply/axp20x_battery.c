@@ -34,6 +34,7 @@
 
 #define AXP20X_PWR_STATUS_BAT_CHARGING	BIT(2)
 
+#define AXP20X_PWR_OP_BATT_CHARGING	BIT(6)
 #define AXP20X_PWR_OP_BATT_PRESENT	BIT(5)
 #define AXP20X_PWR_OP_BATT_ACTIVATED	BIT(3)
 
@@ -55,7 +56,14 @@
 
 #define AXP20X_V_OFF_MASK		GENMASK(2, 0)
 
+#define DRVNAME "axp20x-battery-power-supply"
+
 struct axp20x_batt_ps;
+
+struct axp_irq_data {
+	const char *name;
+	irq_handler_t handler;
+};
 
 struct axp_data {
 	int	ccc_scale;
@@ -63,6 +71,7 @@ struct axp_data {
 	bool	has_fg_valid;
 	int	(*get_max_voltage)(struct axp20x_batt_ps *batt, int *val);
 	int	(*set_max_voltage)(struct axp20x_batt_ps *batt, int val);
+	const struct axp_irq_data *irqs;
 };
 
 struct axp20x_batt_ps {
@@ -72,6 +81,7 @@ struct axp20x_batt_ps {
 	struct iio_channel *batt_chrg_i;
 	struct iio_channel *batt_dischrg_i;
 	struct iio_channel *batt_v;
+	int health;
 	/* Maximum constant charge current */
 	unsigned int max_ccc;
 	const struct axp_data	*data;
@@ -200,12 +210,12 @@ static int axp20x_battery_get_prop(struct power_supply *psy,
 		break;
 
 	case POWER_SUPPLY_PROP_STATUS:
-		ret = regmap_read(axp20x_batt->regmap, AXP20X_PWR_INPUT_STATUS,
+		ret = regmap_read(axp20x_batt->regmap, AXP20X_PWR_OP_MODE,
 				  &reg);
 		if (ret)
 			return ret;
 
-		if (reg & AXP20X_PWR_STATUS_BAT_CHARGING) {
+		if (reg & AXP20X_PWR_OP_BATT_CHARGING) {
 			val->intval = POWER_SUPPLY_STATUS_CHARGING;
 			return 0;
 		}
@@ -245,7 +255,7 @@ static int axp20x_battery_get_prop(struct power_supply *psy,
 			return 0;
 		}
 
-		val->intval = POWER_SUPPLY_HEALTH_GOOD;
+		val->intval = axp20x_batt->health;
 		break;
 
 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
@@ -507,11 +517,82 @@ static const struct power_supply_desc axp20x_batt_ps_desc = {
 	.set_property = axp20x_battery_set_prop,
 };
 
+static irqreturn_t axp20x_battery_changed_irq(int irq, void *devid)
+{
+	struct axp20x_batt_ps *axp20x_batt = devid;
+
+	power_supply_changed(axp20x_batt->batt);
+
+	return IRQ_HANDLED;
+}
+
+static irqreturn_t axp20x_battery_temp_cold_irq(int irq, void *devid)
+{
+	struct axp20x_batt_ps *axp20x_batt = devid;
+
+	axp20x_batt->health = POWER_SUPPLY_HEALTH_COLD;
+
+	power_supply_changed(axp20x_batt->batt);
+
+	return IRQ_HANDLED;
+}
+
+static irqreturn_t axp20x_battery_temp_hot_irq(int irq, void *devid)
+{
+	struct axp20x_batt_ps *axp20x_batt = devid;
+
+	axp20x_batt->health = POWER_SUPPLY_HEALTH_OVERHEAT;
+
+	power_supply_changed(axp20x_batt->batt);
+
+	return IRQ_HANDLED;
+}
+
+static irqreturn_t axp20x_battery_temp_normal_irq(int irq, void *devid)
+{
+	struct axp20x_batt_ps *axp20x_batt = devid;
+
+	axp20x_batt->health = POWER_SUPPLY_HEALTH_GOOD;
+
+	power_supply_changed(axp20x_batt->batt);
+
+	return IRQ_HANDLED;
+}
+
+static const struct axp_irq_data axp20x_irqs[] = {
+	{ "BATT_PLUGIN",		axp20x_battery_changed_irq },
+	{ "BATT_REMOVAL",		axp20x_battery_changed_irq },
+	{ "BATT_HEALTH_DEAD",		axp20x_battery_changed_irq },
+	{ "BATT_HEALTH_GOOD",		axp20x_battery_changed_irq },
+	{ "BATT_CHARGING",		axp20x_battery_changed_irq },
+	{ "BATT_CHARGING_DONE",		axp20x_battery_changed_irq },
+	{}
+};
+
+static const struct axp_irq_data axp813_irqs[] = {
+	{ "BATT_PLUGIN",		axp20x_battery_changed_irq },
+	{ "BATT_REMOVAL",		axp20x_battery_changed_irq },
+	{ "BATT_HEALTH_DEAD",		axp20x_battery_changed_irq },
+	{ "BATT_HEALTH_GOOD",		axp20x_battery_changed_irq },
+	{ "BATT_CHARGING",		axp20x_battery_changed_irq },
+	{ "BATT_CHARGING_DONE",		axp20x_battery_changed_irq },
+	{ "BATT_CHG_TEMP_HIGH",		axp20x_battery_temp_hot_irq },
+	{ "BATT_CHG_TEMP_HIGH_END",	axp20x_battery_temp_normal_irq },
+	{ "BATT_CHG_TEMP_LOW",		axp20x_battery_temp_cold_irq },
+	{ "BATT_CHG_TEMP_LOW_END",	axp20x_battery_temp_normal_irq },
+	{ "BATT_ACT_TEMP_HIGH",		axp20x_battery_temp_hot_irq },
+	{ "BATT_ACT_TEMP_HIGH_END",	axp20x_battery_temp_normal_irq },
+	{ "BATT_ACT_TEMP_LOW",		axp20x_battery_temp_cold_irq },
+	{ "BATT_ACT_TEMP_LOW_END",	axp20x_battery_temp_normal_irq },
+	{}
+};
+
 static const struct axp_data axp209_data = {
 	.ccc_scale = 100000,
 	.ccc_offset = 300000,
 	.get_max_voltage = axp20x_battery_get_max_voltage,
 	.set_max_voltage = axp20x_battery_set_max_voltage,
+	.irqs = axp20x_irqs,
 };
 
 static const struct axp_data axp221_data = {
@@ -520,6 +601,7 @@ static const struct axp_data axp221_data = {
 	.has_fg_valid = true,
 	.get_max_voltage = axp22x_battery_get_max_voltage,
 	.set_max_voltage = axp22x_battery_set_max_voltage,
+	.irqs = axp20x_irqs,
 };
 
 static const struct axp_data axp813_data = {
@@ -528,6 +610,7 @@ static const struct axp_data axp813_data = {
 	.has_fg_valid = true,
 	.get_max_voltage = axp813_battery_get_max_voltage,
 	.set_max_voltage = axp20x_battery_set_max_voltage,
+	.irqs = axp813_irqs,
 };
 
 static const struct of_device_id axp20x_battery_ps_id[] = {
@@ -546,10 +629,13 @@ MODULE_DEVICE_TABLE(of, axp20x_battery_ps_id);
 
 static int axp20x_power_probe(struct platform_device *pdev)
 {
+	struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
 	struct axp20x_batt_ps *axp20x_batt;
 	struct power_supply_config psy_cfg = {};
 	struct power_supply_battery_info info;
 	struct device *dev = &pdev->dev;
+	const struct axp_irq_data *irq_data;
+	int irq, ret;
 
 	if (!of_device_is_available(pdev->dev.of_node))
 		return -ENODEV;
@@ -601,6 +687,8 @@ static int axp20x_power_probe(struct platform_device *pdev)
 		return PTR_ERR(axp20x_batt->batt);
 	}
 
+	axp20x_batt->health = POWER_SUPPLY_HEALTH_GOOD;
+
 	if (!power_supply_get_battery_info(axp20x_batt->batt, &info)) {
 		int vmin = info.voltage_min_design_uv;
 		int ccc = info.constant_charge_current_max_ua;
@@ -630,13 +718,32 @@ static int axp20x_power_probe(struct platform_device *pdev)
 	axp20x_get_constant_charge_current(axp20x_batt,
 					   &axp20x_batt->max_ccc);
 
+	/* Request irqs after registering, as irqs may trigger immediately */
+	for (irq_data = axp20x_batt->data->irqs; irq_data->name; irq_data++) {
+		irq = platform_get_irq_byname(pdev, irq_data->name);
+		if (irq < 0) {
+			dev_err(&pdev->dev, "No IRQ for %s: %d\n",
+				irq_data->name, irq);
+			return irq;
+		}
+		irq = regmap_irq_get_virq(axp20x->regmap_irqc, irq);
+		ret = devm_request_any_context_irq(&pdev->dev, irq,
+						   irq_data->handler, 0,
+						   DRVNAME, axp20x_batt);
+		if (ret < 0) {
+			dev_err(&pdev->dev, "Error requesting %s IRQ: %d\n",
+				irq_data->name, ret);
+			return ret;
+		}
+	}
+
 	return 0;
 }
 
 static struct platform_driver axp20x_batt_driver = {
 	.probe    = axp20x_power_probe,
 	.driver   = {
-		.name  = "axp20x-battery-power-supply",
+		.name		= DRVNAME,
 		.of_match_table = axp20x_battery_ps_id,
 	},
 };
