@@ -101,6 +101,12 @@ static int dp_altmode_configure(struct dp_altmode *dp, u8 con)
 		conf |= DP_CONF_UFP_U_AS_UFP_D;
 		pin_assign = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo) &
 			     DP_CAP_UFP_D_PIN_ASSIGN(dp->port->vdo);
+
+		// Some devices have assignments reversed
+		if (!pin_assign) {
+			pin_assign = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo) &
+			     DP_CAP_DFP_D_PIN_ASSIGN(dp->port->vdo);
+		}
 		break;
 	default:
 		break;
@@ -445,10 +451,11 @@ pin_assignment_store(struct device *dev, struct device_attribute *attr,
 		goto out_unlock;
 	}
 
+	// Some devices have pin assignments reversed
 	if (DP_CONF_CURRENTLY(dp->data.conf) == DP_CONF_DFP_D)
-		assignments = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo);
+		assignments = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo) || DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo);
 	else
-		assignments = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo);
+		assignments = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo) || DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo);
 
 	if (!(DP_CONF_GET_PIN_ASSIGN(conf) & assignments)) {
 		ret = -EINVAL;
@@ -485,10 +492,11 @@ static ssize_t pin_assignment_show(struct device *dev,
 
 	cur = get_count_order(DP_CONF_GET_PIN_ASSIGN(dp->data.conf));
 
+	// Some devices have pin assignments reversed
 	if (DP_CONF_CURRENTLY(dp->data.conf) == DP_CONF_DFP_D)
-		assignments = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo);
+		assignments = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo) || DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo);
 	else
-		assignments = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo);
+		assignments = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo) || DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo);
 
 	for (i = 0; assignments; assignments >>= 1, i++) {
 		if (assignments & 1) {
