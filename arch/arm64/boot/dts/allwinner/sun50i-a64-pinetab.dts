@@ -460,19 +460,20 @@
 
 &sound {
 	status = "okay";
+	simple-audio-card,name = "PineTab";
 	simple-audio-card,aux-devs = <&codec_analog>, <&speaker_amp>;
 	simple-audio-card,widgets = "Microphone", "Internal Microphone Left",
 				    "Microphone", "Internal Microphone Right",
 				    "Headphone", "Headphone Jack",
 				    "Speaker", "Internal Speaker";
 	simple-audio-card,routing =
-			"Left DAC", "DACL",
-			"Right DAC", "DACR",
-			"Speaker Amp INL", "LINEOUT",
-			"Speaker Amp INR", "LINEOUT",
+			"Headphone Jack", "HP",
 			"Internal Speaker", "Speaker Amp OUTL",
 			"Internal Speaker", "Speaker Amp OUTR",
-			"Headphone Jack", "HP",
+			"Speaker Amp INL", "LINEOUT",
+			"Speaker Amp INR", "LINEOUT",
+			"Left DAC", "DACL",
+			"Right DAC", "DACR",
 			"ADCL", "Left ADC",
 			"ADCR", "Right ADC",
 			"Internal Microphone Left", "MBIAS",
