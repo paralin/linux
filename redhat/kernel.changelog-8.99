@@ -1,3 +1,7 @@
+* Tue Oct 20 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201020git071a0578b0ce.47.test]
+- Fix Fedora config locations ("Justin M. Forbes")
+- Fedora config updates ("Justin M. Forbes")
+
 * Sat Oct 17 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201017git071a0578b0ce.44.test]
 - 071a0578b0ce rebase
 - configs: enable CONFIG_CRYPTO_CTS=y so cts(cbc(aes)) is available in FIPS mode (Vladis Dronov)
