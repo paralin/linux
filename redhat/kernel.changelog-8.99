@@ -1,3 +1,6 @@
+* Thu Oct 22 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201022git96485e446260.49.test]
+- 96485e446260 rebase
+
 * Thu Oct 22 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201022gitf804b3159482.48.test]
 - f804b3159482 rebase
 - New configs in kernel/trace (Fedora Kernel Team)
