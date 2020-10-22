@@ -1,3 +1,8 @@
+* Thu Oct 22 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201022gitf804b3159482.48.test]
+- f804b3159482 rebase
+- New configs in kernel/trace (Fedora Kernel Team)
+- configs/iommu: Add config comment to empty CONFIG_SUN50I_IOMMU file (Jerry Snitselaar)
+
 * Tue Oct 20 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201020git071a0578b0ce.47.test]
 - Fix Fedora config locations ("Justin M. Forbes")
 - Fedora config updates ("Justin M. Forbes")
