@@ -1,3 +1,6 @@
+* Sat Oct 24 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201024git96485e446260.51.test]
+- [Automatic] Handle config dependency changes (Don Zickus)
+
 * Thu Oct 22 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201022git96485e446260.49.test]
 - 96485e446260 rebase
 
