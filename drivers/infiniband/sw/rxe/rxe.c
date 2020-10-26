@@ -286,13 +286,6 @@ static int __init rxe_module_init(void)
 
 	mark_tech_preview("Soft-RoCE Transport Driver", THIS_MODULE);
 
-	/* initialize slab caches for managed objects */
-	err = rxe_cache_init();
-	if (err) {
-		pr_err("unable to init object pools\n");
-		return err;
-	}
-
 	err = rxe_net_init();
 	if (err)
 		return err;
