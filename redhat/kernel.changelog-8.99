@@ -1,3 +1,8 @@
+* Wed Oct 28 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.20201028gited8780e3f2ec.55.test]
+- ed8780e3f2ec rebase
+- Fix up a merge issue with rxe.c ("Justin M. Forbes")
+- configs: Disable CONFIG_SECURITY_SELINUX_DISABLE (Ondrej Mosnacek)
+
 * Mon Oct 26 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.54.test]
 - v5.10-rc1 rebase
 
