@@ -1,3 +1,7 @@
+* Thu Oct 29 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.20201029gited8780e3f2ec.56.test]
+- Point pathfix to the new location for gen_compile_commands.py ("Justin M. Forbes")
+- Filter out LTO build options from the perl ccopts ("Justin M. Forbes")
+
 * Wed Oct 28 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.20201028gited8780e3f2ec.55.test]
 - ed8780e3f2ec rebase
 - Fix up a merge issue with rxe.c ("Justin M. Forbes")
