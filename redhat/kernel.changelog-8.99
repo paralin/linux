@@ -1,3 +1,33 @@
+* Fri Oct 30 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.20201030git07e088730245.58.test]
+- 07e088730245 rebase
+- Fix LTO issues with kernel-tools (Don Zickus)
+- New configs in drivers/mfd (Fedora Kernel Team)
+- arm64/defconfig: Enable CONFIG_KEXEC_FILE (Bhupesh Sharma) [https://bugzilla.redhat.com/show_bug.cgi?id=1821565]
+- redhat/configs: Cleanup CONFIG_CRYPTO_SHA512 (Prarit Bhargava)
+- redhat: ark: disable CONFIG_NET_ACT_CTINFO (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_TEQL (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_SFB (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_QFQ (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_PLUG (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_PIE (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_MULTIQ (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_HHF (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_DSMARK (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_DRR (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_CODEL (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_CHOKE (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_CBQ (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_SCH_ATM (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_EMATCH and sub-targets (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_CLS_TCINDEX (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_CLS_RSVP6 (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_CLS_RSVP (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_CLS_ROUTE4 (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_CLS_BASIC (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_ACT_SKBMOD (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_ACT_SIMP (Davide Caratti)
+- redhat: ark: disable CONFIG_NET_ACT_NAT (Davide Caratti)
+
 * Thu Oct 29 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.20201029git23859ae44402.57.test]
 - 23859ae44402 rebase
 
