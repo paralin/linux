@@ -1,3 +1,8 @@
+* Sat Oct 31 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.20201031git5fc6b075e165.59.test]
+- 5fc6b075e165 rebase
+- Allow building of kernel-tools standalone (Don Zickus)
+- Allow kernel-tools to build without selftests (Don Zickus)
+
 * Fri Oct 30 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.20201030git07e088730245.58.test]
 - 07e088730245 rebase
 - Fix LTO issues with kernel-tools (Don Zickus)
