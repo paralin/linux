@@ -591,6 +591,10 @@
 			opp-hz = /bits/ 64 <2016000000>;
 			opp-microvolt = <1010000>;
 		};
+		opp13 {
+			opp-hz = /bits/ 64 <2100000000>;
+			opp-microvolt = <1030000>;
+		};
 	};
 
 	cpufreq-meson {
@@ -621,14 +625,26 @@
 		compatible = "amlogic, aml_dummy_codec";
 		status = "okay";
 	};
+	spdif_dit:spdif{
+		#sound-dai-cells = <0>;
+		compatible = "linux,spdif-dit";
+		status = "okay";
+	};
+	pcm5102a: pcm5102a {
+		compatible = "ti,pcm5102a";
+		#sound-dai-cells = <0>;
+		status = "disabled";
+	};
 	amlogic_codec:t9015{
 		#sound-dai-cells = <0>;
 		compatible = "amlogic, aml_codec_T9015";
 		reg = <0x0 0xFF632000 0x0 0x2000>;
 		is_auge_used = <1>; /* meson or auge chipset used */
-		tocodec_inout = <0>;
+		tocodec_inout = <1>;
 		tdmout_index = <2>;
-		status = "okay";
+		ch0_sel = <0>;
+		ch1_sel = <1>;
+		status = "disabled";
 	};
 	audio_effect:eqdrc{
 		/*eq_enable = <1>;*/
@@ -646,9 +662,9 @@
 		/* max 0xff, each bit for one channel */
 		channel_mask = <0x3>;
 	};
-	auge_sound {
+	odroid_hdmi {
 		compatible = "amlogic, g12a-sound-card";
-		aml-audio-card,name = "AML-AUGESOUND";
+		aml-audio-card,name = "ODROID-HDMI";
 
 		/* ODROID-C4: spdif_out GPIOAO_10(J7.2), HDMI out*/
 		aml-audio-card,dai-link@0 {
@@ -659,29 +675,26 @@
 				system-clock-frequency = <6144000>;
 			};
 			codec {
-				sound-dai = <&dummy_codec>;
-			};
-		};
-
-		/* ODROID-C4: I2S out(J7)*/
-		aml-audio-card,dai-link@1 {
-			format = "i2s";
-			mclk-fs = <256>;
-			bitclock-master = <&tdmb>;
-			frame-master = <&tdmb>;
-			continuous-clock;
-			cpu {
-				sound-dai = <&tdmb>;
-				dai-tdm-slot-tx-mask = <1 1>;
-				dai-tdm-slot-num = <2>;
-				dai-tdm-slot-width = <32>;
-				system-clock-frequency = <12288000>;
-			};
-			codec {
-				sound-dai = <&dummy_codec>;
+				sound-dai = <&spdif_dit>;
 			};
 		};
 	};
+	odroid_lineout: odroid_lineout {
+		compatible = "amlogic, g12a-sound-card";
+		aml-audio-card,name = "ODROID-LINEOUT";
+		status = "disabled";
+	};
+	odroid_hifi: odroid_hifi {
+		compatible = "amlogic, g12a-sound-card";
+		aml-audio-card,name = "ODROID-HIFI";
+		status = "disabled";
+	};
+	odroid_hifi2: odroid_hifi2 {
+		compatible = "amlogic, g12a-sound-card";
+		aml-audio-card,name = "ODROID-HIFI2";
+		status = "disabled";
+	};
+
 	audiolocker: locker {
 		compatible = "amlogic, audiolocker";
 		clocks = <&clkaudio CLKID_AUDIO_LOCKER_OUT
@@ -720,75 +733,42 @@
 	gpio-reset {
 		/delete-node/ usb_hub_en;
 	};
-	onewire:onewire {
-		compatible = "w1-gpio";
-		gpios = <&gpio GPIOX_5 GPIO_ACTIVE_HIGH>;
-		status = "disabled";
-	};
-
-	hktft35 {
-		status = "disabled";
-		compatible = "odroid,hktft35";
-		pinctrl-names = "hktft35";
-		pinctrl-0 = <&hktft35_pins>;
-
-		rotate = <270>;
-		bgr;
-		fps = <20>;
-		bpp = <16>;
-		reset-gpios = <&gpio GPIOX_3 GPIO_ACTIVE_LOW>;
-		dc-gpios = <&gpio GPIOX_14 GPIO_ACTIVE_LOW>;
-		wr-gpios = <&gpio GPIOX_10 GPIO_ACTIVE_LOW>;
-		cs-gpios = <&gpio GPIOX_16 GPIO_ACTIVE_LOW>;
-		led-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>;
-		db-gpios = <&gpio GPIOX_1 GPIO_ACTIVE_LOW>,
-			   <&gpio GPIOX_2 GPIO_ACTIVE_LOW>,
-			   <&gpio GPIOX_0 GPIO_ACTIVE_LOW>,
-			   <&gpio GPIOX_11 GPIO_ACTIVE_LOW>,
-			   <&gpio GPIOX_9 GPIO_ACTIVE_LOW>,
-			   <&gpio GPIOX_8 GPIO_ACTIVE_LOW>,
-			   <&gpio GPIOX_7 GPIO_ACTIVE_LOW>,
-			   <&gpio GPIOX_4 GPIO_ACTIVE_LOW>;
-		debug = <0>;
-
-		hktft35_pins: hktft35_pins {
-			mux {
-				groups = "GPIOX_0",
-					"GPIOX_1",
-					"GPIOX_2",
-					"GPIOX_3",
-					"GPIOX_4",
-					"GPIOX_6",
-					"GPIOX_7",
-					"GPIOX_8",
-					"GPIOX_9",
-					"GPIOX_10",
-					"GPIOX_11",
-					"GPIOX_14",
-					"GPIOX_16";
-				function = "gpio_periphs";
-				output-high;
-				drive-strength = <3>;
-			};
-		};
-	};
 }; /* end of / */
 
 &audiobus {
 	tdmb: tdm@1 {
 		compatible = "amlogic, sm1-snd-tdmb";
 		#sound-dai-cells = <0>;
+		dai-tdm-lane-slot-mask-in = <0 1 0 0>;
 		dai-tdm-lane-slot-mask-out = <1 0 0 0>;
-		dai-tdm-clk-sel = <0>;
-		clocks = <&clkaudio CLKID_AUDIO_MCLK_A
+		dai-tdm-clk-sel = <1>;
+		clocks = <&clkaudio CLKID_AUDIO_MCLK_B
+				&clkaudio CLKID_AUDIO_MCLK_PAD0
 				&clkc CLKID_MPLL0>;
-		clock-names = "mclk", "clk_srcpll";
+		clock-names = "mclk", "mclk_pad", "clk_srcpll";
 		pinctrl-names = "tdm_pins";
-		pinctrl-0 = <&tdmb_mclk &tdmout_b>;
-		mclk_pad = <0>;  /* 0: mclk_0; 1: mclk_1 */
+		pinctrl-0 = <&tdmb_mclk_ao &tdmout_b_ao>;
 		i2s2hdmi = <0>;
-		status = "okay";
+		/*enable default mclk(12.288M), before extern codec start*/
+		start_clk_enable = <1>;
+		/*tdm clk tuning enable*/
+		clk_tuning_enable = <1>;
+		status = "disabled";
 	};
+
+	tdmc: tdm@2 {
+		compatible = "amlogic, sm1-snd-tdmc";
+		#sound-dai-cells = <0>;
+		dai-tdm-lane-slot-mask-in = <0 1 0 0>;
+		dai-tdm-lane-slot-mask-out = <1 0 0 0>;
+		dai-tdm-clk-sel = <2>;
+		clocks = <&clkaudio CLKID_AUDIO_MCLK_C
+				&clkc CLKID_MPLL2>;
+		clock-names = "mclk", "clk_srcpll";
+		i2s2hdmi = <0>;
+		status = "disabled";
+	};
+
 	spdifa: spdif@0 {
 		compatible = "amlogic, sm1-snd-spdif-a";
 		#sound-dai-cells = <0>;
@@ -875,7 +855,7 @@
 };
 
 &uart_A {
-	status = "okay";
+	status = "disabled";
 };
 
 &usb3_phy_v2 {
@@ -908,7 +888,6 @@
 			"MMC_CAP_ERASE",
 			"MMC_CAP_CMD23";
 		vol_switch = <&gpio_ao GPIOAO_6 GPIO_ACTIVE_HIGH>;
-		gpio_power = <&gpio_ao GPIOAO_3 GPIO_ACTIVE_HIGH>;
 		vol_switch_18 = <1>;
 		f_min = <400000>;
 		f_max = <200000000>;
@@ -916,7 +895,7 @@
 };
 
 &sd_emmc_a {
-	status = "okay";
+	status = "disabled";
 	sdio {
 		caps = "MMC_CAP_4_BIT_DATA",
 			 "MMC_CAP_MMC_HIGHSPEED",
@@ -934,7 +913,6 @@
 };
 
 &pinctrl_periphs {
-
 };
 
 &pinctrl_aobus {
@@ -944,14 +922,14 @@
 			function = "spdif_out_ao";
 		};
 	};
-	tdmb_mclk: tdmb_mclk {
-		mux {
+	tdmb_mclk_ao: mclk0_ao {
+		mux { /* GPIOAO_9 */
 			groups = "mclk0_ao";
 			function = "mclk0_ao";
 			drive-strength = <2>;
 		};
 	};
-	tdmout_b: tdmout_b {
+	tdmout_b_ao: tdmout_b {
 		mux { /* GPIOAO_8, GPIOAO_7, GPIOAO_4 */
 			groups = "tdmb_sclk_ao",
 				"tdmb_fs_ao",
@@ -963,7 +941,7 @@
 }; /* end of pinctrl_aobus */
 
 &spicc0 {
-	status = "okay";
+	status = "disabled";
 
 	/*
 	 40 Pin Header : MOSI(GPIOX.8->19 Pin), MISO(GPIOX.9->21 Pin),
@@ -977,104 +955,12 @@
 
 	cs-gpios = <&gpio GPIOX_10 GPIO_ACTIVE_LOW>,
 		   <&gpio GPIOH_6 GPIO_ACTIVE_LOW>;
-
-	can0: can@0 {
-		compatible = "microchip,mcp2515";
-		reg = <0>;
-		spi-max-frequency = <10000000>;
-		status = "disabled";
-		gpio-irq = <&gpio GPIOX_3 GPIO_ACTIVE_LOW>;
-	};
-
-	spidev@0 {
-		status = "okay";
-
-		compatible = "linux,spidev";
-		/* spi default max clock 100Mhz */
-		spi-max-frequency = <100000000>;
-		reg = <0>;
-	};
-
-	/* SPI 3.2" Touch Screen Define */
-	ads7846@1 {
-		status = "disabled";
-
-		spi-max-frequency = <1000000>;
-
-		compatible = "ti,ads7846";
-
-		reg = <1>;
-
-		/* ODROID-N2 Touch interrupt gpio */
-		pendown-gpio = <&gpio GPIOX_3 GPIO_ACTIVE_HIGH>;
-
-		ti,swap-xy = <1>;
-		ti,x-min = /bits/ 16 <0>;
-		ti,x-max = /bits/ 16 <8000>;
-		ti,y-min = /bits/ 16 <0>;
-		ti,y-max = /bits/ 16 <4800>;
-		ti,x-plate-ohms = /bits/ 16 <40>;
-		ti,pressure-max = /bits/ 16 <255>;
-
-		linux,wakeup;
-	};
-
-	hktft32@0 {
-		status = "disabled";
-		compatible = "odroid,hktft32";
-		reg = <0>;
-		pinctrl-names = "hktft32";
-		pinctrl-0 = <&hktft32_pins>;
-
-		spi-max-frequency = <40000000>;
-		rotate = <90>;
-		bgr;
-		backlight;
-		fps = <20>;
-		bpp = <16>;
-		reset-gpios = <&gpio GPIOX_4 GPIO_ACTIVE_LOW>;
-		dc-gpios = <&gpio GPIOX_7 GPIO_ACTIVE_LOW>;
-		debug = <0>;
-
-		hktft32_pins: hktft32_pins {
-			mux {
-				groups = "GPIOX_4",
-					"GPIOX_7";
-				function = "gpio_periphs";
-				output-high;
-				drive-strength = <3>;
-			};
-		};
-	};
 };
 
 &i2c2 {
-	pcf8563: rtc@51 {
-		status = "disabled";
-		compatible = "nxp,pcf8563";
-		reg = <0x51>;
-	};
+	status = "disabled";
 };
 
 &i2c3 {
 	status = "disabled";
-
-	/* Hardkernel I2C 3.5" Touchscreen */
-	/* drivers/input/sx8650.c */
-	sx865x: sx865x@49 {
-		status = "disabled";
-		compatible = "semtech,sx8650";
-		reg = <0x49>;
-		#clock-cells = <0>;
-
-		/* H/W Pin control setup */
-		/* ODROID-C4 */
-		gpio-pendown = <&gpio GPIOH_5 GPIO_ACTIVE_LOW>;
-		gpio-reset   = <&gpio GPIOH_7 GPIO_ACTIVE_LOW>;
-
-		/* platform data setup */
-		invert-x = <0>;
-		invert-y = <1>;
-		swap-xy = <1>;
-	};
 };

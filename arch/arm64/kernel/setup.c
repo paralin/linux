@@ -227,13 +227,18 @@ static void __init setup_machine_fdt(phys_addr_t dt_phys)
 	dump_stack_set_arch_desc("%s (DT)", name);
 
 #ifdef CONFIG_ARCH_MESON64_ODROID_COMMON
-	if (!strcmp(machine_name, "Hardkernel ODROID-N2")) {
+	if (!strcmp(machine_name, "Hardkernel ODROID-N2") ||
+		!strcmp(machine_name, "Hardkernel ODROID-N2Plus")) {
 		system_rev = 0x0400;
 		__odroid_model = BOARD_ODROIDN2;
 		__odroid_amlogic_usb3 = true;
 	} else if (!strcmp(machine_name, "Hardkernel ODROID-C4")) {
 		system_rev = 0x0500;
 		__odroid_model = BOARD_ODROIDC4;
+		__odroid_amlogic_usb3 = false;
+	} else if (!strcmp(machine_name, "Hardkernel ODROID-HC4")) {
+		system_rev = 0x0600;
+		__odroid_model = BOARD_ODROIDHC4;
 		__odroid_amlogic_usb3 = false;
 	}
 #endif
