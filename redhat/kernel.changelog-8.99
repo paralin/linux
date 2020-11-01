@@ -1,3 +1,6 @@
+* Sun Nov 01 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.20201101gitc2dc4c073fb7.60.test]
+- c2dc4c073fb7 rebase
+
 * Sat Oct 31 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.20201031git5fc6b075e165.59.test]
 - 5fc6b075e165 rebase
 - Allow building of kernel-tools standalone (Don Zickus)
