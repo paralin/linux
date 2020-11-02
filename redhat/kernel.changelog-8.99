@@ -1,3 +1,6 @@
+* Mon Nov 02 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc2.61.test]
+- v5.10-rc2 rebase
+
 * Sun Nov 01 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc1.20201101gitc2dc4c073fb7.60.test]
 - c2dc4c073fb7 rebase
 
