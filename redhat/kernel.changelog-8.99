@@ -1,3 +1,7 @@
+* Tue Nov 10 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc3.67.test]
+- More Fedora config fixes ("Justin M. Forbes")
+- Fedora 5.10 config updates ("Justin M. Forbes")
+
 * Mon Nov 09 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc3.66.test]
 - v5.10-rc3 rebase
 
