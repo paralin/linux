@@ -1,3 +1,7 @@
+* Wed Nov 11 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc3.20201111giteccc87672492.68.test]
+- eccc87672492 rebase
+- redhat: enable CONFIG_INTEL_IOMMU_SVM (Jerry Snitselaar)
+
 * Tue Nov 10 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc3.67.test]
 - More Fedora config fixes ("Justin M. Forbes")
 - Fedora 5.10 config updates ("Justin M. Forbes")
