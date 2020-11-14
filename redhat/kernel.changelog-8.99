@@ -1,3 +1,7 @@
+* Sat Nov 14 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc3.20201114gitf01c30de86f1.73.test]
+- f01c30de86f1 rebase
+- Turn on ATH11K for Fedora ("Justin M. Forbes")
+
 * Fri Nov 13 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc3.20201113git585e5b17b92d.72.test]
 - 585e5b17b92d rebase
 
