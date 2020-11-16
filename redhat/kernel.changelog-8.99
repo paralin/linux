@@ -1,3 +1,8 @@
+* Mon Nov 16 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.76.test]
+- v5.10-rc4 rebase
+- Ath11k related config updates ("Justin M. Forbes")
+- Fedora config updates for ath11k ("Justin M. Forbes")
+
 * Sun Nov 15 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc3.20201115gite28c0d7c92c8.74.test]
 - e28c0d7c92c8 rebase
 
