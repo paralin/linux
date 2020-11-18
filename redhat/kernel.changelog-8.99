@@ -1,3 +1,6 @@
+* Wed Nov 18 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.20201118git0fa8ee0d9ab9.78.test]
+- 0fa8ee0d9ab9 rebase
+
 * Tue Nov 17 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.20201117git9c87c9f41245.77.test]
 - 9c87c9f41245 rebase
 
