@@ -1,3 +1,8 @@
+* Thu Nov 19 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.20201119gitc2e7554e1b85.79.test]
+- c2e7554e1b85 rebase
+- Enable NANDSIM for Fedora ("Justin M. Forbes")
+- Re-enable CONFIG_ACPI_TABLE_UPGRADE for Fedora since upstream disables this if secureboot is active ("Justin M. Forbes")
+
 * Wed Nov 18 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.20201118git0fa8ee0d9ab9.78.test]
 - 0fa8ee0d9ab9 rebase
 
