@@ -1,3 +1,7 @@
+* Fri Nov 20 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.20201120git4d02da974ea8.81]
+- Fedora config update ("Justin M. Forbes")
+- redhat: generic  enable CONFIG_INET_MPTCP_DIAG (Davide Caratti)
+
 * Thu Nov 19 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.20201119gitc2e7554e1b85.79.test]
 - c2e7554e1b85 rebase
 - Enable NANDSIM for Fedora ("Justin M. Forbes")
