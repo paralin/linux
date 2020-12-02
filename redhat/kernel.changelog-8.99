@@ -1,3 +1,9 @@
+* Wed Dec 02 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc6.20201202git509a15421674.90]
+- Fedora config update ("Justin M. Forbes")
+- Fedora config change because CONFIG_FSL_DPAA2_ETH now selects CONFIG_FSL_XGMAC_MDIO ("Justin M. Forbes")
+- Fedora: Only enable legacy serial/game port joysticks on x86 (Peter Robinson)
+- Fedora: Enable the options required for the Librem 5 Phone (Peter Robinson)
+
 * Fri Nov 20 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.20201120git4d02da974ea8.81]
 - Fedora config update ("Justin M. Forbes")
 - redhat: generic  enable CONFIG_INET_MPTCP_DIAG (Davide Caratti)
