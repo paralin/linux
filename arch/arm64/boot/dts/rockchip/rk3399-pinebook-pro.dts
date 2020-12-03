@@ -709,15 +709,15 @@
 	fusb0: fusb30x@22 {
 		compatible = "fcs,fusb302";
 		reg = <0x22>;
-		interrupt-parent = <&gpio1>;
-		interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
+		fcs,int_n = <&gpio1 RK_PA2 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&fusb0_int_pin>;
 		vbus-supply = <&vbus_typec>;
+		status = "okay";
 
 		connector {
 			compatible = "usb-c-connector";
-			data-role = "data";
+			data-role = "host";
 			label = "USB-C";
 			op-sink-microwatt = <1000000>;
 			power-role = "dual";
