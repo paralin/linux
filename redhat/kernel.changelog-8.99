@@ -1,3 +1,7 @@
+* Thu Dec 03 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc6.20201203git34816d20f173.91]
+- fedora: some minor arm audio config tweaks (Peter Robinson)
+- Ship xpad with default modules on Fedora and RHEL (Bastien Nocera)
+
 * Wed Dec 02 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc6.20201202git509a15421674.90]
 - Fedora config update ("Justin M. Forbes")
 - Fedora config change because CONFIG_FSL_DPAA2_ETH now selects CONFIG_FSL_XGMAC_MDIO ("Justin M. Forbes")
