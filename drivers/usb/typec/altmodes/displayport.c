@@ -184,9 +184,12 @@ static int dp_altmode_configured(struct dp_altmode *dp)
 	sysfs_notify(&dp->alt->dev.kobj, "displayport", "configuration");
 
 	if (!dp->data.conf) {
-		dp_altmode_update_extcon(dp, true)
+		dp_altmode_update_extcon(dp, true);
 		return typec_altmode_notify(dp->alt, TYPEC_STATE_USB,
 					    &dp->data);
+	}
+
+	dp_altmode_update_extcon(dp, false);
 
 	ret = dp_altmode_notify(dp);
 	if (ret)
@@ -217,6 +220,7 @@ static int dp_altmode_configure_vdm(struct dp_altmode *dp, u32 conf)
 			dp_altmode_update_extcon(dp, true);
 			typec_altmode_notify(dp->alt, TYPEC_STATE_USB,
 					     &dp->data);
+		}
 	}
 
 	return ret;
