@@ -66,6 +66,16 @@ config SND_SOC_RK3288_HDMI_ANALOG
 	  Say Y or M here if you want to add support for SoC audio on Rockchip
 	  RK3288 boards using an analog output and the built-in HDMI audio.
 
+config SND_SOC_ROCKCHIP_HDMI_DP
+	tristate "ASoC support for Rockchip built-in HDMI and DP"
+	depends on SND_SOC_ROCKCHIP && CLKDEV_LOOKUP
+	depends on ROCKCHIP_CDN_DP || DRM_DW_HDMI_I2S_AUDIO
+	select SND_SOC_ROCKCHIP_I2S
+	select SND_SOC_HDMI_CODEC
+	help
+	  Say Y or M here if you want to add support for SoC audio on Rockchip
+	  boards using built-in HDMI and DP, such as RK3399 boards.
+
 config SND_SOC_RK3399_GRU_SOUND
 	tristate "ASoC support multiple codecs for Rockchip RK3399 GRU boards"
 	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && CLKDEV_LOOKUP && SPI
