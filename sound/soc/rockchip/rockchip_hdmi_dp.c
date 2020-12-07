@@ -39,8 +39,8 @@ static int rk_hdmi_dp_hw_params(struct snd_pcm_substream *substream,
 				struct snd_pcm_hw_params *params)
 {
 	int ret = 0;
-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_soc_pcm_runtime *rtd = asoc_substream_to_rtd(substream);
+	struct snd_soc_dai *cpu_dai = asoc_rtd_to_cpu(rtd, 0);
 	int mclk;
 
 	switch (params_rate(params)) {
@@ -80,7 +80,7 @@ static int rk_hdmi_dp_hw_params(struct snd_pcm_substream *substream,
 	return 0;
 }
 
-static int rockchip_sound_register_jack(struct snd_soc_card *card, struct snd_soc_codec *codec, int index)
+static int rockchip_sound_register_jack(struct snd_soc_card *card, struct snd_soc_component *codec, int index)
 {
 	struct snd_soc_jack *jack;
 	char jack_name[60];
@@ -126,9 +126,9 @@ static int rockchip_sound_hdmi_dp_init(struct snd_soc_pcm_runtime *runtime)
 	int ret;
 
 	for (i = 0; i < runtime->num_codecs; ++i) {
-		struct snd_soc_codec *codec = runtime->codec_dais[i]->codec;
+		struct snd_soc_component *component = asoc_rtd_to_codec(runtime, i)->component;
 
-		ret = rockchip_sound_register_jack(card, codec, i);
+		ret = rockchip_sound_register_jack(card, component, i);
 		if (ret) {
 			dev_err(card->dev, "Failed to register codec jack: %d\n", ret);
 			return ret;
@@ -211,11 +211,10 @@ static int rk_hdmi_dp_probe(struct platform_device *pdev)
 		idx++;
 	}
 
-	link->cpu_of_node = of_parse_phandle(np, "rockchip,cpu", 0);
-	if (!link->cpu_of_node)
+	link->cpus->of_node = of_parse_phandle(np, "rockchip,cpu", 0);
+	if (!link->cpus->of_node)
 		return -ENODEV;
-
-	link->platform_of_node = link->cpu_of_node;
+	link->platforms->of_node = link->cpus->of_node;
 
 	ret = devm_snd_soc_register_card(&pdev->dev, card);
 	if (ret == -EPROBE_DEFER)
