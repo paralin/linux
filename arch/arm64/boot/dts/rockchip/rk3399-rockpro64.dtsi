@@ -73,6 +73,13 @@
 		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
 	};
 
+	hdmi-sound {
+		status = "okay";
+		compatible = "rockchip,rk3399-hdmi-dp";
+		rockchip,cpu = <&i2s2>;
+		rockchip,codec = <&hdmi>, <&cdn_dp>;
+	};
+
 	sound {
 		compatible = "audio-graph-card";
 		label = "rockchip,rk3399";
