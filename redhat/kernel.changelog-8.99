@@ -1,3 +1,6 @@
+* Tue Dec 08 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc7.93]
+- fedora: move CONFIG_RTC_NVMEM options from ark to common (Peter Robinson)
+
 * Mon Dec 07 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc7.92]
 - configs: Enable CONFIG_DEBUG_INFO_BTF (Don Zickus)
 
