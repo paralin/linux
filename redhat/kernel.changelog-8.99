@@ -1,3 +1,7 @@
+* Wed Dec 09 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc7.20201209gita68a0262abda.94]
+- Update CONFIG_INET6_ESPINTCP (Justin Forbes)
+- New configs in net/ipv6 ("Justin M. Forbes")
+
 * Tue Dec 08 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc7.93]
 - fedora: move CONFIG_RTC_NVMEM options from ark to common (Peter Robinson)
 
