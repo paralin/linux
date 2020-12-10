@@ -1,3 +1,7 @@
+* Thu Dec 10 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc7.20201210gita2f5ea9e314b.95]
+- kernel: Update some missing KASAN/KCSAN options (Jeremy Linton)
+- kernel: Enable coresight on aarch64 (Jeremy Linton)
+
 * Wed Dec 09 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc7.20201209gita68a0262abda.94]
 - Update CONFIG_INET6_ESPINTCP (Justin Forbes)
 - New configs in net/ipv6 ("Justin M. Forbes")
