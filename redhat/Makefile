@@ -1,3 +1,4 @@
+GIT ?= git
 include Makefile.common
 include Makefile.rhpkg
 
@@ -32,8 +33,8 @@ endif
 BUILD_TARGET ?= --scratch $(BUILD_SCRATCH_TARGET)
 FLAVOR =
 
-RHGITURL?=$(shell git config rhg.url || git config remote.origin.url)
-RHGITCOMMIT?=$(shell git log -1 --pretty=format:%H)
+RHGITURL?=$(shell $(GIT) config rhg.url || $(GIT) config remote.origin.url)
+RHGITCOMMIT?=$(shell $(GIT) log -1 --pretty=format:%H)
 
 # this section is needed in order to make O= to work
 _OUTPUT := ..
@@ -165,7 +166,10 @@ dist-clean-rpmdirs:
 		rm -rf $$i; \
 	done;
 
-dist-clean: dist-clean-sources dist-clean-configs dist-clean-rpmdirs
+dist-clean-scripts:
+	@rm -f dist-dump-variables.sh
+
+dist-clean: dist-clean-sources dist-clean-configs dist-clean-rpmdirs dist-clean-scripts
 
 dist-stub-key:
 	@echo "Copying pre-generated keys";
@@ -199,7 +203,7 @@ $(KABIDW_TARBALL):
 dist-git-version-check:
 	@# genspec.sh uses pathspec magic that wasn't introduced until version 2.13
 	@IFS=" ."; \
-	set -- $$(git --version); \
+	set -- $$($(GIT) --version); \
 	IFS=; \
 	if [ "$$3" -lt 2 -o \( "$$3" -eq 2 -a "$$4" -lt 13 \) ]; then \
 		echo "ERROR: You need git version 2.13 or newer to run some setup commands"; \
@@ -219,7 +223,7 @@ setup-source: dist-git-version-check dist-clean-sources
 sources-rh: $(TARBALL)
 	@cp -l $(TARBALL) $(SOURCES)/ || cp $(TARBALL) $(SOURCES)/
 	@touch $(TESTPATCH)
-	@git diff --no-renames HEAD > $(TESTPATCH).tmp
+	@$(GIT) diff --no-renames HEAD > $(TESTPATCH).tmp
 	@# 1) filterdiff will return crap from the patches it just filtered,
 	@#    that's why egrep is needed so if there're changes under redhat/
 	@#    but not everywhere else, it will be empty just like
@@ -265,7 +269,7 @@ sources-rh: $(TARBALL)
 dist-sources: setup-source dist-configs-check dist-kabi dist-kabi-dup sources-rh
 
 dist-test-patch:
-	@git diff --no-renames HEAD > $(TESTPATCH);
+	@$(GIT) diff --no-renames HEAD > $(TESTPATCH);
 	@($(FILTERDIFF) $(TESTPATCH) | egrep -v "^index|^diff" >$(TESTPATCH).tmp; true)
 	@mv $(TESTPATCH).tmp $(TESTPATCH);
 
@@ -298,43 +302,43 @@ dist-rpm-baseonly: dist-sources
 # unless you know what you're doing, you don't want to use the next four ones
 dist-release-finish: setup-source
 	@cp $(SOURCES)/$(CHANGELOG) $(REDHAT)/$(CHANGELOG)
-	@git add $(REDHAT)/$(CHANGELOG)
-	@git add $(REDHAT)/marker
-	@git commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(BUILDID)"
+	@$(GIT) add $(REDHAT)/$(CHANGELOG)
+	@$(GIT) add $(REDHAT)/marker
+	@$(GIT) commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(BUILDID)"
 dist-release-changed: setup-source
 	@cp $(SOURCES)/$(CHANGELOG) $(REDHAT)/$(CHANGELOG)
 	@echo $(MARKER) > $(REDHAT)/marker
 	@# if neither changelog nor marker was updated, skip bumping a release
-	@git update-index -q --really-refresh
-	@if git diff-index --quiet HEAD; then \
+	@$(GIT) update-index -q --really-refresh
+	@if $(GIT) diff-index --quiet HEAD; then \
 		echo "Nothing changed, skipping updates"; \
 	else \
-		git checkout -- $(REDHAT)/$(CHANGELOG); \
+		$(GIT) checkout -- $(REDHAT)/$(CHANGELOG); \
 		$(REDHAT)/scripts/new_release.sh $(REDHAT) $(__YSTREAM) $(__ZSTREAM); \
 		$(MAKE) dist-release-finish; \
 	fi
 dist-release: dist-clean-sources
 	@$(MAKE) dist-release-changed
 dist-release-tag:
-	@git tag -a -m "$(PACKAGE_NAME)-$(STAMP_VERSION)-$(PKGRELEASE)" $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PKGRELEASE)
+	@$(GIT) tag -a -m "$(PACKAGE_NAME)-$(STAMP_VERSION)-$(PKGRELEASE)" $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PKGRELEASE)
 
 git-tree-check:
-	@if test -n "$(DIST_PUSH)" && test -z "$(shell git remote get-url gitlab 2>/dev/null)"; then \
+	@if test -n "$(DIST_PUSH)" && test -z "$(shell $(GIT) remote get-url gitlab 2>/dev/null)"; then \
 		echo -e "Please run 'git remote add gitlab <url>' to enable git-push.\n"; \
 		exit 1; \
 	fi
-	@git diff-index --quiet HEAD || \
+	@$(GIT) diff-index --quiet HEAD || \
 		{ echo -e "Dirty tree, please clean before merging.\n"; exit 1; }
 
 DIST_BRANCH ?= "os-build"
 dist-merge-upstream: git-tree-check
-	@if test "$(shell git branch --show-current)" != "$(DIST_BRANCH)"; then \
+	@if test "$(shell $(GIT) branch --show-current)" != "$(DIST_BRANCH)"; then \
 		echo -e "Please checkout $(DIST_BRANCH) branch before merging.\n"; \
 		exit 1; \
 		fi;
 
 	@# If TAG is empty, script defaults to master:HEAD
-	@git checkout $(DIST_BRANCH)
+	@$(GIT) checkout $(DIST_BRANCH)
 	@cd ..; $(REDHAT)/scripts/ci/ark-update-configs.sh $(TAG)
 
 dist-merge-upstream-push: export DIST_PUSH="1"
@@ -387,6 +391,20 @@ dist-get-latest:
 
 dist-os-version:
 	@echo "OSVERSION: $(RHEL_MAJOR).$(RHEL_MINOR)"
+
+.EXPORT_ALL_VARIABLES:
+.PHONY: dist-dump-variables
+dist-dump-variables:
+	grep "^[ 	]*[a-zA-Z_][a-zA-Z_0-9]*[ 	]*[:?]*=" $(REDHAT)/Makefile.common | sed -e 's/[ 	]*\([a-zA-Z_][a-zA-Z_0-9]*\).*/echo "\1=$$\1"/' | sort | uniq > dist-dump-variables.sh
+	chmod +x $(REDHAT)/dist-dump-variables.sh
+	@$(REDHAT)/dist-dump-variables.sh
+
+dist-self-test:
+	@if test -x /usr/bin/bats; then \
+		bats $(REDHAT)/self-test/*.bats ; \
+	else \
+		echo "dist-self-test: The bats package is not installed" ; \
+	fi
 
 dist-help:
 	@echo  'Cleaning targets:'
@@ -505,4 +523,5 @@ dist-full-help:
 	@echo  '                    development tag.'
 	@echo  '  dist-os-version - Displays the current Red Hat Enterprise Linux versioni'
 	@echo  '                    target used by the current branch/tree.'
+	@echo  '  dist-self-test  - Runs self-tests from the redhat/self-test directory'
 	@echo  ''
