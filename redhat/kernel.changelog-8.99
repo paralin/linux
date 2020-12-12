@@ -1,3 +1,7 @@
+* Sat Dec 12 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc7.20201212git7f376f1917d7.97]
+- Remove filterdiff and use native git instead (Don Zickus)
+- New configs in net/sched ("Justin M. Forbes")
+
 * Fri Dec 11 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc7.20201211git33dc9614dc20.96]
 - redhat: explicitly disable CONFIG_IMA_APPRAISE_SIGNED_INIT (Bruno Meneguele)
 - redhat: enable CONFIG_EVM_LOAD_X509 on ARK (Bruno Meneguele)
