@@ -1,3 +1,7 @@
+* Tue Dec 15 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-99]
+- Add missing '$' sign to (GIT) in redhat/Makefile (Augusto Caringi)
+- redhat: ark: enable CONFIG_IKHEADERS (Jiri Olsa)
+
 * Sat Dec 12 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc7.20201212git7f376f1917d7.97]
 - Remove filterdiff and use native git instead (Don Zickus)
 - New configs in net/sched ("Justin M. Forbes")
