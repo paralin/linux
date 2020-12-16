@@ -1,3 +1,6 @@
+* Wed Dec 16 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc0.20201216gite994cc240a3b.101]
+- drop unused BACKLIGHT_GENERIC (Peter Robinson)
+
 * Tue Dec 15 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc0.20201215git148842c98a24.100]
 - Add missing '$' sign to (GIT) in redhat/Makefile (Augusto Caringi)
 - Remove filterdiff and use native git instead (Don Zickus)
