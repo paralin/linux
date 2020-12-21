@@ -1,3 +1,8 @@
+* Mon Dec 21 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc0.20201221git8653b778e454.106]
+- Fix fedora config mismatch due to dep changes ("Justin M. Forbes")
+- Remove duplicate ENERGY_MODEL configs (Peter Robinson)
+- New configs in drivers/crypto (Jeremy Cline)
+
 * Fri Dec 18 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc0.20201218gita409ed156a90.102]
 - This is selected by PCIE_QCOM so must match ("Justin M. Forbes")
 
