@@ -1,3 +1,6 @@
+* Sun Jan 03 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc1.20210103giteda809aef534.113]
+- Fedora: cleanup PCMCIA configs, move to x86 (Peter Robinson)
+
 * Wed Dec 23 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc0.20201223git614cb5894306.107]
 - New configs in drivers/rtc (Fedora Kernel Team)
 - redhat/configs: Enable CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL (Josh Poimboeuf)
