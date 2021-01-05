@@ -1,3 +1,8 @@
+* Tue Jan 05 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc2.20210105git36bbbd0e234d.115]
+- Revert "Merge branch 'ark-enable-structleak' into 'os-build'" (Justin Forbes)
+- CONFIG_KASAN_HW_TAGS for aarch64 ("Justin M. Forbes")
+- Fix up bad merge with efi: generalize efi_get_secureboot ("Justin M. Forbes")
+
 * Sun Jan 03 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc1.20210103giteda809aef534.113]
 - Fedora: cleanup PCMCIA configs, move to x86 (Peter Robinson)
 
