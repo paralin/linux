@@ -1,3 +1,6 @@
+* Fri Jan 08 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc2.20210108gitf5e6c330254a.118]
+- Fedora: arm updates for 5.11 and general cross Fedora cleanups (Peter Robinson)
+
 * Thu Jan 07 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc2.20210107git71c061d24438.117]
 - Add gcc-c++ to BuildRequires ("Justin M. Forbes")
 
