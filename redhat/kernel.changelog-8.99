@@ -1,3 +1,6 @@
+* Sat Jan 09 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc2.20210109git996e435fd401.119]
+- Revert "Merge branch 'revert-29a48502' into 'os-build'" (Justin Forbes)
+
 * Fri Jan 08 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc2.20210108gitf5e6c330254a.118]
 - Fedora: arm updates for 5.11 and general cross Fedora cleanups (Peter Robinson)
 
