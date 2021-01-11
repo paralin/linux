@@ -64,6 +64,8 @@ Red Hat Maintainers List (try to look for most precise areas first)
 
 ARK Kernel Maintainer
 M:	Justin Forbes <jforbes@redhat.com>
+M:	Patrick Talbert <ptalbert@redhat.com>
+R:	Donald Zickus <dzickus@redhat.com>
 T:	git https://gitlab.com/cki-project/kernel-ark.git
 S:	Maintained
 F:	redhat/
@@ -278,6 +280,13 @@ M:	Tomas Henzl <thenzl@redhat.com>
 S:	Maintained
 F:	drivers/scsi/arcmsr/
 
+ARCHITECTURE DIRECTORY FILES
+M:	Prarit Bhargava <prarit@redhat.com>
+M:	David Arcari <darcari@redhat.com>
+M:	Mark Salter <msalter@redhat.com>
+M:	kernel-patches@redhat.com
+F:	arch/Kconfig
+
 ARM64 PORT (AARCH64 ARCHITECTURE)
 M:	Mark Salter <msalter@redhat.com>
 M:	Mark Langsdorf <mlangsdo@redhat.com>
@@ -454,7 +463,6 @@ F:	include/linux/ceph/
 F:	include/linux/crush/
 
 CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)
-M:	"Yan, Zheng" <zyan@redhat.com>
 M:	Ilya Dryomov <idryomov@redhat.com>
 S:	Maintained
 F:	Documentation/filesystems/ceph.txt
@@ -543,19 +551,16 @@ F:	include/linux/crypto*
 F:	lib/crypto/
 
 CXGB3 ETHERNET DRIVER (cxgb3)
-M:	Vishal Kulkarni <viskulka@redhat.com>
 M:	John W. Linville <linville@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/chelsio/cxgb3/
 
 CXGB4 ETHERNET DRIVER (cxgb4)
-M:	Vishal Kulkarni <viskulka@redhat.com>
 M:	John W. Linville <linville@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/chelsio/cxgb4/
 
 CXGB4 IWARP DRIVER (IW_CXGB4)
-M:	Vishal Kulkarni <viskulka@redhat.com>
 M:	John W. Linville <linville@redhat.com>
 S:	Maintained
 F:	drivers/infiniband/hw/cxgb4/
@@ -1222,6 +1227,7 @@ NETWORKING [GENERAL]
 I:	net
 M:	Jiri Benc <jbenc@redhat.com>
 M:	Marcelo Leitner <mleitner@redhat.com>
+R:	Antoine Tenart <atenart@redhat.com>
 R:	Davide Caratti <dcaratti@redhat.com>
 R:	Eric Garver <egarver@redhat.com>
 R:	Flavio Leitner <fbl@redhat.com>
@@ -1362,6 +1368,17 @@ NFS SERVER (nfsd)
 L:	kernel-patches@redhat.com
 S:	Maintained
 F:	fs/nfsd/
+
+NITRO ENCLAVES (NE)
+M:	Cathy Avery <cavery@redhat.com>
+M:	Mohammed Gamal <mgamal@redhat.com>
+M:	Vitaly Kuznetsov <vkuznets@redhat.com>
+S:	Maintained
+F:	Documentation/virt/ne_overview.rst
+F:	drivers/virt/nitro_enclaves/
+F:	include/linux/nitro_enclaves.h
+F:	include/uapi/linux/nitro_enclaves.h
+F:	samples/nitro_enclaves/
 
 NON-MASKABLE INTERRUPT (NMI)
 M:	Don Zickus <dzickus@redhat.com>
