@@ -1,3 +1,6 @@
+* Tue Jan 12 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210112gita0d54b4f5b21.122]
+- Enable the vkms module in Fedora (Jeremy Cline)
+
 * Sat Jan 09 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc2.20210109git996e435fd401.119]
 - Revert "Merge branch 'revert-29a48502' into 'os-build'" (Justin Forbes)
 
