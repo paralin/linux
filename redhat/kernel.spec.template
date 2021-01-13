@@ -7,6 +7,14 @@
 %global _lto_cflags %{nil}
 
 
+# Cross compile on copr for arm
+# See https://bugzilla.redhat.com/1879599
+%if 0%{?_with_cross_arm:1}
+%global _target_cpu armv7hl
+%global _arch arm
+%global _build_arch arm
+%global _with_cross    1
+%endif
 
 # The kernel's %%install section is special
 # Normally the %%install section starts by cleaning up the BUILD_ROOT
@@ -575,6 +583,7 @@ BuildRequires: pesign >= 0.10-4
 %if %{with_cross}
 BuildRequires: binutils-%{_build_arch}-linux-gnu, gcc-%{_build_arch}-linux-gnu
 %define cross_opts CROSS_COMPILE=%{_build_arch}-linux-gnu-
+%define __strip %{_build_arch}-linux-gnu-strip
 %endif
 
 # These below are required to build man pages
