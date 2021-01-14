@@ -1,3 +1,8 @@
+* Thu Jan 14 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210114git65f0d2414b70.124]
+- Reword comment (Nicolas Chauvet)
+- Add with_cross_arm conditional (Nicolas Chauvet)
+- Redefines __strip if with_cross (Nicolas Chauvet)
+
 * Wed Jan 13 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210113gite609571b5ffa.123]
 - fedora: only enable ACPI_CONFIGFS, ACPI_CUSTOM_METHOD in debug kernels (Peter Robinson)
 - fedora: User the same EFI_CUSTOM_SSDT_OVERLAYS as ARK (Peter Robinson)
