@@ -1,3 +1,10 @@
+* Fri Jan 15 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210115git5ee88057889b.125]
+- redhat: avoid conflict with mod-blacklist.sh and released_kernel defined ("Herton R. Krzesinski")
+- redhat: handle certificate files conditionally as done for src.rpm ("Herton R. Krzesinski")
+- Run MR testing in CKI pipeline (Veronika Kabatova)
+- specfile: add {?_smp_mflags} to "make headers_install" in tools/testing/selftests (Denys Vlasenko)
+- specfile: add {?_smp_mflags} to "make samples/bpf/" (Denys Vlasenko)
+
 * Thu Jan 14 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210114git65f0d2414b70.124]
 - Reword comment (Nicolas Chauvet)
 - Add with_cross_arm conditional (Nicolas Chauvet)
