@@ -1,3 +1,6 @@
+* Sat Jan 16 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210116git1d94330a437a.126]
+- Fedora 5.11 configs pt 1 ("Justin M. Forbes")
+
 * Fri Jan 15 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210115git5ee88057889b.125]
 - redhat: avoid conflict with mod-blacklist.sh and released_kernel defined ("Herton R. Krzesinski")
 - redhat: handle certificate files conditionally as done for src.rpm ("Herton R. Krzesinski")
