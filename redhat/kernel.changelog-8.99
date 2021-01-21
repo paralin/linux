@@ -1,3 +1,7 @@
+* Thu Jan 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc4.20210121git9791581c049c.131]
+- Fix USB_XHCI_PCI regression ("Justin M. Forbes")
+- fedora: fixes for ARMv7 build issue by disabling HIGHPTE (Peter Robinson)
+
 * Tue Jan 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc4.20210119git1e2a199f6ccd.129]
 - all: s390x: Increase CONFIG_PCI_NR_FUNCTIONS to 512 (#1888735) (=?UTF-8?q?Dan=20Hor=C3=A1k?=)
 
