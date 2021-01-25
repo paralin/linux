@@ -1,3 +1,9 @@
+* Mon Jan 25 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.133]
+- Fedora 5.11 config updates part 4 ("Justin M. Forbes")
+- Fedora 5.11 config updates part 3 ("Justin M. Forbes")
+- Fedora 5.11 config updates part 2 ("Justin M. Forbes")
+- Update internal (test) module list from RHEL-8 (Joe Lawrence) [https://bugzilla.redhat.com/show_bug.cgi?id=1915073]
+
 * Thu Jan 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc4.20210121git9791581c049c.131]
 - Fix USB_XHCI_PCI regression ("Justin M. Forbes")
 - fedora: fixes for ARMv7 build issue by disabling HIGHPTE (Peter Robinson)
