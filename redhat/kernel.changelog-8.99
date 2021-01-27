@@ -1,3 +1,6 @@
+* Wed Jan 27 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210127git2ab38c17aac1.135]
+- New configs in lib/Kconfig.debug (Jeremy Cline)
+
 * Mon Jan 25 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.133]
 - Fedora 5.11 config updates part 4 ("Justin M. Forbes")
 - Fedora 5.11 config updates part 3 ("Justin M. Forbes")
