@@ -1,3 +1,6 @@
+* Fri Jan 29 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210129gitbec4c2968fce.137]
+- Turn off CONFIG_VIRTIO_CONSOLE for s390x zfcpdump ("Justin M. Forbes")
+
 * Thu Jan 28 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210128git76c057c84d28.136]
 - Keep VIRTIO_CONSOLE on s390x available. (=?UTF-8?q?Jakub=20=C4=8Cajka?=)
 - New configs in drivers/clk ("Justin M. Forbes")
