@@ -1,3 +1,6 @@
+* Sun Jan 31 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210131git0e9bcda5d286.139]
+- Remove bpf-helpers.7 from bpftool package (Jiri Olsa)
+
 * Sat Jan 30 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210130git0e9bcda5d286.138]
 - New configs in lib/Kconfig.debug (Fedora Kernel Team)
 
