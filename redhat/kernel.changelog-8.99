@@ -1,3 +1,8 @@
+* Tue Feb 02 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210202git88bb507a74ea.141]
+- redhat: remove remaining references of CONFIG_RH_DISABLE_DEPRECATED ("Herton R. Krzesinski")
+- .gitignore: fix previous mismerge with "HEAD line" ("Herton R. Krzesinski")
+- Turn off vdso_install for ppc ("Justin M. Forbes")
+
 * Sun Jan 31 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210131git0e9bcda5d286.139]
 - Remove bpf-helpers.7 from bpftool package (Jiri Olsa)
 
