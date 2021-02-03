@@ -1,3 +1,8 @@
+* Wed Feb 03 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210203git3aaf0a27ffc2.142]
+- redhat: replace inline awk script with genlog.py call (Herton R. Krzesinski)
+- redhat: add genlog.py script (Herton R. Krzesinski)
+- kernel.spec.template - fix use_vdso usage (Ben Crocker)
+
 * Tue Feb 02 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210202git88bb507a74ea.141]
 - redhat: remove remaining references of CONFIG_RH_DISABLE_DEPRECATED ("Herton R. Krzesinski")
 - .gitignore: fix previous mismerge with "HEAD line" ("Herton R. Krzesinski")
