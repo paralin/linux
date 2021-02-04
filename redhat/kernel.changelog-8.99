@@ -1,3 +1,9 @@
+* Thu Feb 04 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210204git61556703b610.143]
+- Makefile targets for packit integration (Ben Crocker)
+- Turn off KASAN for rawhide debug builds (Justin M. Forbes)
+- New configs in arch/arm64 (Justin Forbes)
+- Remove deprecated Intel MIC config options (Peter Robinson)
+
 * Wed Feb 03 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210203git3aaf0a27ffc2.142]
 - redhat: replace inline awk script with genlog.py call (Herton R. Krzesinski)
 - redhat: add genlog.py script (Herton R. Krzesinski)
