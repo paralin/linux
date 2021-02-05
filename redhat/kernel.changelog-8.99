@@ -1,3 +1,7 @@
+* Fri Feb 05 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210205gitdd86e7fa07a3.144]
+- Turn off additional KASAN options for Fedora (Justin M. Forbes)
+- Rename the master branch to rawhide for Fedora (Justin M. Forbes)
+
 * Thu Feb 04 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210204git61556703b610.143]
 - Makefile targets for packit integration (Ben Crocker)
 - Turn off KASAN for rawhide debug builds (Justin M. Forbes)
