@@ -1,3 +1,6 @@
+* Sat Feb 06 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210206git17fbcdf9f163.145]
+- Update CKI pipeline project (Veronika Kabatova)
+
 * Fri Feb 05 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210205gitdd86e7fa07a3.144]
 - Turn off additional KASAN options for Fedora (Justin M. Forbes)
 - Rename the master branch to rawhide for Fedora (Justin M. Forbes)
