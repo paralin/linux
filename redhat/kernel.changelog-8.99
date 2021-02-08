@@ -1,3 +1,6 @@
+* Mon Feb 08 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc7.148]
+- redhat: add DUP and kpatch certificates to system trusted keys for RHEL build (Herton R. Krzesinski)
+
 * Mon Feb 08 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210208git825b5991a46e.147]
 - The comments in CONFIG_USB_RTL8153_ECM actually turn off CONFIG_USB_RTL8152 (Justin M. Forbes)
 
