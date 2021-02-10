@@ -1,3 +1,10 @@
+* Wed Feb 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc7.20210210gite0756cfc7d7c.149]
+- Fix trailing white space in redhat/configs/fedora/generic/CONFIG_SND_INTEL_BYT_PREFER_SOF (Justin M. Forbes)
+- Add a redhat/rebase-notes.txt file (Hans de Goede)
+- Turn on SND_INTEL_BYT_PREFER_SOF for Fedora (Hans de Goede)
+- ALSA: hda: intel-dsp-config: Add SND_INTEL_BYT_PREFER_SOF Kconfig option (Hans de Goede) [1924101]
+- CI: Drop MR ID from the name variable (Veronika Kabatova)
+
 * Mon Feb 08 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc7.148]
 - redhat: add DUP and kpatch certificates to system trusted keys for RHEL build (Herton R. Krzesinski)
 
