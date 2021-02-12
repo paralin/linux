@@ -1,3 +1,6 @@
+* Fri Feb 12 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc7.20210212git291009f656e8.150]
+- fedora: minor arm sound config updates (Peter Robinson)
+
 * Wed Feb 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc7.20210210gite0756cfc7d7c.149]
 - Fix trailing white space in redhat/configs/fedora/generic/CONFIG_SND_INTEL_BYT_PREFER_SOF (Justin M. Forbes)
 - Add a redhat/rebase-notes.txt file (Hans de Goede)
