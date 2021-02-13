@@ -1,3 +1,6 @@
+* Sat Feb 13 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc7.20210213gitdcc0b49040c7.151]
+- Fedora config update (Justin M. Forbes)
+
 * Fri Feb 12 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc7.20210212git291009f656e8.150]
 - fedora: minor arm sound config updates (Peter Robinson)
 
