@@ -1,3 +1,6 @@
+* Mon Feb 15 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-154]
+- process_configs.sh: fix find/xargs data flow (Ondrej Mosnacek)
+
 * Sat Feb 13 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc7.20210213gitdcc0b49040c7.151]
 - Fedora config update (Justin M. Forbes)
 
