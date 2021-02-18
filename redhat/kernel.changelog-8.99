@@ -1,3 +1,7 @@
+* Thu Feb 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-155]
+- Fedora: ARMv7: build for 16 CPUs. (Peter Robinson)
+- Fedora: only enable DEBUG_HIGHMEM on debug kernels (Peter Robinson)
+
 * Mon Feb 15 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-154]
 - process_configs.sh: fix find/xargs data flow (Ondrej Mosnacek)
 
