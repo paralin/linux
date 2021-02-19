@@ -7,6 +7,7 @@ RPMBUILD := $(shell if [ -x "/usr/bin/rpmbuild" ]; then echo rpmbuild; \
 
 MACH :=  $(shell uname -m)
 HEAD ?= HEAD
+UPSTREAM ?= linux-5.12.y
 RPMKVERSION:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^VERSION\ =\ /{s///;p;q}')
 RPMKPATCHLEVEL:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^PATCHLEVEL\ =\ /{s///;p;q}')
 RPMKSUBLEVEL:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^SUBLEVEL\ =\ /{s///;p;q}')
@@ -42,18 +43,13 @@ endif
 ifeq ("$(DIST)", ".elrdy")
   VERSION_ON_UPSTREAM:=1
 else ifeq ("$(DISTRO)", "fedora")
-  VERSION_ON_UPSTREAM:=1
+  VERSION_ON_UPSTREAM:=0
 else
   VERSION_ON_UPSTREAM:=0
 endif
 ifeq ($(VERSION_ON_UPSTREAM),1)
   # master is expected to track mainline.
-  MASTER:=$(shell $(GIT) rev-parse -q --verify origin/master || \
-                  $(GIT) rev-parse -q --verify master)
-  ifeq ($(MASTER),)
-      $(error "Missing an 'origin/master' or 'master' branch")
-  endif
-  MERGE_BASE:=$(shell $(GIT) merge-base $(HEAD) $(MASTER))
+  MERGE_BASE:=$(shell $(GIT) merge-base $(HEAD) $UPSTREAM)
   _TAG:=$(shell $(GIT) describe $(MERGE_BASE))
   # a snapshot off of a tagged git is of the form [tag]-[cnt]-g[hash]
   SNAPSHOT:=$(shell echo $(_TAG) | grep -c '\-g')
