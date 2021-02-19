@@ -21,7 +21,8 @@ LAST_MARKER=${14}
 SINGLE_TARBALL=${15}
 TARFILE_RELEASE=${16}
 SNAPSHOT=${17}
-BUILDID=${18}
+UPSTREAM=${18}
+BUILDID=${19}
 RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
 clogf="$SOURCES/changelog"
 # hide [redhat] entries from changelog
@@ -48,7 +49,7 @@ if [[ -z $lasttag ]]; then
 fi
 echo "Gathering new log entries since $lasttag"
 git log --topo-order --reverse --no-merges -z --format="- %s (%an)%n%b" \
-	^master "$lasttag".. -- ':!/redhat/rhdocs' | ${0%/*}/genlog.py >> "$clogf"
+	^$UPSTREAM "$lasttag".. -- ':!/redhat/rhdocs' | ${0%/*}/genlog.py >> "$clogf"
 
 grep -v "tagging $RPM_VERSION" "$clogf" > "$clogf.stripped"
 cp "$clogf.stripped" "$clogf"
@@ -167,7 +168,7 @@ ARK_COMMIT_URL="https://gitlab.com/cki-project/kernel-ark/-/commit"
 #
 # May need to preserve word splitting in EXCLUDE_FILES
 # shellcheck disable=SC2086
-git log --no-merges --pretty=oneline --no-decorate master.. $EXCLUDE_FILES | \
+git log --no-merges --pretty=oneline --no-decorate $UPSTREAM.. $EXCLUDE_FILES | \
 	sed "s!^\([^ ]*\)!$ARK_COMMIT_URL/\1\n &!; s!\$!\n!" \
 	> "$SOURCES"/Patchlist.changelog
 

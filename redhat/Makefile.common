@@ -7,6 +7,7 @@ RPMBUILD := $(shell if [ -x "/usr/bin/rpmbuild" ]; then echo rpmbuild; \
 
 MACH :=  $(shell uname -m)
 HEAD ?= HEAD
+UPSTREAM ?= linux-5.11.y
 RPMKVERSION:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^VERSION\ =\ /{s///;p;q}')
 RPMKPATCHLEVEL:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^PATCHLEVEL\ =\ /{s///;p;q}')
 RPMKSUBLEVEL:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^SUBLEVEL\ =\ /{s///;p;q}')
@@ -37,13 +38,13 @@ IS_FEDORA:=$(shell ! echo $(DIST) | grep -q fc; echo $$?)
 ifeq ("$(DIST)", ".elrdy")
   VERSION_ON_UPSTREAM:=1
 else ifeq ("$(IS_FEDORA)", "1")
-  VERSION_ON_UPSTREAM:=1
+  VERSION_ON_UPSTREAM:=0
 else
   VERSION_ON_UPSTREAM:=0
 endif
 ifeq ($(VERSION_ON_UPSTREAM),1)
   # master is expected to track mainline.
-  MERGE_BASE:=$(shell $(GIT) merge-base $(HEAD) master)
+  MERGE_BASE:=$(shell $(GIT) merge-base $(HEAD) $UPSTREAM)
   _TAG:=$(shell $(GIT) describe $(MERGE_BASE))
   # a snapshot off of a tagged git is of the form [tag]-[cnt]-g[hash]
   SNAPSHOT:=$(shell echo $(_TAG) | grep -c '\-g')
