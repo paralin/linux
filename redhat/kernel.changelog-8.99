@@ -1,3 +1,6 @@
+* Fri Feb 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-156]
+- New configs in drivers/dma-buf (Jeremy Cline)
+
 * Thu Feb 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-155]
 - Fedora: ARMv7: build for 16 CPUs. (Peter Robinson)
 - Fedora: only enable DEBUG_HIGHMEM on debug kernels (Peter Robinson)
