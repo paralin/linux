@@ -1,3 +1,6 @@
+* Sat Feb 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-157]
+- Removed description text as a comment confuses the config generation (Justin M. Forbes)
+
 * Fri Feb 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-156]
 - New configs in drivers/dma-buf (Jeremy Cline)
 
