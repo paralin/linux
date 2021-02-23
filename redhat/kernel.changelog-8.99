@@ -1,3 +1,7 @@
+* Tue Feb 23 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc0.20210223git3b9cdafb5358.159]
+- Update pending-common configs to address new upstream config deps (Justin M. Forbes)
+- rpmspec: ship gpio-watch.debug in the proper debuginfo package (Herton R. Krzesinski)
+
 * Mon Feb 22 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc0.20210222git31caf8b2a847.158]
 - Removed description text as a comment confuses the config generation (Justin M. Forbes)
 - New configs in drivers/dma-buf (Jeremy Cline)
