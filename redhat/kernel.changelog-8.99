@@ -1,3 +1,8 @@
+* Fri Feb 26 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.11.2-4]
+- drm/i915/gt: Correct surface base address for renderclear (Chris Wilson)
+- drm/i915/gt: Flush before changing register state (Chris Wilson)
+- drm/i915/gt: One more flush for Baytrail clear residuals (Chris Wilson)
+
 * Fri Feb 26 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.11.2-3]
 - MARKER needs SUBLEVEL for stable, I need to think of a better longterm solution (Justin M. Forbes)
 - Config updates for 5.11.1 (Justin M. Forbes)
