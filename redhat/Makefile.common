@@ -16,7 +16,7 @@ GITID:= $(shell $(GIT) log --max-count=1 --pretty=format:%H $(HEAD))
 # marker is git tag which we base off of for exporting patches
 # Make sure marker uses RPMKPATCHLEVEL and RPMKEXTRAVERSION from the kernel
 # makefile as opposed to any adjusted version for snapshotting.
-MARKER:=v$(RPMKVERSION).$(RPMKPATCHLEVEL)$(RPMKEXTRAVERSION)
+MARKER:=v$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)$(RPMKEXTRAVERSION)
 ifneq ($(RPMKEXTRAVERSION),)
   KEXTRAVERSION:=$(shell echo $(RPMKEXTRAVERSION) | sed -e s/-/./)
   PREBUILD:=0$(KEXTRAVERSION).
