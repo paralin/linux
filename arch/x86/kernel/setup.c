@@ -16,7 +16,6 @@
 #include <linux/memblock.h>
 #include <linux/pci.h>
 #include <linux/root_dev.h>
-#include <linux/sfi.h>
 #include <linux/hugetlb.h>
 #include <linux/tboot.h>
 #include <linux/security.h>
@@ -1226,7 +1225,6 @@ void __init setup_arch(char **cmdline_p)
 	 * Read APIC and some other early information from ACPI tables.
 	 */
 	acpi_boot_init();
-	sfi_init();
 	x86_dtb_init();
 
 	/*
