@@ -392,8 +392,8 @@ static void __iomem *tegra194_map_bus(struct pci_bus *bus,
 		type = PCIE_ATU_TYPE_CFG1;
 	}
 
-	program_outbound_atu(pcie, PCIE_ATU_REGION_INDEX0, type,
-			     cfg->res.start, busdev, SZ_256K);
+	program_outbound_atu(pcie, 0, type, cfg->res.start, busdev, SZ_256K);
+
 	return (void __iomem *)(pcie->config_base + where);
 }
 
