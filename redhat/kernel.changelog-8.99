@@ -1,3 +1,12 @@
+* Thu Mar 04 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc1.20210304gitf69d02e37a85.163]
+- Revert "dt-bindings: panel: add binding for Xingbangda XBD599 panel" (Herton R. Krzesinski)
+- redhat: remove CONFIG_DRM_PANEL_XINGBANGDA_XBD599 (Herton R. Krzesinski)
+- Revert "drm: panel: add Xingbangda XBD599 panel" (Herton R. Krzesinski)
+- Revert "drm/sun4i: sun6i_mipi_dsi: fix horizontal timing calculation" (Herton R. Krzesinski)
+- New configs in arch/powerpc (Fedora Kernel Team)
+- Fix merge issue (Justin M. Forbes)
+- Revert pending so that MR works (Justin M. Forbes)
+
 * Sat Feb 27 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc0.20210227gitc03c21ba6f4e.161]
 - Change the pending config for CONFIG_PPC_QUEUED_SPINLOCKS as it is now default upstream for 64-bit server CPUs (Justin M. Forbes)
 - Turn on CONFIG_PPC_QUEUED_SPINLOCKS as it is default upstream now (Justin M. Forbes)
