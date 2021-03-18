@@ -1,3 +1,7 @@
+* Thu Mar 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc3.20210318git6417f03132a6.171]
+- Turn off weak-modules for Fedora (Justin M. Forbes)
+- redhat: enable CONFIG_FW_LOADER_COMPRESS for ARK (Herton R. Krzesinski) [1939095]
+
 * Mon Mar 15 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc3.170]
 - Fedora: filters: update to move dfl-emif to modules (Peter Robinson)
 - drop duplicate DEVFREQ_GOV_SIMPLE_ONDEMAND config (Peter Robinson)
