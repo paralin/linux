@@ -1,3 +1,6 @@
+* Sat Mar 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc3.20210320git1c273e10bc0c.173]
+- CONFIG_VFIO now selects IOMMU_API instead of depending on it, causing several config mismatches for the zfcpdump kernel (Justin M. Forbes)
+
 * Thu Mar 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc3.20210318git6417f03132a6.171]
 - Turn off weak-modules for Fedora (Justin M. Forbes)
 - redhat: enable CONFIG_FW_LOADER_COMPRESS for ARK (Herton R. Krzesinski) [1939095]
