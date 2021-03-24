@@ -1,3 +1,25 @@
+* Wed Mar 24 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc4.20210324git7acac4b3196c.176]
+- New configs in drivers/platform (CKI@GitLab)
+- New configs in drivers/firmware (CKI@GitLab)
+- New configs in drivers/mailbox (Fedora Kernel Team)
+- New configs in drivers/net/phy (Justin M. Forbes)
+- Update CONFIG_DM_MULTIPATH_IOA (Augusto Caringi)
+- New configs in mm/Kconfig (CKI@GitLab)
+- New configs in arch/powerpc (Jeremy Cline)
+- New configs in arch/powerpc (Jeremy Cline)
+- New configs in drivers/input (Fedora Kernel Team)
+- New configs in net/bluetooth (Justin M. Forbes)
+- New configs in drivers/clk (Fedora Kernel Team)
+- New configs in init/Kconfig (Jeremy Cline)
+- redhat: allow running fedora-configs and rh-configs targets outside of redhat/ (Herton R. Krzesinski)
+- all: unify the disable of goldfish (android emulation platform) (Peter Robinson)
+- common: minor cleanup/de-dupe of dma/dmabuf debug configs (Peter Robinson)
+- common/ark: these drivers/arches were removed in 5.12 (Peter Robinson)
+- common: unset serial mouse for general config (Peter Robinson)
+- Correct kernel-devel make prepare build for 5.12. (Paulo E. Castro)
+- redhat: add initial support for centos stream dist-git sync on Makefiles (Herton R. Krzesinski)
+- redhat/configs: Enable CONFIG_SCHED_STACK_END_CHECK for Fedora and ARK (Josh Poimboeuf) [1856174]
+
 * Sat Mar 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc3.20210320git1c273e10bc0c.173]
 - CONFIG_VFIO now selects IOMMU_API instead of depending on it, causing several config mismatches for the zfcpdump kernel (Justin M. Forbes)
 
