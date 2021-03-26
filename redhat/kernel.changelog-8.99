@@ -1,3 +1,6 @@
+* Fri Mar 26 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc4.20210326gitdb24726bfefa.178]
+- New configs in fs/pstore (CKI@GitLab)
+
 * Thu Mar 25 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc4.20210325gite138138003eb.177]
 - New configs in arch/powerpc (Fedora Kernel Team)
 - configs: enable BPF LSM on Fedora and ARK (Ondrej Mosnacek)
