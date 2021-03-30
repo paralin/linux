@@ -2664,11 +2664,12 @@ nv50_display_create(struct drm_device *dev)
 		nouveau_display(dev)->format_modifiers = disp50xx_modifiers;
 
 	/* FIXME: 256x256 cursors are supported on Kepler, however unlike Maxwell and later
-	 * generations Kepler requires that we specify the page type, small (4K) or large (128K),
-	 * correctly for the ctxdma being used on curs/ovly. We currently share a ctxdma across all
-	 * display planes (except ovly) that defaults to small pages, which results in artifacting
-	 * on 256x256 cursors. Until we teach nouveau to create an appropriate ctxdma for the cursor
-	 * fb in use, simply avoid advertising support for 256x256 cursors.
+	 * generations Kepler requires that we use small pages (4K) for cursor scanout surfaces. The
+	 * proper fix for this is to teach nouveau to migrate fbs being used for the cursor plane to
+	 * small page allocations in prepare_fb(). When this is implemented, we should also force
+	 * large pages (128K) for ovly fbs in order to fix Kepler ovlys.
+	 * But until then, just limit cursors to 128x128 - which is small enough to avoid ever using
+	 * large pages.
 	 */
 	if (disp->disp->object.oclass >= GM107_DISP) {
 		dev->mode_config.cursor_width = 256;
