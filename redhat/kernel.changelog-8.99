@@ -1,3 +1,11 @@
+* Sat Apr 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc6.20210410gitd4961772226d.187]
+- Fedora: Enable CHARGER_GPIO on aarch64 too (Peter Robinson)
+- Fedora config updates (Justin M. Forbes)
+- wireguard: mark as Tech Preview (Hangbin Liu) [1613522]
+- configs: enable CONFIG_WIREGUARD in ARK (Hangbin Liu) [1613522]
+- Remove duplicate configs acroos fedora, ark and common (Don Zickus)
+- Combine duplicate configs across ark and fedora into common (Don Zickus)
+
 * Wed Apr 07 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc6.20210407git2d743660786e.185]
 - common/ark: cleanup and unify the parport configs (Peter Robinson)
 - iommu/vt-d: enable INTEL_IDXD_SVM for both fedora and rhel (Jerry Snitselaar)
