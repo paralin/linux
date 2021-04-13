@@ -2,4 +2,4 @@ Rebase notes for Fedora kernel rebases:
 
 1. The SND_INTEL_BYT_PREFER_SOF option should be turned off
    for Fedora 33 and older, also see:
-   https://fedoraproject.org/w/index.php?title=Changes/SofDefaultForIntelLpe
+   https://fedoraproject.org/w/index.php?title=Changes/SofDefaultForIntelLpe (this change was backed out for F34, so all releases are identical)
