@@ -8,7 +8,11 @@
 #include <trace/events/block.h>
 #include "nvme.h"
 
+#ifdef CONFIG_RHEL_DIFFERENCES
+static bool multipath = false;
+#else
 static bool multipath = true;
+#endif
 module_param(multipath, bool, 0444);
 MODULE_PARM_DESC(multipath,
 	"turn on native support for multiple controllers per subsystem");
