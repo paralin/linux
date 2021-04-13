@@ -664,6 +664,7 @@ void nvme_mpath_start_freeze(struct nvme_subsystem *subsys);
 void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
 			struct nvme_ctrl *ctrl, int *flags);
 void nvme_failover_req(struct request *req);
+void nvme_update_ana(struct request *req);
 void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
 int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
 void nvme_mpath_add_disk(struct nvme_ns *ns, struct nvme_id_ns *id);
@@ -712,6 +713,9 @@ static inline void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
 }
 
 static inline void nvme_failover_req(struct request *req)
+{
+}
+static inline void nvme_update_ana(struct request *req)
 {
 }
 static inline void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl)
