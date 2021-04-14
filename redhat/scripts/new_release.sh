@@ -7,6 +7,7 @@ fi
 RHPATH="$1";
 YSTREAM_FLAG="$2";
 ZSTREAM_FLAG="$3";
+IS_FEDORA="$4";
 
 if [ -s "$RHPATH/linux-kernel-test.patch" ]; then
 	echo "linux-kernel-test.patch is not empty, aborting" >&2;
@@ -44,6 +45,10 @@ elif [ "$ZSTREAM_FLAG" == "branch" ]; then
 else
 	echo "$(basename "$0") invalid <zstream> value, allowed [no|yes|branch]" >&2;
 	exit 1;
+fi
+
+if [ "$IS_FEDORA" == "1" ]; then
+	NEW_RELEASE=0;
 fi
 
 sed -i -e "s/RHEL_RELEASE\ =.*/RHEL_RELEASE\ =\ $NEW_RELEASE/" "$RHPATH"/../Makefile.rhelver;
