@@ -1,3 +1,17 @@
+* Fri Apr 16 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc7.20210416git7e25f40eab52.190]
+- Update mod-internal to fix depmod issue (Nico Pache)
+- Turn on CONFIG_VDPA_SIM_NET (rhbz 1942343) (Justin M. Forbes)
+- New configs in drivers/power (Fedora Kernel Team)
+- Turn on CONFIG_NOUVEAU_DEBUG_PUSH for debug configs (Justin M. Forbes)
+- Turn off KFENCE sampling by default for Fedora (Justin M. Forbes)
+- Fedora config updates round 2 (Justin M. Forbes)
+- New configs in drivers/soc (Jeremy Cline)
+- filter-modules.sh: Fix copy/paste error 'input' (Paul Bolle)
+- Update module filtering for 5.12 kernels (Justin M. Forbes)
+- Fix genlog.py to ensure that comments retain "%%" characters. (Mark Mielke)
+- New configs in drivers/leds (Fedora Kernel Team)
+- Limit CONFIG_USB_CDNS_SUPPORT to x86_64 and arm in Fedora (David Ward)
+
 * Sat Apr 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc6.20210410gitd4961772226d.187]
 - Fedora: Enable CHARGER_GPIO on aarch64 too (Peter Robinson)
 - Fedora config updates (Justin M. Forbes)
