@@ -1,3 +1,6 @@
+* Fri Apr 16 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.11.15-0]
+- Turn on CONFIG_VDPA_SIM_NET (rhbz 1942343) (Justin M. Forbes)
+
 * Wed Apr 14 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.11.14-0]
 - Quick hack to reset release to 0 (Justin M. Forbes)
 - Add clarity to rebase notes since that change was backed out (Justin M. Forbes)
