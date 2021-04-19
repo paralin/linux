@@ -1,3 +1,12 @@
+* Mon Apr 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc8.191]
+- filter-modules.sh.fedora: clean up "netprots" (Paul Bolle)
+- filter-modules.sh.fedora: clean up "scsidrvs" (Paul Bolle)
+- filter-*.sh.fedora: clean up "ethdrvs" (Paul Bolle)
+- filter-*.sh.fedora: clean up "driverdirs" (Paul Bolle)
+- filter-*.sh.fedora: remove incorrect entries (Paul Bolle)
+- filter-*.sh.fedora: clean up "singlemods" (Paul Bolle)
+- filter-modules.sh.fedora: drop unused list "iiodrvs" (Paul Bolle)
+
 * Fri Apr 16 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc7.20210416git7e25f40eab52.190]
 - Update mod-internal to fix depmod issue (Nico Pache)
 - Turn on CONFIG_VDPA_SIM_NET (rhbz 1942343) (Justin M. Forbes)
