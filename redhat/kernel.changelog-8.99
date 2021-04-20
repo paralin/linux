@@ -1,3 +1,10 @@
+* Tue Apr 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc8.20210420git7af08140979a.192]
+- Turn off ADI_AXI_ADC and AD9467 which now require CONFIG_OF (Justin M. Forbes)
+- Export ark infrastructure files (Don Zickus)
+- docs: Update docs to reflect newer workflow. (Don Zickus)
+- Use upstream/master for merge-base with fallback to master (Don Zickus)
+- Fedora: Turn off the SND_INTEL_BYT_PREFER_SOF option (Hans de Goede)
+
 * Mon Apr 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc8.191]
 - filter-modules.sh.fedora: clean up "netprots" (Paul Bolle)
 - filter-modules.sh.fedora: clean up "scsidrvs" (Paul Bolle)
