@@ -1,3 +1,6 @@
+* Wed Apr 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc8.20210421git7af08140979a.193]
+- Replace /usr/libexec/platform-python with /usr/bin/python3 (David Ward)
+
 * Tue Apr 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc8.20210420git7af08140979a.192]
 - Turn off ADI_AXI_ADC and AD9467 which now require CONFIG_OF (Justin M. Forbes)
 - Export ark infrastructure files (Don Zickus)
