@@ -1,3 +1,6 @@
+* Mon Apr 26 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-197]
+- Create ark-latest branch last for CI scripts (Don Zickus)
+
 * Wed Apr 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc8.20210421git7af08140979a.193]
 - Replace /usr/libexec/platform-python with /usr/bin/python3 (David Ward)
 
