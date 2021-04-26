@@ -33,6 +33,7 @@ endif
 DIST ?= .fc33
 ifeq ("$(shell ! echo $(DIST) | grep -q fc; echo $$?)", "1")
   DISTRO := fedora
+  IS_FEDORA:=1
 else
   DISTRO ?= rhel
 endif
