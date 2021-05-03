@@ -1,3 +1,17 @@
+* Mon May 03 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.1-0]
+- Enable mtdram for fedora (rhbz 1955916) (Justin M. Forbes)
+- hardlink is in /usr/bin/ (rhbz 1889043) (Justin M. Forbes)
+- sfc: ef10: fix TX queue lookup in TX event handling (Edward Cree)
+- sfc: farch: fix TX queue lookup in TX event handling (Edward Cree)
+- sfc: farch: fix TX queue lookup in TX flush done handling (Edward Cree)
+- A few more fixes for local builds.  None of this works until .1 (Justin M. Forbes)
+- Quick hack to reset release to 0 (Justin M. Forbes)
+- This is a released kernel branch (Justin M. Forbes)
+- Reference the patch as version.patchlevel to more easily see diffs between stable releases (Justin M. Forbes)
+- MARKER needs SUBLEVEL for stable, I need to think of a better longterm solution (Justin M. Forbes)
+- Added redhat/fedora-dist-git-test.sh for a quick and easy script to test changes (Justin M. Forbes)
+- Changes for building stable Fedora (Justin M. Forbes)
+
 * Mon Apr 26 2021 Herton R. Krzesinski <herton@redhat.com> [5.12.0-1]
 - Replace /usr/libexec/platform-python with /usr/bin/python3 (David Ward)
 - Turn off ADI_AXI_ADC and AD9467 which now require CONFIG_OF (Justin M. Forbes)
