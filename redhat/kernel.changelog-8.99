@@ -1,3 +1,10 @@
+* Mon May 03 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.11.18-0]
+- Enable mtdram for fedora (rhbz 1955916) (Justin M. Forbes)
+- hardlink is in /usr/bin/ (rhbz 1889043) (Justin M. Forbes)
+- sfc: ef10: fix TX queue lookup in TX event handling (Edward Cree)
+- sfc: farch: fix TX queue lookup in TX event handling (Edward Cree)
+- sfc: farch: fix TX queue lookup in TX flush done handling (Edward Cree)
+
 * Wed Apr 28 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.11.17-0]
 - Fedora: ARMv7: build for 16 CPUs. (Peter Robinson)
 
