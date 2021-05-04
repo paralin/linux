@@ -710,6 +710,10 @@ config BATTERY_GOLDFISH
 	  driver. Originated in the Android Studio Emulator (goldfish) it is
 	  going to be used in other emulators.
 
+config BATTERY_RK817
+	bool "RK817 Battery"
+	depends on MFD_RK808
+
 config BATTERY_RT5033
 	tristate "RT5033 fuel gauge support"
 	depends on MFD_RT5033

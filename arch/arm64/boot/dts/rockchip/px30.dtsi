@@ -599,6 +599,25 @@
 		status = "disabled";
 	};
 
+	spi2 {
+		compatible = "spi-gpio";
+		sck-gpios = <&gpio1 RK_PB1 0>;
+		miso-gpios = <&gpio1 RK_PA1 0>;
+		mosi-gpios = <&gpio1 RK_PA0 0>;
+		cs-gpios = <&gpio1 RK_PA4 0>;
+		num-chipselects = <1>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "okay";
+		flash: XT25F128B@0 {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "XT25F128B","jedec,spi-nor";
+			reg = <0>;
+			spi-max-frequency = <500000>;
+		};
+	};
+
 	wdt: watchdog@ff1e0000 {
 		compatible = "rockchip,px30-wdt", "snps,dw-wdt";
 		reg = <0x0 0xff1e0000 0x0 0x100>;
