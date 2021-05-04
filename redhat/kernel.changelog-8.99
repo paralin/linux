@@ -1,3 +1,14 @@
+* Tue May 04 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc0.20210504git5e321ded302d.7]
+- Fix branch creation for releases based on tags (Jeremy Cline)
+- Replace "flavour" where "variant" is meant instead (David Ward)
+- Drop the %%{variant} macro and fix --with-vanilla (David Ward)
+- Fix syntax of %%kernel_variant_files (David Ward)
+- Change description of --without-vdso-install to fix typo (David Ward)
+- Config updates to work around mismatches (Justin M. Forbes)
+- CONFIG_SND_SOC_FSL_ASOC_CARD selects CONFIG_MFD_WM8994 now (Justin M. Forbes)
+- wireguard: disable in FIPS mode (Hangbin Liu) [1940794]
+- Enable mtdram for fedora (rhbz 1955916) (Justin M. Forbes)
+
 * Mon May 03 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc0.20210503git9ccce092fc64.6]
 - Remove reference to bpf-helpers man page (Justin M. Forbes)
 - Fedora: enable more modules for surface devices (Dave Olsthoorn)
