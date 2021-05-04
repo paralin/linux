@@ -36,7 +36,7 @@ git checkout os-build
 touch localversion
 make dist-release
 
-if git tag -v "$UPSTREAM_REF" > /dev/null 2>&1; then
+if git tag -v "$(git describe --exact-match "$UPSTREAM_REF")"; then
 	git checkout -b ark/"$UPSTREAM_REF" ark/patches/"$UPSTREAM_REF"
 	RELEASE_BRANCHES=" ark/$UPSTREAM_REF ark/patches/$UPSTREAM_REF"
 else
