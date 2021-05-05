@@ -1,3 +1,13 @@
+* Wed May 05 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc0.20210505gitd665ea6ea86c.8]
+- Flip CONFIG_USB_ROLE_SWITCH from m to y (Justin M. Forbes)
+- Set valid options for CONFIG_FW_LOADER_USER_HELPER (Justin M. Forbes)
+- Clean up CONFIG_FB_MODE_HELPERS (Justin M. Forbes)
+- Turn off CONFIG_VFIO for the s390x zfcpdump kernel (Justin M. Forbes)
+- Delete unused CONFIG_SND_SOC_MAX98390 pending-common (Justin M. Forbes)
+- Update pending-common configs, preparing to set correctly (Justin M. Forbes)
+- Update fedora filters for surface (Justin M. Forbes)
+- Build CONFIG_CRYPTO_ECDSA inline for s390x zfcpdump (Justin M. Forbes)
+
 * Tue May 04 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc0.20210504git5e321ded302d.7]
 - Fix branch creation for releases based on tags (Jeremy Cline)
 - Replace "flavour" where "variant" is meant instead (David Ward)
