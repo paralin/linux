@@ -15,6 +15,9 @@ menuconfig INPUT_JOYSTICK
 
 if INPUT_JOYSTICK
 
+config JOYSTICK_ADC_GPIO
+	tristate "ADC Analog + GPIO keys. Polled."
+
 config JOYSTICK_ANALOG
 	tristate "Classic PC analog joysticks and gamepads"
 	select GAMEPORT

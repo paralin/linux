@@ -495,65 +495,6 @@ enum rk809_reg_id {
 #define RK817_CODEC_DI2S_TXCR2		0x4e
 #define RK817_CODEC_DI2S_TXCR3_TXCMD	0x4f
 
-enum rk817_bat_fields {
-	CHG_STS = 0,
-
-	VOL_CALIB_UPD,
-	CUR_CALIB_UPD,
-
-	OCV_THRE_VOL,
-	OCV_VOL_H,
-	OCV_VOL_L,
-
-	Q_PRES_H3,
-	Q_PRES_H2,
-	Q_PRES_L1,
-	Q_PRES_L0,
-
-	BAT_VOL_H,
-	BAT_VOL_L,
-	SYS_VOL_H,
-	SYS_VOL_L,
-
-	CAL_OFFSET_H,
-	CAL_OFFSET_L,
-	VCALIB0_H,
-	VCALIB0_L,
-	VCALIB1_H,
-	VCALIB1_L,
-	IOFFSET_H,
-	IOFFSET_L,
-};
-
-static const struct reg_field rk817_bat_reg_fields[] = {
-	[CHG_STS] = REG_FIELD(0xEB, 4, 6),
-
-	[VOL_CALIB_UPD] = REG_FIELD(0x55, 6, 6),
-	[CUR_CALIB_UPD] = REG_FIELD(0x55, 7, 7),
-
-	[OCV_THRE_VOL] = REG_FIELD(0x62, 0, 7),
-	[OCV_VOL_H] = REG_FIELD(0x63, 0, 7),
-	[OCV_VOL_L] = REG_FIELD(0x64, 0, 7),
-
-	[Q_PRES_H3] = REG_FIELD(0x74, 0, 7),
-	[Q_PRES_H2] = REG_FIELD(0x75, 0, 7),
-	[Q_PRES_L1] = REG_FIELD(0x76, 0, 7),
-	[Q_PRES_L0] = REG_FIELD(0x77, 0, 7),
-	[BAT_VOL_H] = REG_FIELD(0x78, 0, 7),
-	[BAT_VOL_L] = REG_FIELD(0x79, 0, 7),
-	[SYS_VOL_H] = REG_FIELD(0x80, 0, 7),
-	[SYS_VOL_L] = REG_FIELD(0x81, 0, 7),
-
-	[CAL_OFFSET_H] = REG_FIELD(0x91, 0, 7),
-	[CAL_OFFSET_L] = REG_FIELD(0x92, 0, 7),
-	[VCALIB0_H] = REG_FIELD(0x93, 0, 7),
-	[VCALIB0_L] = REG_FIELD(0x94, 0, 7),
-	[VCALIB1_H] = REG_FIELD(0x95, 0, 7),
-	[VCALIB1_L] = REG_FIELD(0x96, 0, 7),
-	[IOFFSET_H] = REG_FIELD(0x97, 0, 7),
-	[IOFFSET_L] = REG_FIELD(0x98, 0, 7),
-};
-
 /* RK817_CODEC_DI2S_CKM */
 #define RK817_I2S_MODE_MASK		(0x1 << 0)
 #define RK817_I2S_MODE_MST		(0x1 << 0)
@@ -635,6 +576,34 @@ static const struct reg_field rk817_bat_reg_fields[] = {
 #define RK817_CODEC_DI2S_TXCR2		0x4e
 #define RK817_CODEC_DI2S_TXCR3_TXCMD	0x4f
 
+/* RK817 Battery Registers */
+#define RK817_GAS_GAUGE_ADC_CONFIG0	0x50
+#define RK817_GAS_GAUGE_ADC_CONFIG1	0x55
+
+#define RK817_CUR_CALIB_UPD		(0x1 << 7)
+#define RK817_VOL_CALIB_UPD		(0x1 << 6)
+
+#define RK817_GAS_GAUGE_OCV_THRE_VOL	0x62
+#define RK817_GAS_GAUGE_OCV_VOL_H	0x63
+#define RK817_GAS_GAUGE_OCV_VOL_L	0x64
+#define RK817_GAS_GAUGE_Q_PRES_H3	0x74
+#define RK817_GAS_GAUGE_Q_PRES_H2	0x75
+#define RK817_GAS_GAUGE_Q_PRES_L1	0x76
+#define RK817_GAS_GAUGE_Q_PRES_L0	0x77
+#define RK817_GAS_GAUGE_BAT_VOL_H	0x78
+#define RK817_GAS_GAUGE_BAT_VOL_L	0x79
+#define RK817_GAS_GAUGE_SYS_VOL_H	0x80
+#define RK817_GAS_GAUGE_SYS_VOL_L	0x81
+#define RK817_GAS_GAUGE_CAL_OFFSET_H	0x91
+#define RK817_GAS_GAUGE_CAL_OFFSET_L	0x92
+#define RK817_GAS_GAUGE_VCALIB0_H	0x93
+#define RK817_GAS_GAUGE_VCALIB0_L	0x94
+#define RK817_GAS_GAUGE_VCALIB1_H	0x95
+#define RK817_GAS_GAUGE_VCALIB1_L	0x96
+#define RK817_GAS_GAUGE_IOFFSET_H	0x97
+#define RK817_GAS_GAUGE_IOFFSET_L	0x98
+#define RK817_GAS_GAUGE_CUR_ADC_K0	0xb0
+
 /* RK817_CODEC_DI2S_CKM */
 #define RK817_I2S_MODE_MASK		(0x1 << 0)
 #define RK817_I2S_MODE_MST		(0x1 << 0)
@@ -682,6 +651,12 @@ static const struct reg_field rk817_bat_reg_fields[] = {
 
 #define RK817_LDO_ON_VSEL_REG(idx)	(0xcc + (idx) * 2)
 #define RK817_BOOST_OTG_CFG		(0xde)
+
+#define RK817_PMIC_CHRG_OUT		0xe4
+#define RK817_PMIC_CHRG_IN		0xe5
+#define RK817_PMIC_CHRG_STS		0xeb
+
+#define RK817_CHG_STS			(0x07 << 4)
 
 #define RK817_ID_MSB			0xed
 #define RK817_ID_LSB			0xee

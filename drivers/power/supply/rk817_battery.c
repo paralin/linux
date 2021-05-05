@@ -32,12 +32,10 @@ struct rk817_bat {
 	struct platform_device *pdev;
 	struct device *dev;
 	struct i2c_client *client;
+	struct rk808 *rk808;
 
 	struct power_supply *bat_ps;
 	struct power_supply_battery_info info;
-
-	struct regmap *regmap;
-	struct regmap_field *rmap_fields[ARRAY_SIZE(rk817_bat_reg_fields)];
 
 	/* FIXME: do i move it into other struct? */
 	uint32_t voltage_k;
@@ -46,17 +44,18 @@ struct rk817_bat {
 	int sample_res;
 };
 
-static int rk817_get_reg_hl(struct rk817_bat *battery, int fieldH, int fieldL)
+static int rk817_get_reg_hl(struct rk817_bat *battery, int regH, int regL)
 {
 	int tmp, ret;
 	uint32_t out;
+	struct rk808 *rk808 = battery->rk808;
 
-	ret = regmap_field_read(battery->rmap_fields[fieldL], &tmp);
+	ret = regmap_read(rk808->regmap, regL, &tmp);
 	if (ret)
 		return ret;
 	out |= tmp;
 
-	ret = regmap_field_read(battery->rmap_fields[fieldH], &tmp);
+	ret = regmap_read(rk808->regmap, regH, &tmp);
 	if (ret)
 		return ret;
 	out |= tmp << 8;
@@ -64,14 +63,15 @@ static int rk817_get_reg_hl(struct rk817_bat *battery, int fieldH, int fieldL)
 	return out;
 }
 
-static void rk817_write_reg_hl(struct rk817_bat *battery, int fieldH, int fieldL, int val)
+static void rk817_write_reg_hl(struct rk817_bat *battery, int regH, int regL, int val)
 {
 	uint8_t tmp;
+	struct rk808 *rk808 = battery->rk808;
 
 	tmp = val & 0xff;
-	regmap_field_write(battery->rmap_fields[fieldL], tmp);
+	regmap_write(rk808->regmap, regL, tmp);
 	tmp = (val >> 8) & 0xff;
-	regmap_field_write(battery->rmap_fields[fieldH], tmp);
+	regmap_write(rk808->regmap, regH, tmp);
 }
 
 static void rk817_bat_calib_vol(struct rk817_bat *battery)
@@ -80,8 +80,8 @@ static void rk817_bat_calib_vol(struct rk817_bat *battery)
 	uint32_t vcalib1 = 0;
 
 	/* calibrate voltage */
-	vcalib0 = rk817_get_reg_hl(battery, VCALIB0_H, VCALIB0_L);
-	vcalib1 = rk817_get_reg_hl(battery, VCALIB1_H, VCALIB1_L);
+	vcalib0 = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_VCALIB0_H, RK817_GAS_GAUGE_VCALIB0_L);
+	vcalib1 = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_VCALIB1_H, RK817_GAS_GAUGE_VCALIB1_L);
 
 	/* values were taken from BSP kernel */
 	battery->voltage_k = (4025 - 2300) * 1000 / ((vcalib1 - vcalib0) ? (vcalib1 - vcalib0) : 1);
@@ -93,8 +93,8 @@ static void rk817_bat_calib_cur(struct rk817_bat *battery)
 {
 	int ioffset = 0;
 	/* calibrate current */
-	ioffset = rk817_get_reg_hl(battery, IOFFSET_H, IOFFSET_L);
-	rk817_write_reg_hl(battery, CAL_OFFSET_H, CAL_OFFSET_L, ioffset);
+	ioffset = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_IOFFSET_H, RK817_GAS_GAUGE_IOFFSET_H);
+	rk817_write_reg_hl(battery, RK817_GAS_GAUGE_CAL_OFFSET_H, RK817_GAS_GAUGE_CAL_OFFSET_L, ioffset);
 }
 
 static int rk817_bat_get_prop(struct power_supply *ps,
@@ -104,22 +104,26 @@ static int rk817_bat_get_prop(struct power_supply *ps,
 	struct rk817_bat *battery = power_supply_get_drvdata(ps);
 	uint32_t tmp = 0;
 	int ret = 0;
+	int reg = 0;
+	struct rk808 *rk808 = battery->rk808;
 
 	/* recalibrate voltage and current readings if we need to */
 	/* BSP does both on CUR_CALIB_UPD, ignoring VOL_CALIB_UPD */
-	ret = regmap_field_read(battery->rmap_fields[CUR_CALIB_UPD], &tmp);
+	regmap_read(rk808->regmap, RK817_GAS_GAUGE_ADC_CONFIG1, &reg);
+	tmp = (reg >> 7) & RK817_CUR_CALIB_UPD;
 	if (tmp == 0)
 	{
 		rk817_bat_calib_vol(battery);
 		rk817_bat_calib_cur(battery);
-		regmap_field_write(battery->rmap_fields[CUR_CALIB_UPD], 1);
+		regmap_update_bits(rk808->regmap, RK817_GAS_GAUGE_ADC_CONFIG1,  RK817_CUR_CALIB_UPD, 1);
 	}
 
 	switch (prop) {
 		case POWER_SUPPLY_PROP_STATUS:
-			ret = regmap_field_read(battery->rmap_fields[CHG_STS], &tmp);
+			ret = regmap_read(rk808->regmap, RK817_PMIC_CHRG_STS, &reg);
 			if (ret)
 				return ret;
+			tmp = (reg >> 4) & RK817_CHG_STS;
 			switch(tmp) {
 				case CHRG_OFF:
 					val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
@@ -142,9 +146,10 @@ static int rk817_bat_get_prop(struct power_supply *ps,
 			}
 			break;
 		case POWER_SUPPLY_PROP_CHARGE_TYPE:
-			ret = regmap_field_read(battery->rmap_fields[CHG_STS], &tmp);
+			ret = regmap_read(rk808->regmap, RK817_PMIC_CHRG_STS, &reg);
 			if (ret)
 				return ret;
+			tmp = (reg >> 4) & RK817_CHG_STS;
 			switch(tmp) {
 				case CHRG_OFF:
 				case DEAD_CHRG:
@@ -165,7 +170,7 @@ static int rk817_bat_get_prop(struct power_supply *ps,
 			val->intval = battery->info.voltage_min_design_uv;
 			break;
 		case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-			tmp = rk817_get_reg_hl(battery, BAT_VOL_H, BAT_VOL_L);
+			tmp = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_BAT_VOL_H, RK817_GAS_GAUGE_BAT_VOL_L);
 			val->intval = 1000 * ((battery->voltage_k * tmp) / (1000 + battery->voltage_b));
 			break;
 		case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
@@ -205,37 +210,25 @@ MODULE_DEVICE_TABLE(of, rk817_bat_of_match);
 
 static int rk817_bat_probe(struct platform_device *pdev)
 {
+	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
 	struct rk817_bat *battery;
 	struct device *dev = &pdev->dev;
 	struct power_supply_config pscfg = {};
-	int i, ret;
+	int ret;
 
 	if (!of_device_is_available(pdev->dev.of_node))
 		return -ENODEV;
 
 	battery = devm_kzalloc(&pdev->dev, sizeof(battery), GFP_KERNEL);
-
 	if (!battery)
 		return -ENOMEM;
 
+	battery->rk808 = rk808;
+
 	battery->dev = &pdev->dev;
-	battery->regmap = dev_get_regmap(pdev->dev.parent, NULL);
 	platform_set_drvdata(pdev, battery);
 
-	for (i = 0; i < ARRAY_SIZE(rk817_bat_reg_fields); i++) {
-		const struct reg_field *reg_fields = rk817_bat_reg_fields;
-
-		battery->rmap_fields[i] = devm_regmap_field_alloc(dev, battery->regmap, reg_fields[i]);
-
-		if (IS_ERR(battery->rmap_fields[i])) {
-			dev_err(dev, "Unable to allocate regmap field\n");
-
-			return PTR_ERR(battery->rmap_fields[i]);
-		}
-	}
-
 	rk817_bat_calib_vol(battery);
-
 
 	pscfg.drv_data = battery;
 	pscfg.of_node = pdev->dev.of_node;

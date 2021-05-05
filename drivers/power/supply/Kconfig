@@ -710,10 +710,6 @@ config BATTERY_GOLDFISH
 	  driver. Originated in the Android Studio Emulator (goldfish) it is
 	  going to be used in other emulators.
 
-config BATTERY_RK817
-	bool "RK817 Battery"
-	depends on MFD_RK808
-
 config BATTERY_RT5033
 	tristate "RT5033 fuel gauge support"
 	depends on MFD_RT5033
@@ -721,6 +717,13 @@ config BATTERY_RT5033
 	  This adds support for battery fuel gauge in Richtek RT5033 PMIC.
 	  The fuelgauge calculates and determines the battery state of charge
 	  according to battery open circuit voltage.
+
+config BATTERY_RK817
+	bool "RK817 Battery Driver"
+	depends on MFD_RK808
+	help
+	  This adds support for the battery for the Rockchip RK817 PMIC.
+	  The battery is an optional device for the RK817 PMIC.
 
 config CHARGER_RT9455
 	tristate "Richtek RT9455 battery charger driver"

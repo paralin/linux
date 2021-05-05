@@ -66,6 +66,10 @@ static bool rk817_is_volatile_reg(struct device *dev, unsigned int reg)
 	case RK817_SECONDS_REG ... RK817_WEEKS_REG:
 	case RK817_RTC_STATUS_REG:
 	case RK817_CODEC_DTOP_LPT_SRST:
+	case RK817_GAS_GAUGE_ADC_CONFIG0 ... RK817_GAS_GAUGE_CUR_ADC_K0:
+	case RK817_PMIC_CHRG_STS:
+	case RK817_PMIC_CHRG_OUT:
+	case RK817_PMIC_CHRG_IN:
 	case RK817_INT_STS_REG0:
 	case RK817_INT_STS_REG1:
 	case RK817_INT_STS_REG2:
@@ -73,7 +77,7 @@ static bool rk817_is_volatile_reg(struct device *dev, unsigned int reg)
 		return true;
 	}
 
-	return true;
+	return false;
 }
 
 static const struct regmap_config rk818_regmap_config = {
@@ -164,7 +168,6 @@ static const struct mfd_cell rk808s[] = {
 static const struct mfd_cell rk817s[] = {
 	{ .name = "rk808-clkout",},
 	{ .name = "rk808-regulator",},
-	{ .name = "rk817-battery", .of_compatible = "rk817,battery", },
 	{
 		.name = "rk8xx-pwrkey",
 		.num_resources = ARRAY_SIZE(rk817_pwrkey_resources),
@@ -178,6 +181,12 @@ static const struct mfd_cell rk817s[] = {
 #ifdef CONFIG_SND_SOC_RK817
 	{
 		.name = "rk817-codec",
+	},
+#endif
+#ifdef CONFIG_BATTERY_RK817
+	{
+		.name = "rk817-battery",
+		.of_compatible = "rk817,battery",
 	},
 #endif
 };
