@@ -74,26 +74,19 @@ static void rk817_write_reg_hl(struct rk817_bat *battery, int fieldH, int fieldL
 	regmap_field_write(battery->rmap_fields[fieldH], tmp);
 }
 
-static int rk817_bat_calib_vol(struct rk817_bat *battery)
+static void rk817_bat_calib_vol(struct rk817_bat *battery)
 {
 	uint32_t vcalib0 = 0;
 	uint32_t vcalib1 = 0;
 
 	/* calibrate voltage */
 	vcalib0 = rk817_get_reg_hl(battery, VCALIB0_H, VCALIB0_L);
-	if (vcalib0 < 0)
-		return vcalib0;
-
 	vcalib1 = rk817_get_reg_hl(battery, VCALIB1_H, VCALIB1_L);
-	if (vcalib1 < 0)
-		return vcalib1;
 
 	/* values were taken from BSP kernel */
 	battery->voltage_k = (4025 - 2300) * 1000 / ((vcalib1 - vcalib0) ? (vcalib1 - vcalib0) : 1);
 	battery->voltage_b = 4025 - (battery->voltage_k * vcalib1) / 1000;
 
-	regmap_field_write(battery->rmap_fields[VOL_CALIB_UPD], 1);
-	return 0;
 }
 
 static void rk817_bat_calib_cur(struct rk817_bat *battery)
@@ -102,8 +95,6 @@ static void rk817_bat_calib_cur(struct rk817_bat *battery)
 	/* calibrate current */
 	ioffset = rk817_get_reg_hl(battery, IOFFSET_H, IOFFSET_L);
 	rk817_write_reg_hl(battery, CAL_OFFSET_H, CAL_OFFSET_L, ioffset);
-
-	regmap_field_write(battery->rmap_fields[CUR_CALIB_UPD], 1);
 }
 
 static int rk817_bat_get_prop(struct power_supply *ps,
@@ -117,14 +108,12 @@ static int rk817_bat_get_prop(struct power_supply *ps,
 	/* recalibrate voltage and current readings if we need to */
 	/* BSP does both on CUR_CALIB_UPD, ignoring VOL_CALIB_UPD */
 	ret = regmap_field_read(battery->rmap_fields[CUR_CALIB_UPD], &tmp);
-	if (ret)
-		return ret;
 	if (tmp == 0)
 	{
 		rk817_bat_calib_vol(battery);
 		rk817_bat_calib_cur(battery);
+		regmap_field_write(battery->rmap_fields[CUR_CALIB_UPD], 1);
 	}
-	printk("adsf");
 
 	switch (prop) {
 		case POWER_SUPPLY_PROP_STATUS:
@@ -244,6 +233,8 @@ static int rk817_bat_probe(struct platform_device *pdev)
 			return PTR_ERR(battery->rmap_fields[i]);
 		}
 	}
+
+	rk817_bat_calib_vol(battery);
 
 
 	pscfg.drv_data = battery;
