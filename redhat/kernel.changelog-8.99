@@ -1,3 +1,16 @@
+* Fri May 07 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.2-0]
+- Fedora-5.12: Make amd_pinctrl module builtin (Hans de Goede)
+- ALSA: hda/realtek: Fix silent headphone output on ASUS UX430UA (Takashi Iwai)
+- Fedora 32 will EOL on 5.11 (Justin M. Forbes)
+- PCI: Add MCFG quirks for Tegra194 host controllers (Vidya Sagar)
+- Revert "PCI: Add MCFG quirks for Tegra194 host controllers" (Peter Robinson)
+- nitro_enclaves: Fix stale file descriptors on failed usercopy (Mathias Krause)
+- Revert "add pci_hw_vendor_status()" (Justin M. Forbes)
+- fedora: arm: build in Tegra194 PCIe/PHY drivers (Peter Robinson)
+- PCI: Add MCFG quirks for Tegra194 host controllers (Peter Robinson)
+- fedora: arm: enaable SUN50I_IOMMU on aarch64 (Peter Robinson)
+- arm64: dts: rockchip: disable USB type-c DisplayPort (Jian-Hong Pan)
+
 * Mon May 03 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.1-0]
 - Enable mtdram for fedora (rhbz 1955916) (Justin M. Forbes)
 - hardlink is in /usr/bin/ (rhbz 1889043) (Justin M. Forbes)
