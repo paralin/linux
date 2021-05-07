@@ -1,3 +1,8 @@
+* Fri May 07 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc0.20210507gita48b0872e694.10]
+- Keep sctp and l2tp modules in modules-extra (Don Zickus)
+- Fix ppc64le cross build packaging (Don Zickus)
+- Fedora: Make amd_pinctrl module builtin (Hans de Goede)
+
 * Thu May 06 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc0.20210506git8404c9fbc84b.9]
 - Keep CONFIG_KASAN_HW_TAGS off for aarch64 debug configs (Justin M. Forbes)
 - New configs in drivers/bus (Fedora Kernel Team)
