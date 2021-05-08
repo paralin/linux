@@ -1,3 +1,9 @@
+* Sat May 08 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc0.20210507gita48b0872e694.11]
+- fedora: arm updates for 5.13 (Peter Robinson)
+- fedora: Enable WWAN and associated MHI bits (Peter Robinson)
+- Update CONFIG_MODPROBE_PATH to /usr/sbin (Justin Forbes)
+- Fedora set modprobe path (Justin M. Forbes)
+
 * Fri May 07 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc0.20210507gita48b0872e694.10]
 - Keep sctp and l2tp modules in modules-extra (Don Zickus)
 - Fix ppc64le cross build packaging (Don Zickus)
