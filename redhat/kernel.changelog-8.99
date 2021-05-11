@@ -1,3 +1,8 @@
+* Tue May 11 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc1.20210511git1140ab592e2e.13]
+- common: disable Apple Silicon generally (Peter Robinson)
+- cleanup Intel's FPGA configs (Peter Robinson)
+- common: move PTP KVM support from ark to common (Peter Robinson)
+
 * Mon May 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc1.12]
 - Revert "Merge branch 'fix-tag-check' into 'os-build'" (Justin Forbes)
 - Enable CONFIG_DRM_AMDGPU_USERPTR for everyone (Justin M. Forbes)
