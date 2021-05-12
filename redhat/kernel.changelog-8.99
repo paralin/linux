@@ -1,3 +1,7 @@
+* Wed May 12 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc1.20210512git88b06399c9c7.14]
+- redhat/configs: Enable mlx5 IPsec and TLS offloads (Alaa Hleihel) [1869674 1957636]
+- Force DWARF4 because crash does not support DWARF5 yet (Justin M. Forbes)
+
 * Tue May 11 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc1.20210511git1140ab592e2e.13]
 - common: disable Apple Silicon generally (Peter Robinson)
 - cleanup Intel's FPGA configs (Peter Robinson)
