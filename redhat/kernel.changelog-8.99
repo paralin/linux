@@ -1,3 +1,9 @@
+* Fri May 14 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc1.20210514git315d99318179.16]
+- redhat: load specific ARCH keys to INTEGRITY_PLATFORM_KEYRING (Bruno Meneguele)
+- redhat: enable INTEGRITY_TRUSTED_KEYRING across all variants (Bruno Meneguele)
+- redhat: enable SYSTEM_BLACKLIST_KEYRING across all variants (Bruno Meneguele)
+- redhat: enable INTEGRITY_ASYMMETRIC_KEYS across all variants (Bruno Meneguele)
+
 * Thu May 13 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc1.20210513gitc06a2ba62fc4.15]
 - Remove unused boot loader specification files (David Ward)
 - Revert "nvme: multipath: Change default of kernel NVMe multipath to be disabled" (Mike Snitzer)
