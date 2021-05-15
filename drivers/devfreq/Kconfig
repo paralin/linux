@@ -120,6 +120,11 @@ config ARM_TEGRA_DEVFREQ
 	  This adds the DEVFREQ driver for the Tegra family of SoCs.
 	  It reads ACTMON counters of memory controllers and adjusts the
 	  operating frequencies and voltages with OPP support.
+config ARM_ROCKCHIP_BUS_DEVFREQ
+	tristate "rockchip bus"
+	depends on ARCH_ROCKCHIP || COMPILE_TEST
+	help
+	  rk bus driver lololool
 
 config ARM_RK3399_DMC_DEVFREQ
 	tristate "ARM RK3399 DMC DEVFREQ Driver"

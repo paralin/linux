@@ -80,7 +80,7 @@ static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
 	unsigned long target_volt, target_rate;
 	struct arm_smccc_res res;
 	bool odt_enable = false;
-	int ret;
+	int err;
 
 	opp = devfreq_recommended_opp(dev, freq, flags);
 	if (IS_ERR(opp))
@@ -88,20 +88,78 @@ static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
 
 	target_rate = dev_pm_opp_get_freq(opp);
 	target_volt = dev_pm_opp_get_voltage(opp);
-
-	mutex_lock(&dmcfreq->lock);
-	
 	dev_pm_opp_put(opp);
 
-	ret = dev_pm_opp_set_rate(dev, *freq);
-	if (!ret)
-	{
-		dmcfreq->rate = target_rate;
-		dmcfreq->volt = target_volt;
+	if (dmcfreq->rate == target_rate)
+		return 0;
+
+	mutex_lock(&dmcfreq->lock);
+
+	if (dmcfreq->regmap_pmu) {
+		if (target_rate >= dmcfreq->odt_dis_freq)
+			odt_enable = true;
+
+		/*
+		 * This makes a SMC call to the TF-A to set the DDR PD
+		 * (power-down) timings and to enable or disable the
+		 * ODT (on-die termination) resistors.
+		 */
+		arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, dmcfreq->odt_pd_arg0,
+			      dmcfreq->odt_pd_arg1,
+			      ROCKCHIP_SIP_CONFIG_DRAM_SET_ODT_PD,
+			      odt_enable, 0, 0, 0, &res);
 	}
-	
+
+	/*
+	 * If frequency scaling from low to high, adjust voltage first.
+	 * If frequency scaling from high to low, adjust frequency first.
+	 */
+	if (old_clk_rate < target_rate) {
+		err = regulator_set_voltage(dmcfreq->vdd_center, target_volt,
+					    target_volt);
+		if (err) {
+			dev_err(dev, "Cannot set voltage %lu uV\n",
+				target_volt);
+			goto out;
+		}
+	}
+
+	err = clk_set_rate(dmcfreq->dmc_clk, target_rate);
+	if (err) {
+		dev_err(dev, "Cannot set frequency %lu (%d)\n", target_rate,
+			err);
+		regulator_set_voltage(dmcfreq->vdd_center, dmcfreq->volt,
+				      dmcfreq->volt);
+		goto out;
+	}
+
+	/*
+	 * Check the dpll rate,
+	 * There only two result we will get,
+	 * 1. Ddr frequency scaling fail, we still get the old rate.
+	 * 2. Ddr frequency scaling sucessful, we get the rate we set.
+	 */
+	dmcfreq->rate = clk_get_rate(dmcfreq->dmc_clk);
+
+	/* If get the incorrect rate, set voltage to old value. */
+	if (dmcfreq->rate != target_rate) {
+		dev_err(dev, "Got wrong frequency, Request %lu, Current %lu\n",
+			target_rate, dmcfreq->rate);
+		regulator_set_voltage(dmcfreq->vdd_center, dmcfreq->volt,
+				      dmcfreq->volt);
+		goto out;
+	} else if (old_clk_rate > target_rate)
+		err = regulator_set_voltage(dmcfreq->vdd_center, target_volt,
+					    target_volt);
+	if (err)
+		dev_err(dev, "Cannot set voltage %lu uV\n", target_volt);
+
+	dmcfreq->rate = target_rate;
+	dmcfreq->volt = target_volt;
+
+out:
 	mutex_unlock(&dmcfreq->lock);
-	return ret;
+	return err;
 }
 
 static int rk3399_dmcfreq_get_dev_status(struct device *dev,
@@ -180,6 +238,119 @@ static __maybe_unused int rk3399_dmcfreq_resume(struct device *dev)
 static SIMPLE_DEV_PM_OPS(rk3399_dmcfreq_pm, rk3399_dmcfreq_suspend,
 			 rk3399_dmcfreq_resume);
 
+/*
+ * function: packaging de-skew setting to px30_ddr_dts_config_timing,
+ *           px30_ddr_dts_config_timing will pass to trust firmware, and
+ *           used direct to set register.
+ * input: de_skew
+ * output: tim
+ */
+static void px30_de_skew_set_2_reg(struct rk3328_ddr_de_skew_setting *de_skew,
+				   struct px30_ddr_dts_config_timing *tim)
+{
+	u32 n;
+	u32 offset;
+	u32 shift;
+
+	memset_io(tim->ca_skew, 0, sizeof(tim->ca_skew));
+	memset_io(tim->cs0_skew, 0, sizeof(tim->cs0_skew));
+	memset_io(tim->cs1_skew, 0, sizeof(tim->cs1_skew));
+
+	/* CA de-skew */
+	for (n = 0; n < ARRAY_SIZE(de_skew->ca_de_skew); n++) {
+		offset = n / 2;
+		shift = n % 2;
+		/* 0 => 4; 1 => 0 */
+		shift = (shift == 0) ? 4 : 0;
+		tim->ca_skew[offset] &= ~(0xf << shift);
+		tim->ca_skew[offset] |= (de_skew->ca_de_skew[n] << shift);
+	}
+
+	/* CS0 data de-skew */
+	for (n = 0; n < ARRAY_SIZE(de_skew->cs0_de_skew); n++) {
+		offset = ((n / 21) * 11) + ((n % 21) / 2);
+		shift = ((n % 21) % 2);
+		if ((n % 21) == 20)
+			shift = 0;
+		else
+			/* 0 => 4; 1 => 0 */
+			shift = (shift == 0) ? 4 : 0;
+		tim->cs0_skew[offset] &= ~(0xf << shift);
+		tim->cs0_skew[offset] |= (de_skew->cs0_de_skew[n] << shift);
+	}
+
+	/* CS1 data de-skew */
+	for (n = 0; n < ARRAY_SIZE(de_skew->cs1_de_skew); n++) {
+		offset = ((n / 21) * 11) + ((n % 21) / 2);
+		shift = ((n % 21) % 2);
+		if ((n % 21) == 20)
+			shift = 0;
+		else
+			/* 0 => 4; 1 => 0 */
+			shift = (shift == 0) ? 4 : 0;
+		tim->cs1_skew[offset] &= ~(0xf << shift);
+		tim->cs1_skew[offset] |= (de_skew->cs1_de_skew[n] << shift);
+	}
+}
+
+static void of_get_px30_timings(struct device *dev,
+				struct device_node *np, uint32_t *timing)
+{
+	struct device_node *np_tim;
+	u32 *p;
+	struct px30_ddr_dts_config_timing *dts_timing;
+	struct rk3328_ddr_de_skew_setting *de_skew;
+	int ret = 0;
+	u32 i;
+
+	dts_timing =
+		(struct px30_ddr_dts_config_timing *)(timing +
+							DTS_PAR_OFFSET / 4);
+
+	np_tim = of_parse_phandle(np, "ddr_timing", 0);
+	if (!np_tim) {
+		ret = -EINVAL;
+		goto end;
+	}
+	de_skew = kmalloc(sizeof(*de_skew), GFP_KERNEL);
+	if (!de_skew) {
+		ret = -ENOMEM;
+		goto end;
+	}
+	p = (u32 *)dts_timing;
+	for (i = 0; i < ARRAY_SIZE(px30_dts_timing); i++) {
+		ret |= of_property_read_u32(np_tim, px30_dts_timing[i],
+					p + i);
+	}
+	p = (u32 *)de_skew->ca_de_skew;
+	for (i = 0; i < ARRAY_SIZE(rk3328_dts_ca_timing); i++) {
+		ret |= of_property_read_u32(np_tim, rk3328_dts_ca_timing[i],
+					p + i);
+	}
+	p = (u32 *)de_skew->cs0_de_skew;
+	for (i = 0; i < ARRAY_SIZE(rk3328_dts_cs0_timing); i++) {
+		ret |= of_property_read_u32(np_tim, rk3328_dts_cs0_timing[i],
+					p + i);
+	}
+	p = (u32 *)de_skew->cs1_de_skew;
+	for (i = 0; i < ARRAY_SIZE(rk3328_dts_cs1_timing); i++) {
+		ret |= of_property_read_u32(np_tim, rk3328_dts_cs1_timing[i],
+					p + i);
+	}
+	if (!ret)
+		px30_de_skew_set_2_reg(de_skew, dts_timing);
+	kfree(de_skew);
+end:
+	if (!ret) {
+		dts_timing->available = 1;
+	} else {
+		dts_timing->available = 0;
+		dev_err(dev, "of_get_ddr_timings: fail\n");
+	}
+
+	of_node_put(np_tim);
+}
+
 static int rk3399_dmcfreq_probe(struct platform_device *pdev)
 {
 	struct arm_smccc_res res;
@@ -196,6 +367,7 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
 	if (!data)
 		return -ENOMEM;
 
+	printk("ASDFASDFFASDFASDAFSDSDFAFSADASDFAFSDASDFFASD DMC");
 	mutex_init(&data->lock);
 
 	data->vdd_center = devm_regulator_get(dev, "center");
@@ -217,6 +389,48 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
 		dev_err(dev, "failed to enable devfreq-event devices\n");
 		return ret;
 	}
+
+	/*
+	 * Get dram timing and pass it to arm trust firmware,
+	 * the dram driver in arm trust firmware will get these
+	 * timing and to do dram initial.
+	 */
+	//if (!of_get_ddr_timings(&data->timing, np)) {
+	//	timing = &data->timing.ddr3_speed_bin;
+	//	size = sizeof(struct dram_timing) / 4;
+	//	for (index = 0; index < size; index++) {
+	//		arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, *timing++, index,
+	//			      ROCKCHIP_SIP_CONFIG_DRAM_SET_PARAM,
+	//			      0, 0, 0, 0, &res);
+	//		if (res.a0) {
+	//			dev_err(dev, "Failed to set dram param: %ld\n",
+	//				res.a0);
+	//			ret = -EINVAL;
+	//			goto err_edev;
+	//		}
+	//	}
+	//}
+
+	/*
+	 * In TF-A there is a platform SIP call to set the PD (power-down)
+	 * timings and to enable or disable the ODT (on-die termination).
+	 * This call needs three arguments as follows:
+	 *
+	 * arg0:
+	 *     bit[0-7]   : sr_idle
+	 *     bit[8-15]  : sr_mc_gate_idle
+	 *     bit[16-31] : standby idle
+	 * arg1:
+	 *     bit[0-11]  : pd_idle
+	 *     bit[16-27] : srpd_lite_idle
+	 * arg2:
+	 *     bit[0]     : odt enable
+	 */
+	data->odt_pd_arg0 = (data->timing.sr_idle & 0xff) |
+			    ((data->timing.sr_mc_gate_idle & 0xff) << 8) |
+			    ((data->timing.standby_idle & 0xffff) << 16);
+	data->odt_pd_arg1 = (data->timing.pd_idle & 0xfff) |
+			    ((data->timing.srpd_lite_idle & 0xfff) << 16);
 
 	/*
 	 * We add a devfreq driver to our parent since it has a device tree node
@@ -249,7 +463,7 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
 
 	data->devfreq = devm_devfreq_add_device(dev,
 					   &rk3399_devfreq_dmc_profile,
-					   DEVFREQ_GOV_PERFORMANCE,
+					   DEVFREQ_GOV_SIMPLE_ONDEMAND,
 					   &data->ondemand_data);
 	if (IS_ERR(data->devfreq)) {
 		ret = PTR_ERR(data->devfreq);

@@ -24,6 +24,22 @@
 		pwms = <&pwm1 0 25000 0>;
 	};
 
+        battery_cell: battery-cell {
+                compatible = "simple-battery";
+                energy-full-design-microamp-hours = <3000000>;
+                voltage-min-design-microvolt = <3500000>;
+                voltage-max-design-microvolt = <4100000>;
+
+                ocv-capacity-celcius = <20>;
+                ocv-capacity-table-0 =  <3500 0>, <3625 5>, <3685 10>, <3697 15>,
+                                        <3718 20>, <3735 25>, <3748 30>, <3760 35>,
+                                        <3774 40>, <3788 45>, <3802 50>, <3816 55>,
+                                        <3834 60>, <3853 65>, <3877 70>, <3908 75>,
+                                        <3946 80>, <3975 85>, <4018 90>, <4071 95>,
+                                        <4106 100>;
+        };
+
+
 	utils {
                         compatible = "gpio-keys";
                         #address-cells = <1>;
@@ -42,11 +58,6 @@
                                 label = "Mod button";
                                 gpios = <&gpio2 RK_PA1 GPIO_ACTIVE_LOW>;
                                 linux,code = <KEY_LEFTMETA>; // 0x2c2
-                        };
-                        button@3 {
-                                label = "HP detection";
-                                gpios = <&gpio2 RK_PC6 GPIO_ACTIVE_LOW>;
-                                linux,code = <KEY_SOUND>;
                         };
         };
 
@@ -207,29 +218,30 @@
 	};
 
         rk817-sound {
-                status = "okay";
                 compatible = "simple-audio-card";
+                simple-audio-card,name = "Analog";
                 simple-audio-card,format = "i2s";
-                simple-audio-card,name = "rockchip,rk817-codec";
                 simple-audio-card,mclk-fs = <256>;
                 simple-audio-card,widgets =
                         "Microphone", "Mic Jack",
                         "Headphone", "Headphones",
-			"Speaker", "Speaker";
+                        "Speaker", "Speaker";
                 simple-audio-card,routing =
                         "MICL", "Mic Jack",
                         "Headphones", "HPOL",
                         "Headphones", "HPOR",
-			"Speaker", "SPKO";
-                //simple-audio-card,hp-det-gpio = <&gpio2 RK_PC6 GPIO_ACTIVE_LOW>;
-		simple-audio-card,pin-switches = "Speaker","Headphones";
+                        "Speaker", "SPKO";
+                simple-audio-card,hp-det-gpio = <&gpio2 RK_PC6 GPIO_ACTIVE_HIGH>;
+
                 simple-audio-card,cpu {
                         sound-dai = <&i2s1_2ch>;
                 };
+
                 simple-audio-card,codec {
-                        sound-dai = <&rk817_codec>;
+                        sound-dai = <&rk817>;
                 };
         };
+
 
 	vcc_host: vcc_host {
 		compatible = "regulator-fixed";
@@ -328,10 +340,14 @@
 		interrupt-parent = <&gpio0>;
 		interrupts = <RK_PB2 IRQ_TYPE_LEVEL_LOW>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&pmic_int>;
+		pinctrl-0 = <&pmic_int &i2s1_2ch_mclk>;
 		wakeup-source;
 		#clock-cells = <1>;
 		clock-output-names = "rk808-clkout1", "xin32k";
+                clocks = <&cru SCLK_I2S1_OUT>;
+                clock-names = "mclk";
+                #sound-dai-cells = <0>;
+
 
 		vcc1-supply = <&vccsys>;
 		vcc2-supply = <&vccsys>;
@@ -343,58 +359,20 @@
 
                 battery {
                         compatible = "rk817,battery";
-                        ocv_table = <3500 3625 3685 3697 3718 3735 3748
-                        3760 3774 3788 3802 3816 3834 3853
-                        3877 3908 3946 3975 4018 4071 4106>;
-                        design_capacity = <3000>;
-                        design_qmax = <3000>;
+			monitored-battery = <&battery_cell>;
                         bat_res = <180>;
-                        sleep_enter_current = <300>;
-                        sleep_exit_current = <300>;
-                        sleep_filter_current = <100>;
-                        power_off_thresd = <3500>;
-                        zero_algorithm_vol = <3700>;
-                        max_soc_offset = <60>;
-                        monitor_sec = <5>;
-                        virtual_power = <0>;
                         sample_res = <10>;
-                };
-
-                charger {
-                        compatible = "rk817,charger";
-                        min_input_voltage = <4500>;
-                        max_input_current = <1500>;
-                        max_chrg_current = <2000>;
-                        max_chrg_voltage = <4200>;
-                        chrg_term_mode = <0>;
-                        chrg_finish_cur = <300>;
-                        virtual_power = <0>;
-                        sample_res = <10>;
-
-                        dc_det_gpio  = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
-                        chg_led_gpio = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
-
-                        extcon = <&u2phy>;
                 };
 
                 rk817_codec: codec {
-                        #sound-dai-cells = <0>;
-                        compatible = "rockchip,rk817-codec";
-                        clocks = <&cru SCLK_I2S1_OUT>;
-                        clock-names = "mclk";
-                        pinctrl-names = "default";
-                        pinctrl-0 = <&i2s1_2ch_mclk>;
-                        hp-volume = <20>;
-                        spk-volume = <3>;
-                        status = "okay";
-			mic-in-differential;
+                        rockchip,mic-in-differential;
                 };
 
 		regulators {
 			vdd_logic: DCDC_REG1 {
 				regulator-name = "vdd_logic";
 				regulator-min-microvolt = <950000>;
-				regulator-max-microvolt = <1150000>;
+				regulator-max-microvolt = <1200000>;
 				regulator-ramp-delay = <6001>;
 				regulator-always-on;
 				regulator-boot-on;

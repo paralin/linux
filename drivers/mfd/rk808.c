@@ -169,7 +169,7 @@ static const struct mfd_cell rk817s[] = {
 	{ .name = "rk808-clkout",},
 	{ .name = "rk808-regulator",},
 	{
-		.name = "rk805-pwrkey",
+		.name = "rk8xx-pwrkey",
 		.num_resources = ARRAY_SIZE(rk817_pwrkey_resources),
 		.resources = &rk817_pwrkey_resources[0],
 	},
@@ -762,6 +762,8 @@ static int rk808_probe(struct i2c_client *client,
 		rk808_i2c_client = client;
 		pm_power_off = rk808_pm_power_off;
 	}
+
+	device_init_wakeup(&client->dev, true);
 
 	return 0;
 
