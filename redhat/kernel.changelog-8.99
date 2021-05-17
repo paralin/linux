@@ -1,3 +1,7 @@
+* Mon May 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc2.19]
+- rpmspec: revert/drop content hash for kernel-headers (Herton R. Krzesinski)
+- rpmspec: fix check that calls InitBuildVars (Herton R. Krzesinski)
+
 * Sat May 15 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc1.20210515git25a1298726e9.17]
 - fedora: enable zonefs (Damien Le Moal)
 
