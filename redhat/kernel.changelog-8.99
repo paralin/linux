@@ -1,3 +1,7 @@
+* Tue May 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc2.20210518git8ac91e6c6033.20]
+- UIO: disable unused config options (Aristeu Rozanski) [1957819]
+- ARK-config: Make amd_pinctrl module builtin (Hans de Goede)
+
 * Mon May 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc2.19]
 - rpmspec: revert/drop content hash for kernel-headers (Herton R. Krzesinski)
 - rpmspec: fix check that calls InitBuildVars (Herton R. Krzesinski)
