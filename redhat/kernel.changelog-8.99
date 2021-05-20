@@ -1,3 +1,6 @@
+* Thu May 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc2.20210520gitc3d0e3fd41b7.21]
+- rpmspec: build debug-* meta-packages if debug builds are disabled (Herton R. Krzesinski)
+
 * Tue May 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc2.20210518git8ac91e6c6033.20]
 - UIO: disable unused config options (Aristeu Rozanski) [1957819]
 - ARK-config: Make amd_pinctrl module builtin (Hans de Goede)
