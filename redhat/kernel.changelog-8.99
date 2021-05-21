@@ -1,3 +1,11 @@
+* Fri May 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc2.20210521git79a106fc6585.22]
+- configs: enable CONFIG_EXFAT_FS (Pavel Reichl) [1943423]
+- Revert s390x/zfcpdump part of a9d179c40281 and ecbfddd98621 (Vladis Dronov)
+- Embed crypto algos, modes and templates needed in the FIPS mode (Vladis Dronov) [1947240]
+- configs: Add and enable CONFIG_HYPERV_TESTING for debug kernels (Mohammed Gamal)
+- mm/cma: mark CMA on x86_64 tech preview and print RHEL-specific infos (David Hildenbrand) [1945002]
+- configs: enable CONFIG_CMA on x86_64 in ARK (David Hildenbrand) [1945002]
+
 * Thu May 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc2.20210520gitc3d0e3fd41b7.21]
 - rpmspec: build debug-* meta-packages if debug builds are disabled (Herton R. Krzesinski)
 
