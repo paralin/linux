@@ -1,3 +1,6 @@
+* Sat May 22 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.6-0]
+- bus: mhi: core: Download AMSS image from appropriate function (Bhaumik Bhatt)
+
 * Wed May 19 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.5-0]
 - drm/rockchip: remove existing generic drivers to take over the device (Javier Martinez Canillas)
 - fedora: enable zonefs (Damien Le Moal)
