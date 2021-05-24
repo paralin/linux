@@ -1,3 +1,7 @@
+* Mon May 24 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.25]
+- Override %%{debugbuildsenabled} if the --with-release option is used (David Ward)
+- Improve comments in SPEC file, and move some option tests and macros (David Ward)
+
 * Fri May 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc2.20210521git79a106fc6585.22]
 - configs: enable CONFIG_EXFAT_FS (Pavel Reichl) [1943423]
 - Revert s390x/zfcpdump part of a9d179c40281 and ecbfddd98621 (Vladis Dronov)
