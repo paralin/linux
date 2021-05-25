@@ -1,3 +1,7 @@
+* Tue May 25 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.20210525gita050a6d2b7e8.26]
+- Make CRYPTO_EC also builtin (Simo Sorce) [1947240]
+- Do not hard-code a default value for DIST (David Ward)
+
 * Mon May 24 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.25]
 - Override %%{debugbuildsenabled} if the --with-release option is used (David Ward)
 - Improve comments in SPEC file, and move some option tests and macros (David Ward)
