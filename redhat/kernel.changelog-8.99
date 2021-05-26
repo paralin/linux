@@ -1,3 +1,6 @@
+* Wed May 26 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.20210526gitad9f25d33860.27]
+- team: mark team driver as deprecated (Hangbin Liu) [1945477]
+
 * Tue May 25 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.20210525gita050a6d2b7e8.26]
 - Make CRYPTO_EC also builtin (Simo Sorce) [1947240]
 - Do not hard-code a default value for DIST (David Ward)
