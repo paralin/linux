@@ -1,3 +1,7 @@
+* Wed May 26 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.7-0]
+- Fix up merge issue resulting in dual entries for ALC295_FIXUP_ASUS_DACS (Justin M. Forbes)
+- powerpc/64s/syscall: Fix ptrace syscall info with scv syscalls (Nicholas Piggin)
+
 * Sat May 22 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.6-0]
 - bus: mhi: core: Download AMSS image from appropriate function (Bhaumik Bhatt)
 
