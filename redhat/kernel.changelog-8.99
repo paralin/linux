@@ -1,3 +1,6 @@
+* Fri May 28 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.20210528git97e5bf604b7a.28]
+- nvme: nvme_mpath_init remove multipath check (Mike Snitzer)
+
 * Wed May 26 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.20210526gitad9f25d33860.27]
 - team: mark team driver as deprecated (Hangbin Liu) [1945477]
 
