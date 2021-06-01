@@ -1,3 +1,6 @@
+* Tue Jun 01 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc4.20210601gitc2131f7e73c9.32]
+- configs/common/s390: disable CONFIG_QETH_{OSN,OSX} (Philipp Rudo) [1903201]
+
 * Fri May 28 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.20210528git97e5bf604b7a.28]
 - nvme: nvme_mpath_init remove multipath check (Mike Snitzer)
 
