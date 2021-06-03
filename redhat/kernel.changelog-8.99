@@ -1,3 +1,11 @@
+* Thu Jun 03 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc4.20210603git324c92e5e0ee.34]
+- all: Changing CONFIG_UV_SYSFS to build uv_sysfs.ko as a loadable module. (Frank Ramsay)
+- Enable NITRO_ENCLAVES on RHEL (Vitaly Kuznetsov)
+- Update the Quick Start documentation (David Ward)
+- redhat/configs: Set PVPANIC_MMIO for x86 and PVPANIC_PCI for aarch64 (Eric Auger) [1961178]
+- bpf: Fix unprivileged_bpf_disabled setup (Jiri Olsa)
+- Enable CONFIG_BPF_UNPRIV_DEFAULT_OFF (Jiri Olsa)
+
 * Tue Jun 01 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc4.20210601gitc2131f7e73c9.32]
 - configs/common/s390: disable CONFIG_QETH_{OSN,OSX} (Philipp Rudo) [1903201]
 
