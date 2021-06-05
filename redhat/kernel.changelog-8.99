@@ -1,3 +1,6 @@
+* Sat Jun 05 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc4.20210604gitf88cd3fb9df2.36]
+- RHEL: disable io_uring support (Jeff Moyer)
+
 * Thu Jun 03 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc4.20210603git324c92e5e0ee.34]
 - all: Changing CONFIG_UV_SYSFS to build uv_sysfs.ko as a loadable module. (Frank Ramsay)
 - Enable NITRO_ENCLAVES on RHEL (Vitaly Kuznetsov)
