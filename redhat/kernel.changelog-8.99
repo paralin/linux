@@ -1,3 +1,6 @@
+* Fri Jun 11 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc5.20210611git06af8679449d.40]
+- configs: enable CONFIG_LEDS_BRIGHTNESS_HW_CHANGED (Benjamin Tissoires)
+
 * Sat Jun 05 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc4.20210604gitf88cd3fb9df2.36]
 - RHEL: disable io_uring support (Jeff Moyer)
 
