@@ -1,3 +1,6 @@
+* Wed Jun 16 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.11-0]
+- Bluetooth: btqca: Don't modify firmware contents in-place (Connor Abbott)
+
 * Thu Jun 10 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.10-0]
 - Bluetooth: use correct lock to prevent UAF of hdev object (Lin Ma)
 - nfc: fix NULL ptr dereference in llcp_sock_getname() after failed connect (Krzysztof Kozlowski)
