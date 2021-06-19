@@ -1,3 +1,6 @@
+* Sat Jun 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210619gitfd0aa1a4567d.49]
+- Fedora 5.13 config updates pt 3 (Justin M. Forbes)
+
 * Fri Jun 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210618gitfd0aa1a4567d.48]
 - all: enable ath11k wireless modules (Peter Robinson)
 - all: Enable WWAN and associated MHI bus pieces (Peter Robinson)
