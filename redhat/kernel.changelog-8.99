@@ -1,3 +1,6 @@
+* Mon Jun 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc7.51]
+- Turn off DRM_XEN_FRONTEND for Fedora as we had DRM_XEN off already (Justin M. Forbes)
+
 * Sat Jun 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210619gitfd0aa1a4567d.49]
 - Fedora 5.13 config updates pt 3 (Justin M. Forbes)
 
