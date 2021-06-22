@@ -1,3 +1,8 @@
+* Tue Jun 22 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc7.20210622gita96bfed64c89.52]
+- configs: Enable CONFIG_DEBUG_KERNEL for zfcpdump (Jiri Olsa)
+- kernel.spec: Add support to use vmlinux.h (Don Zickus)
+- spec: Add vmlinux.h to kernel-devel package (Jiri Olsa)
+
 * Mon Jun 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc7.51]
 - Turn off DRM_XEN_FRONTEND for Fedora as we had DRM_XEN off already (Justin M. Forbes)
 
