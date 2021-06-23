@@ -1,3 +1,6 @@
+* Wed Jun 23 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc7.20210623git0c18f29aae7c.53]
+- redhat/configs: enable CONFIG_NET_ACT_MPLS (Marcelo Ricardo Leitner)
+
 * Tue Jun 22 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc7.20210622gita96bfed64c89.52]
 - configs: Enable CONFIG_DEBUG_KERNEL for zfcpdump (Jiri Olsa)
 - kernel.spec: Add support to use vmlinux.h (Don Zickus)
