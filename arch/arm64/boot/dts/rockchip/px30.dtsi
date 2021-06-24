@@ -334,8 +334,8 @@
 		clocks = <&cru SCLK_DDRCLK>;
 		clock-names = "dmc_clk";
 		operating-points-v2 = <&dmc_opp_table>;
-		uptreshold = <25>;
-		downdifferential = <15>;
+		uptreshold = <40>;
+		downdifferential = <20>;
 		status = "okay";
 	};
 
