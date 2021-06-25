@@ -1,3 +1,7 @@
+* Fri Jun 25 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc7.20210625git44db63d1ad8d.55]
+- redhat/configs: Enable needed drivers for BlueField SoC on aarch64 (Alaa Hleihel) [1858592 1858594 1858596]
+- redhat: Rename mod-blacklist.sh to mod-denylist.sh (Prarit Bhargava)
+
 * Wed Jun 23 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc7.20210623git0c18f29aae7c.53]
 - redhat/configs: enable CONFIG_NET_ACT_MPLS (Marcelo Ricardo Leitner)
 
