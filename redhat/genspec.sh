@@ -21,8 +21,10 @@ LAST_MARKER=${14}
 SINGLE_TARBALL=${15}
 TARFILE_RELEASE=${16}
 SNAPSHOT=${17}
-BUILDID=${18}
+UPSTREAM=${18}
+BUILDID=${19}
 RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
+STABLEVERSION=${KVERSION}.${KPATCHLEVEL}
 clogf="$SOURCES/changelog"
 # hide [redhat] entries from changelog
 HIDE_REDHAT=1;
@@ -35,7 +37,7 @@ RPM_VERSION="$RPMVERSION-$PKGRELEASE";
 
 echo > "$clogf"
 
-lasttag=$(git rev-list --first-parent --grep="^\[redhat\] kernel-${RPMVERSION}" --max-count=1 HEAD)
+lasttag=$(git rev-list --first-parent --grep="^\[redhat\] kernel-${STABLEVERSION}" --max-count=1 HEAD)
 # if we didn't find the proper tag, assume this is the first release
 if [[ -z $lasttag ]]; then
     if [[ -z ${MARKER//[0-9a-f]/} ]]; then
@@ -52,7 +54,7 @@ MASTER="$(git rev-parse -q --verify origin/master || \
           git rev-parse -q --verify master)"
  
 git log --topo-order --reverse --no-merges -z --format="- %s (%an)%n%b" \
-	^${MASTER} "$lasttag".. -- ':!/redhat/rhdocs' | ${0%/*}/genlog.py >> "$clogf"
+	^$UPSTREAM "$lasttag".. -- ':!/redhat/rhdocs' | ${0%/*}/genlog.py >> "$clogf"
 
 grep -v "tagging $RPM_VERSION" "$clogf" > "$clogf.stripped"
 cp "$clogf.stripped" "$clogf"
@@ -153,10 +155,10 @@ if [ "$SINGLE_TARBALL" = 0 ]; then
 	# May need to preserve word splitting in EXCLUDE_FILES
 	# shellcheck disable=SC2086
 	git diff -p --no-renames --stat "$MARKER"..  $EXCLUDE_FILES \
-		> "$SOURCES"/patch-"$RPMVERSION"-redhat.patch
+		> "$SOURCES"/patch-"$STABLEVERSION"-redhat.patch
 else
 	# Need an empty file for dist-git compatibility
-	touch "$SOURCES"/patch-"$RPMVERSION"-redhat.patch
+	touch "$SOURCES"/patch-"$STABLEVERSION"-redhat.patch
 fi
 
 # generate Patchlist.changelog file that holds the shas and commits not
@@ -171,7 +173,7 @@ ARK_COMMIT_URL="https://gitlab.com/cki-project/kernel-ark/-/commit"
 #
 # May need to preserve word splitting in EXCLUDE_FILES
 # shellcheck disable=SC2086
-git log --no-merges --pretty=oneline --no-decorate ${MASTER}.. $EXCLUDE_FILES | \
+git log --no-merges --pretty=oneline --no-decorate $UPSTREAM.. $EXCLUDE_FILES | \
 	sed "s!^\([^ ]*\)!$ARK_COMMIT_URL/\1\n &!; s!\$!\n!" \
 	> "$SOURCES"/Patchlist.changelog
 

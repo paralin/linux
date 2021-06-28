@@ -7,6 +7,7 @@ RPMBUILD := $(shell if [ -x "/usr/bin/rpmbuild" ]; then echo rpmbuild; \
 
 MACH :=  $(shell uname -m)
 HEAD ?= HEAD
+UPSTREAM ?= linux-5.13.y
 RPMKVERSION:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^VERSION\ =\ /{s///;p;q}')
 RPMKPATCHLEVEL:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^PATCHLEVEL\ =\ /{s///;p;q}')
 RPMKSUBLEVEL:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^SUBLEVEL\ =\ /{s///;p;q}')
@@ -15,7 +16,7 @@ GITID:= $(shell $(GIT) log --max-count=1 --pretty=format:%H $(HEAD))
 # marker is git tag which we base off of for exporting patches
 # Make sure marker uses RPMKPATCHLEVEL and RPMKEXTRAVERSION from the kernel
 # makefile as opposed to any adjusted version for snapshotting.
-MARKER:=v$(RPMKVERSION).$(RPMKPATCHLEVEL)$(RPMKEXTRAVERSION)
+MARKER:=v$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)$(RPMKEXTRAVERSION)
 ifneq ($(RPMKEXTRAVERSION),)
   KEXTRAVERSION:=$(shell echo $(RPMKEXTRAVERSION) | sed -e s/-/./)
   PREBUILD:=0$(KEXTRAVERSION).
@@ -32,6 +33,7 @@ endif
 DIST ?= $(shell $(RPMBUILD) --eval '%{?dist}')
 ifneq ($(findstring .fc,$(DIST)),)
   DISTRO ?= fedora
+  IS_FEDORA:=1
 else
   DISTRO ?= rhel
 endif
@@ -42,18 +44,13 @@ endif
 ifeq ("$(DIST)", ".elrdy")
   VERSION_ON_UPSTREAM:=1
 else ifeq ("$(DISTRO)", "fedora")
-  VERSION_ON_UPSTREAM:=1
+  VERSION_ON_UPSTREAM:=0
 else
   VERSION_ON_UPSTREAM:=0
 endif
 ifeq ($(VERSION_ON_UPSTREAM),1)
   # master is expected to track mainline.
-  MASTER:=$(shell $(GIT) rev-parse -q --verify origin/master || \
-                  $(GIT) rev-parse -q --verify master)
-  ifeq ($(MASTER),)
-      $(error "Missing an 'origin/master' or 'master' branch")
-  endif
-  MERGE_BASE:=$(shell $(GIT) merge-base $(HEAD) $(MASTER))
+  MERGE_BASE:=$(shell $(GIT) merge-base $(HEAD) $UPSTREAM)
   _TAG:=$(shell $(GIT) describe $(MERGE_BASE))
   # a snapshot off of a tagged git is of the form [tag]-[cnt]-g[hash]
   SNAPSHOT:=$(shell echo $(_TAG) | grep -c '\-g')
@@ -113,7 +110,7 @@ endif
 #	0 : pre-release (devel) secureboot keys are used for signing
 #	1 : release (RC/GA) secureboot keys are used for signing
 #
-RELEASED_KERNEL:=0
+RELEASED_KERNEL:=1
 
 STAMP_VERSION:=$(KVERSION)
 

@@ -117,6 +117,7 @@ Summary: The Linux kernel
 %define kversion %%KVERSION%%.%%KPATCHLEVEL%%
 
 %define rpmversion %%KVERSION%%.%%KPATCHLEVEL%%.%%KSUBLEVEL%%
+%define stableversion %%KVERSION%%.%%KPATCHLEVEL%%
 %define pkgrelease %%PKGRELEASE%%
 
 # This is needed to do merge window version magic
@@ -796,7 +797,7 @@ Source4001: rpminspect.yaml
 
 %if !%{nopatches}
 
-Patch1: patch-%{rpmversion}-redhat.patch
+Patch1: patch-%{stableversion}-redhat.patch
 %endif
 
 # empty final patch to facilitate testing of kernel patches
@@ -1319,7 +1320,7 @@ cp -a %{SOURCE1} .
 
 %if !%{nopatches}
 
-ApplyOptionalPatch patch-%{rpmversion}-redhat.patch
+ApplyOptionalPatch patch-%{stableversion}-redhat.patch
 %endif
 
 ApplyOptionalPatch linux-kernel-test.patch
