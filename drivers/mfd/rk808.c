@@ -77,7 +77,7 @@ static bool rk817_is_volatile_reg(struct device *dev, unsigned int reg)
 		return true;
 	}
 
-	return false;
+	return true;
 }
 
 static const struct regmap_config rk818_regmap_config = {

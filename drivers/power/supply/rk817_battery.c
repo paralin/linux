@@ -37,17 +37,16 @@ struct rk817_bat {
 	struct power_supply *bat_ps;
 	struct power_supply_battery_info info;
 
-	/* FIXME: do i move it into other struct? */
-	uint32_t voltage_k;
-	uint32_t voltage_b;
+	int voltage_k;
+	int voltage_b;
 	int res_div;
 	int sample_res;
 };
 
-static int rk817_get_reg_hl(struct rk817_bat *battery, int regH, int regL)
+static int rk817_get_reg_hl(struct rk817_bat *battery, int regH, int regL, uint32_t *val)
 {
-	int tmp, ret;
-	uint32_t out;
+	int ret;
+	uint32_t tmp, out;
 	struct rk808 *rk808 = battery->rk808;
 
 	ret = regmap_read(rk808->regmap, regL, &tmp);
@@ -60,7 +59,8 @@ static int rk817_get_reg_hl(struct rk817_bat *battery, int regH, int regL)
 		return ret;
 	out |= tmp << 8;
 
-	return out;
+	*val = out;
+	return 0;
 }
 
 static void rk817_write_reg_hl(struct rk817_bat *battery, int regH, int regL, int val)
@@ -76,13 +76,21 @@ static void rk817_write_reg_hl(struct rk817_bat *battery, int regH, int regL, in
 
 static void rk817_bat_calib_vol(struct rk817_bat *battery)
 {
+	printk("rk817 calib vol");
 	uint32_t vcalib0 = 0;
 	uint32_t vcalib1 = 0;
+	int ret;
 
 	/* calibrate voltage */
-	vcalib0 = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_VCALIB0_H, RK817_GAS_GAUGE_VCALIB0_L);
-	vcalib1 = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_VCALIB1_H, RK817_GAS_GAUGE_VCALIB1_L);
+	ret = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_VCALIB0_H, RK817_GAS_GAUGE_VCALIB0_L, &vcalib0);
+	if (ret)
+		printk("AAAAAAAA");
 
+	ret = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_VCALIB1_H, RK817_GAS_GAUGE_VCALIB1_L, &vcalib1);
+	if (ret)
+		printk("AAAAAAAAAAAAAA");
+
+	printk("0 %d 1 %d", vcalib0, vcalib1);
 	/* values were taken from BSP kernel */
 	battery->voltage_k = (4025 - 2300) * 1000 / ((vcalib1 - vcalib0) ? (vcalib1 - vcalib0) : 1);
 	battery->voltage_b = 4025 - (battery->voltage_k * vcalib1) / 1000;
@@ -91,9 +99,13 @@ static void rk817_bat_calib_vol(struct rk817_bat *battery)
 
 static void rk817_bat_calib_cur(struct rk817_bat *battery)
 {
-	int ioffset = 0;
+	printk("rk817 calib cur");
+	uint32_t ioffset = 0;
+	int ret;
 	/* calibrate current */
-	ioffset = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_IOFFSET_H, RK817_GAS_GAUGE_IOFFSET_H);
+	ret = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_IOFFSET_H, RK817_GAS_GAUGE_IOFFSET_H, &ioffset);
+	if (ret)
+		printk("AAAAAAAAAAAAAAAAAAAAAAAAA");
 	rk817_write_reg_hl(battery, RK817_GAS_GAUGE_CAL_OFFSET_H, RK817_GAS_GAUGE_CAL_OFFSET_L, ioffset);
 }
 
@@ -106,6 +118,7 @@ static int rk817_bat_get_prop(struct power_supply *ps,
 	int ret = 0;
 	int reg = 0;
 	struct rk808 *rk808 = battery->rk808;
+	printk("rk817 bat get prop");
 
 	/* recalibrate voltage and current readings if we need to */
 	/* BSP does both on CUR_CALIB_UPD, ignoring VOL_CALIB_UPD */
@@ -170,7 +183,9 @@ static int rk817_bat_get_prop(struct power_supply *ps,
 			val->intval = battery->info.voltage_min_design_uv;
 			break;
 		case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-			tmp = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_BAT_VOL_H, RK817_GAS_GAUGE_BAT_VOL_L);
+			ret = rk817_get_reg_hl(battery, RK817_GAS_GAUGE_BAT_VOL_H, RK817_GAS_GAUGE_BAT_VOL_L, &tmp);
+			if (ret)
+				return ret;
 			val->intval = 1000 * ((battery->voltage_k * tmp) / (1000 + battery->voltage_b));
 			break;
 		case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
@@ -228,7 +243,7 @@ static int rk817_bat_probe(struct platform_device *pdev)
 	battery->dev = &pdev->dev;
 	platform_set_drvdata(pdev, battery);
 
-	rk817_bat_calib_vol(battery);
+	//rk817_bat_calib_vol(battery);
 
 	pscfg.drv_data = battery;
 	pscfg.of_node = pdev->dev.of_node;

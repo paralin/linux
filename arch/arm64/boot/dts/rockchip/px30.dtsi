@@ -329,7 +329,6 @@
 
 	dmc: dmc {
 		compatible = "rockchip,px30-dmc";
-		rockchip,pmu = <&pmugrf>;
 		devfreq-events = <&dfi>;
 		clocks = <&cru SCLK_DDRCLK>;
 		clock-names = "dmc_clk";

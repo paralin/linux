@@ -64,7 +64,6 @@ struct rk3399_dmcfreq {
 	struct mutex lock;
 	struct dram_timing timing;
 	struct regulator *vdd_center;
-	struct regmap *regmap_pmu;
 	unsigned long rate, target_rate;
 	unsigned long volt, target_volt;
 	unsigned int odt_dis_freq;
@@ -103,6 +102,84 @@ static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
 	mutex_unlock(&dmcfreq->lock);
 	return ret;
 }
+
+/*
+static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
+				 u32 flags)
+{
+	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(dev);
+	struct dev_pm_opp *opp;
+	unsigned long old_clk_rate = dmcfreq->rate;
+	unsigned long target_volt, target_rate;
+	struct arm_smccc_res res;
+	bool odt_enable = false;
+	int err;
+
+	opp = devfreq_recommended_opp(dev, freq, flags);
+	if (IS_ERR(opp))
+		return PTR_ERR(opp);
+
+	target_rate = dev_pm_opp_get_freq(opp);
+	target_volt = dev_pm_opp_get_voltage(opp);
+	dev_pm_opp_put(opp);
+
+	if (dmcfreq->rate == target_rate)
+		return 0;
+
+	mutex_lock(&dmcfreq->lock);
+
+	*
+	 * If frequency scaling from low to high, adjust voltage first.
+	 * If frequency scaling from high to low, adjust frequency first.
+	 *
+	if (old_clk_rate < target_rate) {
+		err = regulator_set_voltage(dmcfreq->vdd_center, target_volt,
+					    target_volt);
+		if (err) {
+			dev_err(dev, "Cannot set voltage %lu uV\n",
+				target_volt);
+			goto out;
+		}
+	}
+
+	err = clk_set_rate(dmcfreq->dmc_clk, target_rate);
+	if (err) {
+		dev_err(dev, "Cannot set frequency %lu (%d)\n", target_rate,
+			err);
+		regulator_set_voltage(dmcfreq->vdd_center, dmcfreq->volt,
+				      dmcfreq->volt);
+		goto out;
+	}
+
+	*
+	 * Check the dpll rate,
+	 * There only two result we will get,
+	 * 1. Ddr frequency scaling fail, we still get the old rate.
+	 * 2. Ddr frequency scaling sucessful, we get the rate we set.
+	 *
+	dmcfreq->rate = clk_get_rate(dmcfreq->dmc_clk);
+
+	* If get the incorrect rate, set voltage to old value. *
+	if (dmcfreq->rate != target_rate) {
+		dev_err(dev, "Got wrong frequency, Request %lu, Current %lu\n",
+			target_rate, dmcfreq->rate);
+		regulator_set_voltage(dmcfreq->vdd_center, dmcfreq->volt,
+				      dmcfreq->volt);
+		goto out;
+	} else if (old_clk_rate > target_rate)
+		err = regulator_set_voltage(dmcfreq->vdd_center, target_volt,
+					    target_volt);
+	if (err)
+		dev_err(dev, "Cannot set voltage %lu uV\n", target_volt);
+
+	dmcfreq->rate = target_rate;
+	dmcfreq->volt = target_volt;
+
+out:
+	mutex_unlock(&dmcfreq->lock);
+	return err;
+}*/
+
 
 static int rk3399_dmcfreq_get_dev_status(struct device *dev,
 					 struct devfreq_dev_status *stat)
