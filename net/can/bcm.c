@@ -1538,9 +1538,8 @@ static int bcm_release(struct socket *sock)
 
 	synchronize_rcu();
 
-	list_for_each_entry_safe(op, next, &bo->rx_ops, list) {
+	list_for_each_entry_safe(op, next, &bo->rx_ops, list)
 		bcm_remove_op(op);
-	}
 
 #if IS_ENABLED(CONFIG_PROC_FS)
 	/* remove procfs entry */
