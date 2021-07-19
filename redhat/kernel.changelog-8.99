@@ -1,3 +1,7 @@
+* Mon Jul 19 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.13.3-0]
+- Don't tag a release as [redhat] (Justin M. Forbes)
+- platform/x86: amd-pmc: Fix missing unlock on error in amd_pmc_send_cmd() (Yang Yingliang)
+
 * Wed Jul 14 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.13.2-0]
 - platform/x86: amd-pmc: Use return code on suspend (Mario Limonciello)
 - ACPI: PM: Only mark EC GPE for wakeup on Intel systems (Mario Limonciello)
