@@ -1,3 +1,8 @@
+* Tue Jul 20 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.19-0]
+- Revert "usb: renesas-xhci: Fix handling of unknown ROM state" (Justin M. Forbes)
+- kernel-5.12.18-0 (Justin M. Forbes)
+- Don't tag a release as [redhat] (Justin M. Forbes)
+
 * Mon Jul 19 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.12.18-0]
 - Don't tag a release as [redhat] (Justin M. Forbes)
 
