@@ -1,3 +1,9 @@
+* Tue Jul 20 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.13.4-0]
+- Config update for 5.13.4 (Justin M. Forbes)
+- kernel-5.13.3-0 (Justin M. Forbes)
+- Don't tag a release as [redhat] (Justin M. Forbes)
+- platform/x86: amd-pmc: Fix missing unlock on error in amd_pmc_send_cmd() (Yang Yingliang)
+
 * Mon Jul 19 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.13.3-0]
 - Don't tag a release as [redhat] (Justin M. Forbes)
 - platform/x86: amd-pmc: Fix missing unlock on error in amd_pmc_send_cmd() (Yang Yingliang)
