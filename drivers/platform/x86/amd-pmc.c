@@ -298,6 +298,7 @@ static int amd_pmc_send_cmd(struct amd_pmc_dev *dev, bool set, u32 *data, u8 msg
 
 	switch (val) {
 	case AMD_PMC_RESULT_OK:
+
 		if (ret) {
 			/* PMFW may take longer time to return back the data */
 			usleep_range(DELAY_MIN_US, 10 * DELAY_MAX_US);
@@ -456,6 +457,7 @@ static int amd_pmc_probe(struct platform_device *pdev)
 	if (err)
 		dev_err(dev->dev, "SMU debugging info not supported on this platform\n");
 
+	mutex_init(&dev->lock);
 	platform_set_drvdata(pdev, dev);
 	amd_pmc_dbgfs_register(dev);
 	return 0;
