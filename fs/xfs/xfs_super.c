@@ -1545,6 +1545,7 @@ xfs_fs_fill_super(
 
 	if (mp->m_flags & XFS_MOUNT_DAX_ALWAYS) {
 		bool rtdev_is_dax = false, datadev_is_dax;
+		static bool printed = false;
 
 		xfs_warn(mp,
 		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
@@ -1564,6 +1565,10 @@ xfs_fs_fill_super(
 		"DAX and reflink cannot be used together!");
 			error = -EINVAL;
 			goto out_filestream_unmount;
+		}
+		if (!printed) {
+			mark_tech_preview("xfs direct access (dax)", NULL);
+			printed = true;
 		}
 	}
 
