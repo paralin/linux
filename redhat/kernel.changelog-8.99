@@ -1,3 +1,12 @@
+* Wed Aug 25 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc7.20210825git6e764bcd1cf7.55]
+- CI: Enable realtime branch testing (Veronika Kabatova)
+- CI: Enable realtime checks for c9s and RHEL9 (Veronika Kabatova)
+- [fs] dax: mark tech preview (Bill O'Donnell)
+- ark: wireless: enable all rtw88 pcie wirless variants (Peter Robinson)
+- wireless: rtw88: move debug options to common/debug (Peter Robinson)
+- fedora: minor PTP clock driver cleanups (Peter Robinson)
+- common: x86: enable VMware PTP support on ark (Peter Robinson)
+
 * Tue Aug 24 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc7.20210824gitd5ae8d7f85b7.54]
 - arm64: dts: rockchip: Disable CDN DP on Pinebook Pro (Matthias Brugger)
 - arm64: dts: rockchip: Setup USB typec port as datarole on (Dan Johansen)
