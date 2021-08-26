@@ -1,3 +1,6 @@
+* Thu Aug 26 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc7.20210826git73f3af7b4611.56]
+- Attempt to fix Intel PMT code (David Arcari)
+
 * Wed Aug 25 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc7.20210825git6e764bcd1cf7.55]
 - CI: Enable realtime branch testing (Veronika Kabatova)
 - CI: Enable realtime checks for c9s and RHEL9 (Veronika Kabatova)
