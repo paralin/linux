@@ -1,3 +1,8 @@
+* Fri Aug 27 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc7.20210827git77dd11439b86.57]
+- rpmspec: drop traceevent files instead of just excluding them from files list (Herton R. Krzesinski) [1967640]
+- Revert "redhat/configs: Enable genet and brcmfmac wlan" (Íñigo Huguet)
+- redhat/config: Enablement of CONFIG_PAPR_SCM for PowerPC (Gustavo Walbon) [1962936]
+
 * Thu Aug 26 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc7.20210826git73f3af7b4611.56]
 - Attempt to fix Intel PMT code (David Arcari)
 
