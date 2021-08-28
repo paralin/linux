@@ -1,3 +1,6 @@
+* Sat Aug 28 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14-0.rc7.20210828git64b4fc45bea6.58]
+- Create Makefile.variables for a single point of configuration change (Justin M. Forbes)
+
 * Fri Aug 27 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc7.20210827git77dd11439b86.57]
 - rpmspec: drop traceevent files instead of just excluding them from files list (Herton R. Krzesinski) [1967640]
 - Revert "redhat/configs: Enable genet and brcmfmac wlan" (Íñigo Huguet)
