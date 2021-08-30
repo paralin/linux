@@ -1,3 +1,6 @@
+* Mon Aug 30 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14-60]
+- arm64: use common CONFIG_MAX_ZONEORDER for arm kernel (Mark Salter)
+
 * Sat Aug 28 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14-0.rc7.20210828git64b4fc45bea6.58]
 - Create Makefile.variables for a single point of configuration change (Justin M. Forbes)
 
