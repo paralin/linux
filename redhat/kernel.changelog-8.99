@@ -1,3 +1,6 @@
+* Fri Sep 03 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14-0]
+- Setup for building fedora-5.14 branch (Justin M. Forbes)
+
 * Mon Aug 30 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14-0]
 - iwlwifi Add support for ax201 in Samsung Galaxy Book Flex2 Alpha (Justin M. Forbes)
 - arm64: use common CONFIG_MAX_ZONEORDER for arm kernel (Mark Salter)
