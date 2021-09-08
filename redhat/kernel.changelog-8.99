@@ -1,3 +1,6 @@
+* Wed Sep 08 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14-0]
+- Revert "team: mark team driver as deprecated" (Justin M. Forbes)
+
 * Fri Sep 03 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14-0]
 - Setup for building fedora-5.14 branch (Justin M. Forbes)
 
