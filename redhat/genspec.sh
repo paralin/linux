@@ -23,10 +23,11 @@ TARFILE_RELEASE=${16}
 SNAPSHOT=${17}
 UPSTREAM_BRANCH=${18}
 BUILDID=${19}
-RPMVERSION=${KVERSION}.${KPATCHLEVEL}
+RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
+UPSTREAMVERSION=${KVERSION}.${KPATCHLEVEL}
 clogf="$SOURCES/changelog"
 # hide [redhat] entries from changelog
-HIDE_REDHAT=1;
+HIDE_REDHAT=0;
 # hide entries for unsupported arches
 HIDE_UNSUPPORTED_ARCH=1;
 # override LC_TIME to avoid date conflicts when building the srpm
@@ -154,10 +155,10 @@ if [ "$SINGLE_TARBALL" = 0 ]; then
 	# May need to preserve word splitting in EXCLUDE_FILES
 	# shellcheck disable=SC2086
 	git diff -p --no-renames --stat "$MARKER"..  $EXCLUDE_FILES \
-		> "$SOURCES"/patch-"$RPMVERSION"-redhat.patch
+		> "$SOURCES"/patch-"$UPSTREAMVERSION"-redhat.patch
 else
 	# Need an empty file for dist-git compatibility
-	touch "$SOURCES"/patch-"$RPMVERSION"-redhat.patch
+	touch "$SOURCES"/patch-"$UPSTREAMVERSION="-redhat.patch
 fi
 
 # generate Patchlist.changelog file that holds the shas and commits not
