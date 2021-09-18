@@ -27,7 +27,7 @@ RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
 UPSTREAMVERSION=${KVERSION}.${KPATCHLEVEL}
 clogf="$SOURCES/changelog"
 # hide [redhat] entries from changelog
-HIDE_REDHAT=0;
+HIDE_REDHAT=1;
 # hide entries for unsupported arches
 HIDE_UNSUPPORTED_ARCH=1;
 # override LC_TIME to avoid date conflicts when building the srpm
@@ -37,7 +37,7 @@ RPM_VERSION="$RPMVERSION-$PKGRELEASE";
 
 echo > "$clogf"
 
-lasttag=$(git rev-list --first-parent --grep="^\[redhat\] kernel-${RPMVERSION}" --max-count=1 HEAD)
+lasttag=$(git rev-list --first-parent --grep="kernel-${UPSTREAMVERSION}" --max-count=1 HEAD)
 # if we didn't find the proper tag, assume this is the first release
 if [[ -z $lasttag ]]; then
     if [[ -z ${MARKER//[0-9a-f]/} ]]; then
