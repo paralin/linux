@@ -1,3 +1,10 @@
+* Sat Sep 18 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.6-0]
+- Fix changelog generation (Justin M. Forbes)
+- Clean up changelog (Justin M. Forbes)
+- ACPI: PM: s2idle: Run both AMD and Microsoft methods if both are supported (Mario Limonciello)
+- Don't tag a release as [redhat] (Justin M. Forbes)
+- Fixes for changelog that I think will help with the next stable bump (Justin M. Forbes)
+
 * Thu Sep 16 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.5-0]
 - kernel-5.14.5-0 (Justin M. Forbes)
 
