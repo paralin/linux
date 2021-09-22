@@ -1,3 +1,7 @@
+* Wed Sep 22 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.7-0]
+- Add Fedora 34 and 33 to release_targets (Justin M. Forbes)
+- Strip [redhat] entries from changelog (Justin M. Forbes)
+
 * Sat Sep 18 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.6-0]
 - Fix changelog generation (Justin M. Forbes)
 - Clean up changelog (Justin M. Forbes)
