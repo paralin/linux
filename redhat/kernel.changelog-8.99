@@ -1,3 +1,6 @@
+* Thu Sep 30 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.9-0]
+- Revert "block, bfq: honor already-setup queue merges" (Jens Axboe)
+
 * Mon Sep 27 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.8-0]
 - thermal/drivers/int340x: Do not set a wrong tcc offset on resume (Antoine Tenart)
 
