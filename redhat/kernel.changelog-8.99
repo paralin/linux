@@ -1,3 +1,9 @@
+* Thu Oct 07 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.10-0]
+- Revert "net: stmmac: dwmac-rk: fix unbalanced pm_runtime_enable warnings" (Peter Robinson)
+- e100e: Fix packet loss issues seen on Intel network controller (Mark Pearson)
+- bpf: Fix integer overflow in prealloc_elems_and_freelist() (Tatsuhiko Yasumatsu)
+- Revert "acpi: prefer booting with ACPI over DTS" (Justin M. Forbes)
+
 * Thu Sep 30 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.9-0]
 - Revert "block, bfq: honor already-setup queue merges" (Jens Axboe)
 
