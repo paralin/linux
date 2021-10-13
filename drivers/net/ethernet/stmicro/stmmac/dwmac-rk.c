@@ -1545,7 +1545,7 @@ static void rk_gmac_powerdown(struct rk_priv_data *gmac)
 	if (gmac->integrated_phy)
 		rk_gmac_integrated_phy_powerdown(gmac);
 
-	pm_runtime_put_sync(dev);
+	pm_runtime_put_sync(&gmac->pdev->dev);
 	pm_runtime_disable(dev);
 
 	phy_power_on(gmac, false);
