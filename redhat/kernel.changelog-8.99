@@ -1,3 +1,6 @@
+* Wed Oct 27 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.15-0]
+- Linux v5.14.15
+
 * Wed Oct 20 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.14-0]
 - autofs: fix wait name hash calculation in autofs_wait() (Ian Kent)
 - Fix up quirk to match upstream (Justin M. Forbes)
