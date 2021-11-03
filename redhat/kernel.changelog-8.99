@@ -1,3 +1,8 @@
+* Wed Nov 03 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.16-1]
+- Update release for usb fix rebuild (Justin M. Forbes)
+- Revert "xhci: Set HCD flag to defer primary roothub registration" (Justin M. Forbes)
+- Revert "usb: core: hcd: Add support for deferring roothub registration" (Justin M. Forbes)
+
 * Tue Nov 02 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.16-0]
 - Changelog entry for 5.14.15 (Justin M. Forbes)
 
