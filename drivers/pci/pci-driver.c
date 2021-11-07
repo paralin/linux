@@ -348,12 +348,10 @@ static long local_pci_probe(void *_ddi)
 	 * its remove routine.
 	 */
 	pm_runtime_get_sync(dev);
-	pci_dev->driver = pci_drv;
 	rc = pci_drv->probe(pci_dev, ddi->id);
 	if (!rc)
 		return rc;
 	if (rc < 0) {
-		pci_dev->driver = NULL;
 		pm_runtime_put_sync(dev);
 		return rc;
 	}
@@ -419,14 +417,13 @@ static int pci_call_probe(struct pci_driver *drv, struct pci_dev *dev,
  * @pci_dev: PCI device being probed
  *
  * returns 0 on success, else error.
- * side-effect: pci_dev->driver is set to drv when drv claims pci_dev.
  */
 static int __pci_device_probe(struct pci_driver *drv, struct pci_dev *pci_dev)
 {
 	const struct pci_device_id *id;
 	int error = 0;
 
-	if (!pci_dev->driver && drv->probe) {
+	if (drv->probe) {
 		error = -ENODEV;
 
 		id = pci_match_device(drv, pci_dev);
@@ -486,18 +483,15 @@ static int pci_device_probe(struct device *dev)
 static void pci_device_remove(struct device *dev)
 {
 	struct pci_dev *pci_dev = to_pci_dev(dev);
-	struct pci_driver *drv = pci_dev->driver;
+	struct pci_driver *drv = to_pci_driver(dev->driver);
 
-	if (drv) {
-		if (drv->remove) {
-			pm_runtime_get_sync(dev);
-			drv->remove(pci_dev);
-			pm_runtime_put_noidle(dev);
-		}
-		pcibios_free_irq(pci_dev);
-		pci_dev->driver = NULL;
-		pci_iov_remove(pci_dev);
+	if (drv->remove) {
+		pm_runtime_get_sync(dev);
+		drv->remove(pci_dev);
+		pm_runtime_put_noidle(dev);
 	}
+	pcibios_free_irq(pci_dev);
+	pci_iov_remove(pci_dev);
 
 	/* Undo the runtime PM settings in local_pci_probe() */
 	pm_runtime_put_sync(dev);
@@ -524,7 +518,7 @@ static void pci_device_remove(struct device *dev)
 static void pci_device_shutdown(struct device *dev)
 {
 	struct pci_dev *pci_dev = to_pci_dev(dev);
-	struct pci_driver *drv = pci_dev->driver;
+	struct pci_driver *drv = to_pci_driver(dev->driver);
 
 	pm_runtime_resume(dev);
 
@@ -605,7 +599,7 @@ static int pci_pm_reenable_device(struct pci_dev *pci_dev)
 {
 	int retval;
 
-	/* if the device was enabled before suspend, reenable */
+	/* if the device was enabled before suspend, re-enable */
 	retval = pci_reenable_device(pci_dev);
 	/*
 	 * if the device was busmaster before the suspend, make it busmaster
@@ -620,7 +614,7 @@ static int pci_pm_reenable_device(struct pci_dev *pci_dev)
 static int pci_legacy_suspend(struct device *dev, pm_message_t state)
 {
 	struct pci_dev *pci_dev = to_pci_dev(dev);
-	struct pci_driver *drv = pci_dev->driver;
+	struct pci_driver *drv = to_pci_driver(dev->driver);
 
 	if (drv && drv->suspend) {
 		pci_power_t prev = pci_dev->current_state;
@@ -661,7 +655,7 @@ static int pci_legacy_suspend_late(struct device *dev, pm_message_t state)
 static int pci_legacy_resume(struct device *dev)
 {
 	struct pci_dev *pci_dev = to_pci_dev(dev);
-	struct pci_driver *drv = pci_dev->driver;
+	struct pci_driver *drv = to_pci_driver(dev->driver);
 
 	pci_fixup_device(pci_fixup_resume, pci_dev);
 
@@ -680,7 +674,7 @@ static void pci_pm_default_suspend(struct pci_dev *pci_dev)
 
 static bool pci_has_legacy_pm_support(struct pci_dev *pci_dev)
 {
-	struct pci_driver *drv = pci_dev->driver;
+	struct pci_driver *drv = to_pci_driver(pci_dev->dev.driver);
 	bool ret = drv && (drv->suspend || drv->resume);
 
 	/*
@@ -1273,11 +1267,11 @@ static int pci_pm_runtime_suspend(struct device *dev)
 	int error;
 
 	/*
-	 * If pci_dev->driver is not set (unbound), we leave the device in D0,
-	 * but it may go to D3cold when the bridge above it runtime suspends.
-	 * Save its config space in case that happens.
+	 * If the device has no driver, we leave it in D0, but it may go to
+	 * D3cold when the bridge above it runtime suspends.  Save its
+	 * config space in case that happens.
 	 */
-	if (!pci_dev->driver) {
+	if (!to_pci_driver(dev->driver)) {
 		pci_save_state(pci_dev);
 		return 0;
 	}
@@ -1334,7 +1328,7 @@ static int pci_pm_runtime_resume(struct device *dev)
 	 */
 	pci_restore_standard_config(pci_dev);
 
-	if (!pci_dev->driver)
+	if (!to_pci_driver(dev->driver))
 		return 0;
 
 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
@@ -1353,14 +1347,13 @@ static int pci_pm_runtime_resume(struct device *dev)
 
 static int pci_pm_runtime_idle(struct device *dev)
 {
-	struct pci_dev *pci_dev = to_pci_dev(dev);
 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
 
 	/*
-	 * If pci_dev->driver is not set (unbound), the device should
-	 * always remain in D0 regardless of the runtime PM status
+	 * If the device has no driver, it should always remain in D0
+	 * regardless of the runtime PM status
 	 */
-	if (!pci_dev->driver)
+	if (!to_pci_driver(dev->driver))
 		return 0;
 
 	if (!pm)
@@ -1467,8 +1460,10 @@ static struct pci_driver pci_compat_driver = {
  */
 struct pci_driver *pci_dev_driver(const struct pci_dev *dev)
 {
-	if (dev->driver)
-		return dev->driver;
+	struct pci_driver *drv = to_pci_driver(dev->dev.driver);
+
+	if (drv)
+		return drv;
 	else {
 		int i;
 		for (i = 0; i <= PCI_ROM_RESOURCE; i++)
@@ -1571,7 +1566,7 @@ static int pci_uevent(struct device *dev, struct kobj_uevent_env *env)
 	return 0;
 }
 
-#if defined(CONFIG_PCIEPORTBUS) || defined(CONFIG_EEH)
+#if defined(CONFIG_PCIEAER) || defined(CONFIG_EEH)
 /**
  * pci_uevent_ers - emit a uevent during recovery path of PCI device
  * @pdev: PCI device undergoing error recovery
