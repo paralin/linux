@@ -1,3 +1,23 @@
+* Mon Nov 08 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.15-0]
+- btrfs: fix memory ordering between normal and ordered work functions (Nikolay Borisov)
+- Turn on COMMON_CLK_AXG_AUDIO for Fedora rhbz 2020481 (Justin M. Forbes)
+- fedora: gpio: tweak some GPIO drivers (Peter Robinson)
+- Enable VMXNET3 for aarch64 (Peter Robinson)
+- all: drop removed obsolete config options (Peter Robinson)
+- Revert "fedora: Disable fbdev drivers and use simpledrm instead" (Justin M. Forbes)
+- Enable binder for fedora (Justin M. Forbes)
+- Add fedora-dist-git-test.sh and release_targets (Justin M. Forbes)
+- Update Makefile.variables for 5.15 stable (Justin M. Forbes)
+- Reset RHEL_RELEASE for 5.16 (Justin M. Forbes)
+- redhat: configs: Update configs for vmware (Kamal Heib)
+- Fedora configs for 5.15 (Justin M. Forbes)
+- redhat/kernel.spec.template: don't hardcode gcov arches (Jan Stancek)
+- redhat/configs: create a separate config for gcov options (Jan Stancek)
+- Update documentation with FAQ and update frequency (Don Zickus)
+- Document force pull option for mirroring (Don Zickus)
+- Ignore the rhel9 kabi files (Don Zickus)
+- Remove legacy elrdy cruft (Don Zickus)
+
 * Fri Oct 29 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc7.20211029gitf25a5481af12.56]
 - redhat/configs/evaluate_configs: walk cfgvariants line by line (Jan Stancek)
 - redhat/configs/evaluate_configs: insert EMPTY tags at correct place (Jan Stancek)
