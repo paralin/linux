@@ -1,3 +1,15 @@
+* Fri Nov 12 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.15-0]
+- usb: xhci: tegra: Check padctrl interrupt presence in device tree (Dmitry Osipenko)
+- Fedora: Enable MediaTek bluetooth pieces (Peter Robinson)
+- x86/PCI/ACPI: Replace printk calls with pr_info/pr_warn calls (Hans de Goede)
+- x86/PCI: Ignore E820 reservations for bridge windows on newer systems (Hans de Goede)
+- Revert "[scsi] megaraid_sas: re-add certain pci-ids" (Justin M. Forbes)
+- Revert "wireguard: disable in FIPS mode" (Justin M. Forbes)
+- Revert "[fs] dax: mark tech preview" (Justin M. Forbes)
+- Revert "wireguard: mark as Tech Preview" (Justin M. Forbes)
+- Revert "add pci_hw_vendor_status()" (Justin M. Forbes)
+- Input: i8042 - Add quirk for Fujitsu Lifebook T725 (Takashi Iwai)
+
 * Mon Nov 08 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.15-0]
 - btrfs: fix memory ordering between normal and ordered work functions (Nikolay Borisov)
 - Turn on COMMON_CLK_AXG_AUDIO for Fedora rhbz 2020481 (Justin M. Forbes)
