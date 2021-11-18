@@ -1,3 +1,6 @@
+* Thu Nov 18 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.20-1]
+- Drop F33 from release_targets as pushes are already disabled in dist-git (Justin M. Forbes)
+
 * Wed Nov 17 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.14.19-1]
 - platform/x86: thinkpad_acpi: Add support for dual fan control (Jimmy Wang)
 - Fedora: Enable MediaTek bluetooth pieces (Peter Robinson)
