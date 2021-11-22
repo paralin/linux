@@ -1,3 +1,8 @@
+* Mon Nov 22 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.15-0]
+- mwifiex_usb: Fix skb_over_panic in mwifiex_usb_recv (Zekun Shen)
+- atlantic: Fix OOB read and write in hw_atl_utils_fw_rpc_wait (Zekun Shen)
+- Add cifs to module filters (Justin M. Forbes)
+
 * Thu Nov 18 2021 Justin M. Forbes <jforbes@fedoraproject.org> [5.15-0]
 - Enable CIFS_SMB_DIRECT for Fedora (Justin M. Forbes)
 - Fedora: rockchip: move the GPIO module back to builtin (Peter Robinson)
