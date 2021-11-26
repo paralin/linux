@@ -326,7 +326,7 @@ static void btrfs_work_helper(struct work_struct *normal_work)
 	if (need_order) {
 		/*
 		 * Ensures all memory accesses done in the work function are
-		 * ordered before setting the WORK_DONE_BIT.Ensuring the thread
+		 * ordered before setting the WORK_DONE_BIT. Ensuring the thread
 		 * which is going to executed the ordered work sees them.
 		 * Pairs with the smp_rmb in run_ordered_work.
 		 */
