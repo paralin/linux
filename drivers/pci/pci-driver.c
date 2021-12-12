@@ -371,7 +371,6 @@ const struct pci_device_id *pci_hw_disabled(const struct pci_device_id *ids,
 	return ret;
 }
 EXPORT_SYMBOL(pci_hw_disabled);
-
 #endif
 
 struct drv_dev_and_id {
