@@ -25,7 +25,8 @@ UPSTREAM_BRANCH=${18}
 INCLUDE_FEDORA_FILES=${19}
 INCLUDE_RHEL_FILES=${20}
 BUILDID=${21}
-RPMVERSION=${KVERSION}.${KPATCHLEVEL}
+RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
+UPSTREAMVERSION=${KVERSION}.${KPATCHLEVEL}
 clogf="$SOURCES/changelog"
 # hide [redhat] entries from changelog
 HIDE_REDHAT=1;
@@ -38,7 +39,7 @@ RPM_VERSION="$RPMVERSION-$PKGRELEASE";
 
 echo > "$clogf"
 
-lasttag=$(git rev-list --first-parent --grep="^\[redhat\] kernel-${RPMVERSION}" --max-count=1 HEAD)
+lasttag=$(git rev-list --first-parent --grep="kernel-${UPSTREAMVERSION}" --max-count=1 HEAD)
 # if we didn't find the proper tag, assume this is the first release
 if [[ -z $lasttag ]]; then
     if [[ -z ${MARKER//[0-9a-f]/} ]]; then
@@ -158,10 +159,10 @@ if [ "$SINGLE_TARBALL" = 0 ]; then
 	# May need to preserve word splitting in EXCLUDE_FILES
 	# shellcheck disable=SC2086
 	git diff -p --no-renames --stat "$MARKER"..  $EXCLUDE_FILES \
-		> "$SOURCES"/patch-"$RPMVERSION"-redhat.patch
+		> "$SOURCES"/patch-"$UPSTREAMVERSION"-redhat.patch
 else
 	# Need an empty file for dist-git compatibility
-	touch "$SOURCES"/patch-"$RPMVERSION"-redhat.patch
+	touch "$SOURCES"/patch-"$UPSTREAMVERSION"-redhat.patch
 fi
 
 # generate Patchlist.changelog file that holds the shas and commits not
