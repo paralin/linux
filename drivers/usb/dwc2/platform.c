@@ -801,8 +801,8 @@ static int __maybe_unused dwc2_resume(struct device *dev)
 		dwc2_hcd_disconnect(dwc2, true);
 		dwc2->op_state = OTG_STATE_B_PERIPHERAL;
 		dwc2->lx_state = DWC2_L3;
-		if (!dwc2->driver)
-			dwc2_hsotg_core_init_disconnected(dwc2, false);
+		// if (!dwc2->driver)
+		// 	dwc2_hsotg_core_init_disconnected(dwc2, false);
 		spin_unlock_irqrestore(&dwc2->lock, flags);
 	}
 
