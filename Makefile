@@ -412,10 +412,13 @@ LINUXINCLUDE    := \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+KBUILD_CFLAGS   := -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
+		   -Wno-uninitialized \
+		   -Wno-sizeof-array-div \
+       -Wno-builtin-declaration-mismatch \
 		   -std=gnu89 $(call cc-option,-fno-PIE)
 
 
