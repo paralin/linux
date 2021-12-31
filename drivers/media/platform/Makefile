@@ -52,7 +52,6 @@ obj-$(CONFIG_VIDEO_ROCKCHIP_RGA)	+= rockchip/rga/
 obj-$(CONFIG_VIDEO_ROCKCHIP_VIP)	+= rockchip/vip/
 
 obj-y	+= omap/
-obj-$(CONFIG_VIDEO_ROCKCHIP_ISP1)	+= rockchip/isp1/
 obj-y	+= rockchip/coprocessor/
 
 obj-$(CONFIG_VIDEO_AM437X_VPFE)		+= am437x/
