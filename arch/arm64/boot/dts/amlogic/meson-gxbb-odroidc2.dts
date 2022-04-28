@@ -17,6 +17,8 @@
 
 	aliases {
 		serial0 = &uart_AO;
+		serial1 = &uart_A;
+		serial2 = &uart_C;
 		ethernet0 = &ethmac;
 	};
 
@@ -396,6 +398,18 @@
 &uart_AO {
 	status = "okay";
 	pinctrl-0 = <&uart_ao_a_pins>;
+	pinctrl-names = "default";
+};
+
+&uart_A {
+	status = "disabled";
+	pinctrl-0 = <&uart_a_pins>;
+	pinctrl-names = "default";
+};
+
+&uart_C {
+	status = "disabled";
+	pinctrl-0 = <&uart_c_pins>;
 	pinctrl-names = "default";
 };
 
